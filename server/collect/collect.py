@@ -21,22 +21,6 @@ inited = 0
 global root
 root = '/home/sol315/data/'
 
-def getLineNumber():
-    global root
-    line_number = 0
-    if os.path.exists(root + 'line_number'):
-        f = open(root + 'line_number','r')
-        s = f.readline()
-        if s != '':
-            line_number = int(s)
-        f.close()
-    else:
-        f = open(root + 'line_number','w')
-        f.write('0')
-        f.close()
-
-    return line_number
-
 def saveImg(pixel, name):
     global root
     img_root = root + 'images/origins/'
@@ -75,6 +59,9 @@ def insert_into_db(db, table_name, data):
         return uid
     except:
         db.rollback()
+        # If something went wrong with the insert, it was probably
+        # the super unlikely race of two threads with the same UID,
+        # so the insert can be tried again
         return insert_into_db(db, table_name, data)
 
 def index(req):
@@ -100,7 +87,5 @@ def index(req):
     for pi in pixels:
         saveImg(pi, str(line_number) + '_' + str(sub_number))
         sub_number += 1
-
-    line_number += 1
 
     return "success"
