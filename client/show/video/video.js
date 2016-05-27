@@ -47,8 +47,8 @@ $(function() {
 
   var tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T,     gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S,     gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
@@ -58,6 +58,15 @@ $(function() {
     drawVid(canvas.width, canvas.height, 0);
   });
   vid.prop('muted', true);
+  var done = false;
+  var level = 0;
+  vid.on('timeupdate', function() {
+    if (level++ == 10) {
+      getDataFromCanvas(ctx, 'vid_can_ctx');
+      getData(gl, 'vid_can_gl', 0);
+      done = true;
+    }
+  });
   vid[0].play();
 
   // Render loop
@@ -70,7 +79,6 @@ $(function() {
     var offset = (h - vidH)/2.0;
     ctx.drawImage(vid[0], 0, offset, w, vidH);
 
-
     gl.viewport(0, offset, w, vidH);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.activeTexture(gl.TEXTURE0);
@@ -82,15 +90,7 @@ $(function() {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ix);
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
     // Here is where the pixel data will be sent
-    if (level == 200) {
-      // Get data for the webgl canvas
-
-      getDataFromCanvas(ctx, 'vid_can_ctx');
-      getData(gl, 'vid_can_gl', 0);
-      //toServer(false, "None", "None", pixels.hashCode(), 8, pi);
-    }
-    // Kills the render loop
-    if (level == 200) {
+    if (done) {
       cancelAnimationFrame(frame);
     }
   }
