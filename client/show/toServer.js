@@ -1,7 +1,7 @@
 var pixels = new Uint8Array(262144);
 var ven, ren;
 var urls = [];
-var canvas_number = 9;
+var canvas_number = 8;
 var finished = 0;
 
 function getData(gl, canvasName, id){
