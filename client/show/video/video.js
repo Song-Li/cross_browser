@@ -84,18 +84,8 @@ $(function() {
     // Here is where the pixel data will be sent
     if (level == 200) {
       // Get data for the webgl canvas
-      getData(gl, 'vid_can_gl', 7);
-
-      var pixels = ctx.getImageData(0, 0, w, h).data;
-      var pi = '[';
-      var s = w * h * 4;
-      for(var i = 0;i < s;++ i){
-        if(i) pi += ',';
-        pi += pixels[i].toString();
-      }
-      pi += ']';
-      // Send pixels to server
-      toServer(false, "None", "None", pixels.hashCode(), 8, pi);
+      getData(gl, 'vid_can_gl', 0);
+      //toServer(false, "None", "None", pixels.hashCode(), 8, pi);
     }
     // Kills the render loop
     if (level == 200) {
