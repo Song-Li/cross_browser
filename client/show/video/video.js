@@ -36,7 +36,7 @@ $(function() {
   var canvas = $('#vid_can_gl')[0];
   var gl = null;
   for (var i=0; i<4; i++) {
-    gl = canvas.getContext(["webgl","experimental-webgl","moz-webgl","webkit-3d"][i])
+    gl = canvas.getContext(["webgl","experimental-webgl","moz-webgl","webkit-3d"][i], {antialias: false});
     if (gl)
       break;
   }
@@ -77,7 +77,7 @@ $(function() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-  vid.attr('src', 'video/video.mp4');
+  vid.prop('src', 'video/video.mp4');
   vid.load();
   vid.on('play', function() {
     drawVid(canvas.width, canvas.height, 0);
@@ -89,11 +89,10 @@ $(function() {
     var frame = requestAnimationFrame(function() {
       drawVid(w, h, level + 1);
     });
-    // This would change the height to keep the aspect ratio correct
-    // but that doesn't work for the gl canvas
-    // var vidH = 9/16*w;
-    ctx.drawImage(vid[0], 0, 0, w, h);
-
+    var vidH = 9/16*w;
+    var offset = (h - vidH)/2.0;
+    ctx.drawImage(vid[0], 0, offset, w, vidH);
+    gl.viewport(0, offset, w, vidH);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -120,7 +119,7 @@ $(function() {
       toServer(false, "None", "None", pixels.hashCode(), 8, pi);
     }
     // Kills the render loop
-    if (level == 300) {
+    if (level == 200) {
       cancelAnimationFrame(frame);
     }
   }
