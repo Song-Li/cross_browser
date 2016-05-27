@@ -80,7 +80,7 @@ $(function() {
   vid.attr('src', 'video/video.mp4');
   vid.load();
   vid.on('play', function() {
-    drawVid(256, 256, 0);
+    drawVid(canvas.width, canvas.height, 0);
   });
   vid.prop('muted', true);
   vid[0].play();
@@ -89,9 +89,10 @@ $(function() {
     var frame = requestAnimationFrame(function() {
       drawVid(w, h, level + 1);
     });
-    var vidH = 9/16*h;
-    var offset = (h - vidH)/2.0;
-    ctx.drawImage(vid[0], 0, offset, w, vidH);
+    // This would change the height to keep the aspect ratio correct
+    // but that doesn't work for the gl canvas
+    // var vidH = 9/16*w;
+    ctx.drawImage(vid[0], 0, 0, w, h);
 
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.activeTexture(gl.TEXTURE0);
@@ -109,14 +110,14 @@ $(function() {
 
       var pixels = ctx.getImageData(0, 0, w, h).data;
       var pi = '[';
-      var s = 256 * 256 * 4;
+      var s = w * h * 4;
       for(var i = 0;i < s;++ i){
         if(i) pi += ',';
         pi += pixels[i].toString();
       }
       pi += ']';
       // Send pixels to server
-      //toServer(false, "None", "None", pixels.hashCode(), 8, pi);
+      toServer(false, "None", "None", pixels.hashCode(), 8, pi);
     }
     // Kills the render loop
     if (level == 300) {
