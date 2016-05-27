@@ -2,36 +2,11 @@
   Shows a video on screen, request it to be redrawn on a canvas and
   then collects those pixels from the canvas
 */
-
-var vertexShader = [
-  'attribute vec2 a_position;',
-  'uniform vec2 u_resolution;',
-  'void main() {',
-     // convert the rectangle from pixels to 0.0 to 1.0
-     'vec2 zeroToOne = a_position / u_resolution;',
-     'vec2 zeroToTwo = zeroToOne * 2.0;',
-     'vec2 clipSpace = zeroToTwo - 1.0;',
-     'gl_Position = vec4(clipSpace, 0, 1);',
-  '}'
-].join('\n');
-
-var fragmentShader = [
-  'precision mediump float;',
-
-  // our texture
-  'uniform sampler2D u_image;',
-
-  // the texCoords passed in from the vertex shader.
-  'varying vec2 v_texCoord;',
-
-  'void main() {',
-     // Look up a color from the texture.
-     'gl_FragColor = texture2D(u_image, v_texCoord);',
-  '}'
-].join('\n');
-
+// Document on ready jquery shortcut
 $(function() {
   var vid = $('#vid');
+  // [0] after jquery selector gets the pure dom element instead of
+  // the jquery extended object
   var ctx = $('#vid_can_ctx')[0].getContext('2d');
   var canvas = $('#vid_can_gl')[0];
   var gl = null;
@@ -85,13 +60,17 @@ $(function() {
   vid.prop('muted', true);
   vid[0].play();
 
+  // Render loop
   function drawVid(w, h, level) {
     var frame = requestAnimationFrame(function() {
       drawVid(w, h, level + 1);
     });
+
     var vidH = 9/16*w;
     var offset = (h - vidH)/2.0;
     ctx.drawImage(vid[0], 0, offset, w, vidH);
+
+
     gl.viewport(0, offset, w, vidH);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.activeTexture(gl.TEXTURE0);
@@ -124,4 +103,3 @@ $(function() {
     }
   }
 });
-
