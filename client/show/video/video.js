@@ -84,6 +84,8 @@ $(function() {
     // Here is where the pixel data will be sent
     if (level == 200) {
       // Get data for the webgl canvas
+
+      getDataFromCanvas(ctx, 'vid_can_ctx');
       getData(gl, 'vid_can_gl', 0);
       //toServer(false, "None", "None", pixels.hashCode(), 8, pi);
     }

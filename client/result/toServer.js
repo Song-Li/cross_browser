@@ -1,4 +1,4 @@
-var case_number = 7;
+var case_number = 9;
 var browser_number = 3;
 var canvas_number = case_number * browser_number * 4;
 var root = "http://54.85.74.36/images/generated/"

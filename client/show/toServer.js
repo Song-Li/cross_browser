@@ -1,8 +1,23 @@
 var pixels = new Uint8Array(262144);
 var ven, ren;
 var urls = [];
-var canvas_number = 8;
+var canvas_number = 9;
 var finished = 0;
+
+
+function getDataFromCanvas(ctx, canvasName){
+    var w = 256, h = 256;
+    var pixels = ctx.getImageData(0, 0, w, h).data;
+    var pi = '[';
+    var s = w * h * 4;
+    for(var i = 0;i < s;++ i){
+        if(i) pi += ',';
+        pi += pixels[i].toString();
+    }
+    pi += ']';
+    // Send pixels to server
+    toServer(false, "None", "None", -1, 8, pi);
+}
 
 function getData(gl, canvasName, id){
     var canvas = document.getElementById(canvasName);
