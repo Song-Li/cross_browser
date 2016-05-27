@@ -1,7 +1,7 @@
 var pixels = new Uint8Array(262144);
 var ven, ren;
 var urls = [];
-var canvas_number = 7;
+var canvas_number = 9;
 var finished = 0;
 
 function getData(gl, canvasName, id){
@@ -11,7 +11,7 @@ function getData(gl, canvasName, id){
     else
         WebGL = false;
 
-    gl.readPixels(0,0,256,256,gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    gl.readPixels(0,0,256,256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
     var pi = '[';
     var s = 256 * 256 * 4;
     for(var i = 0;i < s;++ i){
@@ -42,6 +42,8 @@ function getData(gl, canvasName, id){
         toServer(WebGL,ven, ren, pixels.hashCode(), 5, pi);
     else if(canvasName == 'simple_wood')
         toServer(WebGL,ven, ren, pixels.hashCode(), 6, pi);
+    else if (canvasName == 'vid_can_gl')
+        toServer(WebGL, ven, ren, pixels.hashCode(), 7, pi);
 
     console.log(pixels.hashCode());
 }
@@ -60,14 +62,14 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
 
     $.ajax({
-        url:"http://54.85.74.36/collect.py",  
+        url:"http://54.85.74.36/collect.py",
         dataType:"html",
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
             alert(data);
         }
-    }); 
+    });
 }
 
 Uint8Array.prototype.hashCode = function() {
@@ -75,7 +77,7 @@ Uint8Array.prototype.hashCode = function() {
     if (this.length === 0) return hash;
     for (i = 0, len = this.length; i < len; i++) {
         chr   = this[i];
-        hash  = ((hash << 5) - hash) + chr;        
+        hash  = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32bit integer
     }
     return hash;
