@@ -5,24 +5,21 @@
  * Copyright 2011 Evan Wallace
  * Released under the MIT license
  */
+Uint8Array.prototype.hashCode = function() {
+    var hash = 0, i, chr, len;
+    if (this.length === 0) return hash;
+    for (i = 0, len = this.length; i < len; i++) {
+        chr   = this[i];
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+}
 
 function text2html(text) {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
 }
 
-function handleError(text) {
-  var html = text2html(text);
-  if (html == 'WebGL not supported') {
-    html = 'Your browser does not support WebGL.<br>Please see\
-    <a href="http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">\
-    Getting a WebGL Implementation</a>.';
-  }
-  var loading = document.getElementById('loading');
-  loading.innerHTML = html;
-  loading.style.zIndex = 1;
-}
-
-window.onerror = handleError;
 
 var gl = GL.create();
 var water;
@@ -30,6 +27,7 @@ var cubemap;
 var renderer;
 var angleX = -25;
 var angleY = -200.5;
+var wid = 256;
 
 // Sphere physics info
 var useSpherePhysics = false;
@@ -45,8 +43,8 @@ window.onload = function() {
   var help = document.getElementById('help');
 
   function onresize() {
-    var width = innerWidth - help.clientWidth - 20;
-    var height = innerHeight;
+    var width = wid;
+    var height = width;
     gl.canvas.width = width * ratio;
     gl.canvas.height = height * ratio;
     gl.canvas.style.width = width + 'px';
@@ -81,12 +79,9 @@ window.onload = function() {
   velocity = new GL.Vector();
   gravity = new GL.Vector(0, -4, 0);
   radius = 0.25;
+  
+  water.addDrop(0.5, 0.5, 0.03, 0.01);
 
-  for (var i = 0; i < 20; i++) {
-    water.addDrop(Math.random() * 2 - 1, Math.random() * 2 - 1, 0.03, (i & 1) ? 0.01 : -0.01);
-  }
-
-  document.getElementById('loading').innerHTML = '';
   onresize();
 
   var requestAnimationFrame =
@@ -94,14 +89,18 @@ window.onload = function() {
     window.webkitRequestAnimationFrame ||
     function(callback) { setTimeout(callback, 0); };
 
-  var prevTime = new Date().getTime();
+  var cnt = 0;
+  var speed = 3;
+  var pixels = new Uint8Array(262144);
   function animate() {
-    var nextTime = new Date().getTime();
-    if (!paused) {
-      update((nextTime - prevTime) / 1000);
-      draw();
+    update(speed / 1000);
+    draw();
+    cnt ++;
+    if(cnt == 10){
+        gl.readPixels(0,0,256,256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        console.log(pixels.hashCode());
     }
-    prevTime = nextTime;
+
     requestAnimationFrame(animate);
   }
   requestAnimationFrame(animate);
@@ -173,6 +172,7 @@ window.onload = function() {
     oldY = y;
     if (paused) draw();
   }
+  /*
 
   function stopDrag() {
     mode = -1;
@@ -221,6 +221,7 @@ window.onload = function() {
     else if (e.which == 'G'.charCodeAt(0)) useSpherePhysics = !useSpherePhysics;
     else if (e.which == 'L'.charCodeAt(0) && paused) draw();
   };
+  */
 
   var frame = 0;
 
@@ -258,11 +259,6 @@ window.onload = function() {
 
   function draw() {
     // Change the light direction to the camera look vector when the L key is pressed
-    if (GL.keys.L) {
-      renderer.lightDir = GL.Vector.fromAngles((90 - angleY) * Math.PI / 180, -angleX * Math.PI / 180);
-      if (paused) renderer.updateCaustics(water);
-    }
-
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.loadIdentity();
     gl.translate(0, 0, -4);
