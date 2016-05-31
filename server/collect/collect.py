@@ -69,8 +69,9 @@ def index(req):
     global inited
     global root
     sub_number = 0
+    json = req.get('json');
     post_data = str(req.form.list)
-    one_test = json.loads(post_data[8:-7])
+    one_test = json.loads(json)
     ip = req.connection.remote_ip
 
     agent = req.headers_in[ 'User-Agent' ]

@@ -1,22 +1,13 @@
-var pixels = new Uint8Array(262144);
 var ven, ren;
 var urls = [];
 var canvas_number = 9;
 var finished = 0;
 
-
 function getDataFromCanvas(ctx, canvasName){
     var w = 256, h = 256;
-    var pixels = ctx.getImageData(0, 0, w, h).data;
-    var pi = '[';
-    var s = w * h * 4;
-    for(var i = 0;i < s;++ i){
-        if(i) pi += ',';
-        pi += pixels[i].toString();
-    }
-    pi += ']';
+    pixels = ctx.getImageData(0, 0, w, h).data;
     // Send pixels to server
-    toServer(false, "None", "None", pixels.hashCode(), 8, pi);
+    toServer(false, "None", "None", pixels.hashCode(), 8, pixels);
 
     console.log("CTX: " + pixels.hashCode());
 }
@@ -27,15 +18,9 @@ function getData(gl, canvasName, id){
         WebGL = true;
     else
         WebGL = false;
-
+    var pixels = new Uint8Array(256*256*4);
     gl.readPixels(0,0,256,256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-    var pi = '[';
-    var s = 256 * 256 * 4;
-    for(var i = 0;i < s;++ i){
-        if(i) pi += ',';
-        pi += pixels[i].toString();
-    }
-    pi += ']';
+
     var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
     if(debugInfo){
         ven = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
@@ -46,21 +31,21 @@ function getData(gl, canvasName, id){
         ren = 'No debug Info';
     }
     if(canvasName == 'cube_no_texture')
-        toServer(WebGL,ven, ren, pixels.hashCode(), 0, pi);
+        toServer(WebGL, ven, ren, pixels.hashCode(), 0, pixels);
     else if(canvasName == 'line')
-        toServer(WebGL,ven, ren, pixels.hashCode(), 1, pi);
+        toServer(WebGL, ven, ren, pixels.hashCode(), 1, pixels);
     else if(canvasName == 'curve')
-        toServer(WebGL,ven, ren, pixels.hashCode(), 2, pi);
+        toServer(WebGL, ven, ren, pixels.hashCode(), 2, pixels);
     else if(canvasName == 'model_tiles')
-        toServer(WebGL,ven, ren, pixels.hashCode(), 3, pi);
+        toServer(WebGL, ven, ren, pixels.hashCode(), 3, pixels);
     else if(canvasName == 'model_wood')
-        toServer(WebGL,ven, ren, pixels.hashCode(), 4, pi);
+        toServer(WebGL, ven, ren, pixels.hashCode(), 4, pixels);
     else if(canvasName == 'simple_color')
-        toServer(WebGL,ven, ren, pixels.hashCode(), 5, pi);
+        toServer(WebGL, ven, ren, pixels.hashCode(), 5, pixels);
     else if(canvasName == 'simple_wood')
-        toServer(WebGL,ven, ren, pixels.hashCode(), 6, pi);
+        toServer(WebGL, ven, ren, pixels.hashCode(), 6, pixels);
     else if (canvasName == 'vid_can_gl')
-        toServer(WebGL, ven, ren, pixels.hashCode(), 7, pi);
+        toServer(WebGL, ven, ren, pixels.hashCode(), 7, pixels);
 
     console.log(canvasName + ": " + pixels.hashCode());
 }
@@ -71,22 +56,32 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     finished ++;
     if(finished < canvas_number) return ;
 
-    var pixels = "";
+    /*var pixels = "";
     for(var i = 0;i < canvas_number;++ i){
-        pixels += urls[i];
+        pixels += urls[i].stringify();
         if(i != canvas_number - 1) pixels += ' ';
-    }
-    postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
+    }*/
+    postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, images: urls};
 
     $.ajax({
         url:"http://54.85.74.36/collect.py",
-        dataType:"html",
+        dataType:"json",
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
             alert(data);
         }
     });
+}
+
+Uint8Array.prototype.stringify = function() {
+    var str = '[';
+    for (var i = 0, len = this.length; i < len; ++i) {
+        if(i) str += ',';
+        str += this[i].toString();
+    }
+    str += ']';
+    return str;
 }
 
 Uint8Array.prototype.hashCode = function() {

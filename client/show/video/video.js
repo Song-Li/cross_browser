@@ -61,12 +61,11 @@ $(function() {
   var done = false;
   var level = 0;
   vid.on('timeupdate', function() {
-    if (level++ == 15) {
-      done = true;
-      this.pause();
+    if (++level == 17) {
       getDataFromCanvas(ctx, 'vid_can_ctx');
       getData(gl, 'vid_can_gl', 0);
     }
+    $("#counter").text(level);
   });
   vid[0].play();
 
