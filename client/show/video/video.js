@@ -61,36 +61,39 @@ $(function() {
   var done = false;
   var level = 0;
   vid.on('timeupdate', function() {
-    if (level++ == 10) {
+    if (level++ == 15) {
+      done = true;
+      this.pause();
       getDataFromCanvas(ctx, 'vid_can_ctx');
       getData(gl, 'vid_can_gl', 0);
-      done = true;
     }
   });
   vid[0].play();
 
   // Render loop
   function drawVid(w, h, level) {
-    var frame = requestAnimationFrame(function() {
-      drawVid(w, h, level + 1);
-    });
+    var frame = null;
+    if (!done) {
+      frame = requestAnimationFrame(function() {
+        drawVid(w, h, level + 1);
+      });
 
-    var vidH = 9/16*w;
-    var offset = (h - vidH)/2.0;
-    ctx.drawImage(vid[0], 0, offset, w, vidH);
+      var vidH = 9/16*w;
+      var offset = (h - vidH)/2.0;
+      ctx.drawImage(vid[0], 0, offset, w, vidH);
 
-    gl.viewport(0, offset, w, vidH);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, vid[0]);
-    gl.bindBuffer(gl.ARRAY_BUFFER, vx);
-    gl.vertexAttribPointer(vx_ptr, 2, gl.FLOAT, false, 0, 0);
+      gl.viewport(0, offset, w, vidH);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, vid[0]);
+      gl.bindBuffer(gl.ARRAY_BUFFER, vx);
+      gl.vertexAttribPointer(vx_ptr, 2, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ix);
-    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-    // Here is where the pixel data will be sent
-    if (done) {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ix);
+      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+      // Here is where the pixel data will be sent
+    } else if (frame) {
       cancelAnimationFrame(frame);
     }
   }
