@@ -1,5 +1,5 @@
-getGL = function(canvasID) {
-  var canvas = $(canvasID)[0];
+getGL = function(canvasSelector) {
+  var canvas = $(canvasSelector)[0];
   var gl = null;
   for (var i = 0; i < 4; ++i) {
     gl = canvas.getContext(["webgl","experimental-webgl","moz-webgl","webkit-3d"][i], {antialias: false, preserveDrawingBuffer: true});
