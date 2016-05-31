@@ -7,14 +7,9 @@ $(function() {
   var vid = $('#vid');
   // [0] after jquery selector gets the pure dom element instead of
   // the jquery extended object
-  var ctx = $('#vid_can_ctx')[0].getContext('2d');
-  var canvas = $('#vid_can_gl')[0];
-  var gl = null;
-  for (var i=0; i<4; i++) {
-    gl = canvas.getContext(["webgl","experimental-webgl","moz-webgl","webkit-3d"][i], {antialias: false});
-    if (gl)
-      break;
-  }
+  var canvas = $('#vid_can_ctx')[0];
+  var ctx = canvas.getContext('2d');
+  var gl = getGL("#vid_can_gl");
 
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -61,12 +56,12 @@ $(function() {
   var done = false;
   var level = 0;
   vid.on('timeupdate', function() {
-    if (level++ == 15) {
-      done = true;
-      this.pause();
+    if (++level == 14) {
       getDataFromCanvas(ctx, 'vid_can_ctx');
+    } else if (level == 15) {
       getData(gl, 'vid_can_gl', 0);
     }
+    $("#counter").text(level);
   });
   vid[0].play();
 

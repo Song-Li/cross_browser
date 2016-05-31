@@ -84,7 +84,7 @@ def index(req):
     db.close()
 
     line_number = uid
-    pixels = one_test['pixels'].split(' ')
+    pixels = one_test['pixels']
     for pi in pixels:
         saveImg(pi, str(line_number) + '_' + str(sub_number))
         sub_number += 1
