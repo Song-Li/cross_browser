@@ -7,7 +7,8 @@ $(function() {
   var vid = $('#vid');
   // [0] after jquery selector gets the pure dom element instead of
   // the jquery extended object
-  var ctx = $('#vid_can_ctx')[0].getContext('2d');
+  var canvas = $('#vid_can_ctx')[0];
+  var ctx = canvas.getContext('2d');
   var gl = getGL("#vid_can_gl");
 
   gl.enable(gl.BLEND);
@@ -55,9 +56,9 @@ $(function() {
   var done = false;
   var level = 0;
   vid.on('timeupdate', function() {
-    if (++level == 12) {
+    if (++level == 14) {
       getDataFromCanvas(ctx, 'vid_can_ctx');
-    } else if (level == 13) {
+    } else if (level == 15) {
       getData(gl, 'vid_can_gl', 0);
     }
     $("#counter").text(level);

@@ -55,7 +55,8 @@ function getData(gl, canvasName, id){
 function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server and receive messages from server
     urls[id] = dataurl;
     finished ++;
-    if(finished < canvas_number) return ;
+    if(finished < canvas_number) return;
+
 
     /*var pixels = "";
     for(var i = 0;i < canvas_number;++ i){
