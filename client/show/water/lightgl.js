@@ -2046,7 +2046,7 @@ Vector.fromAngles = function(theta, phi) {
   return new Vector(Math.cos(theta) * Math.cos(phi), Math.sin(phi), Math.sin(theta) * Math.cos(phi));
 };
 Vector.randomDirection = function() {
-  return Vector.fromAngles(Math.random() * Math.PI * 2, Math.asin(Math.random() * 2 - 1));
+  return Vector.fromAngles(0.5 * Math.PI * 2, Math.asin(0.5 * 2 - 1));
 };
 Vector.min = function(a, b) {
   return new Vector(Math.min(a.x, b.x), Math.min(a.y, b.y), Math.min(a.z, b.z));
