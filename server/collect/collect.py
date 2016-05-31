@@ -69,9 +69,8 @@ def index(req):
     global inited
     global root
     sub_number = 0
-    json = req.get('json');
     post_data = str(req.form.list)
-    one_test = json.loads(json)
+    one_test = json.loads(post_data[8:-7])
     ip = req.connection.remote_ip
 
     agent = req.headers_in[ 'User-Agent' ]
@@ -85,7 +84,7 @@ def index(req):
     db.close()
 
     line_number = uid
-    pixels = one_test['pixels'].split(' ')
+    pixels = one_test['pixels']
     for pi in pixels:
         saveImg(pi, str(line_number) + '_' + str(sub_number))
         sub_number += 1

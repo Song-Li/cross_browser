@@ -2,23 +2,24 @@ var ven, ren;
 var urls = [];
 var canvas_number = 9;
 var finished = 0;
+var pixels = new Uint8Array(256*256*4);
 
 function getDataFromCanvas(ctx, canvasName){
     var w = 256, h = 256;
-    pixels = ctx.getImageData(0, 0, w, h).data;
     // Send pixels to server
-    toServer(false, "None", "None", pixels.hashCode(), 8, pixels);
+    toServer(false, "None", "None", -1, 8, ctx.getImageData(0, 0, w, h).data);
 
-    console.log("CTX: " + pixels.hashCode());
+    console.log("CTX: " + "-1");
 }
 
 function getData(gl, canvasName, id){
     var canvas = document.getElementById(canvasName);
+    var WebGL;
     if(canvas.getContext('webgl'))
         WebGL = true;
     else
         WebGL = false;
-    var pixels = new Uint8Array(256*256*4);
+
     gl.readPixels(0,0,256,256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
 
     var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
@@ -42,14 +43,14 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, pixels.hashCode(), 4, pixels);
     else if(canvasName == 'simple_color')
         toServer(WebGL, ven, ren, pixels.hashCode(), 5, pixels);
-    else if(canvasName == 'simple_wood')
+    else if(canvasName == 'simple_wood') {
         toServer(WebGL, ven, ren, pixels.hashCode(), 6, pixels);
-    else if (canvasName == 'vid_can_gl')
+    } else if (canvasName == 'vid_can_gl') {
         toServer(WebGL, ven, ren, pixels.hashCode(), 7, pixels);
+    }
 
     console.log(canvasName + ": " + pixels.hashCode());
 }
-
 
 function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server and receive messages from server
     urls[id] = dataurl;
@@ -58,14 +59,14 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
 
     /*var pixels = "";
     for(var i = 0;i < canvas_number;++ i){
-        pixels += urls[i].stringify();
+        pixels += stringify(urls[i]);
         if(i != canvas_number - 1) pixels += ' ';
     }*/
-    postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, images: urls};
+    postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: urls};
 
     $.ajax({
         url:"http://54.85.74.36/collect.py",
-        dataType:"json",
+        dataType:"html",
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
@@ -74,11 +75,11 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     });
 }
 
-Uint8Array.prototype.stringify = function() {
+stringify = function(array) {
     var str = '[';
-    for (var i = 0, len = this.length; i < len; ++i) {
+    for (var i = 0, len = array.length; i < len; ++i) {
         if(i) str += ',';
-        str += this[i].toString();
+        str += array[i].toString();
     }
     str += ']';
     return str;
