@@ -16,7 +16,9 @@ function getDataFromCanvas(ctx, canvasName){
     }
     pi += ']';
     // Send pixels to server
-    toServer(false, "None", "None", -1, 8, pi);
+    toServer(false, "None", "None", pixels.hashCode(), 8, pi);
+
+    console.log("CTX: " + pixels.hashCode());
 }
 
 function getData(gl, canvasName, id){
@@ -60,7 +62,7 @@ function getData(gl, canvasName, id){
     else if (canvasName == 'vid_can_gl')
         toServer(WebGL, ven, ren, pixels.hashCode(), 7, pi);
 
-    console.log(pixels.hashCode());
+    console.log(canvasName + ": " + pixels.hashCode());
 }
 
 
