@@ -1,7 +1,7 @@
-var case_number = 9;
+var case_number = 10;
 var browser_number = 3;
 var canvas_number = case_number * browser_number * 4;
-var root = "http://54.85.74.36/images/generated/"
+var root = "http://52.90.197.136/images/generated/"
 var img_number = 0;
 
 function generateButton(name){
@@ -54,7 +54,7 @@ function generatePage(){
     /*
     var f = document.createElement("form");
     f.setAttribute('method',"post");
-    f.setAttribute('action',"http://54.85.74.36/result.py");
+    f.setAttribute('action',"http://52.90.197.136/result.py");
     
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
@@ -66,7 +66,7 @@ function generatePage(){
     return ;
     */
     $.ajax({
-        url:"http://54.85.74.36/result.py",  
+        url:"http://52.90.197.136/result.py",  
         dataType:"text",
         type: 'POST',
         data: postData,
@@ -106,7 +106,7 @@ function toServer(id){ //send messages to server and receive messages from serve
     /*
     var f = document.createElement("form");
     f.setAttribute('method',"post");
-    f.setAttribute('action',"http://54.85.74.36/result.py");
+    f.setAttribute('action',"http://52.90.197.136/result.py");
     
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
@@ -118,7 +118,7 @@ function toServer(id){ //send messages to server and receive messages from serve
     return ;
 */
     $.ajax({
-        url:"http://54.85.74.36/result.py",  
+        url:"http://52.90.197.136/result.py",  
         dataType:"text",
         type: 'POST',
         data:postData,

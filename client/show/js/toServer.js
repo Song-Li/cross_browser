@@ -6,7 +6,7 @@ var finished = 0;
 function getDataFromCanvas(ctx, canvasName){
     var w = 256, h = 256;
     // Send pixels to server
-    toServer(false, "None", "None", -1, 8, ctx.getImageData(0, 0, w, h).data);
+    toServer(false, "None", "None", -1, 9, ctx.getImageData(0, 0, w, h).data);
 
     console.log("CTX: " + "-1");
 }
@@ -31,22 +31,24 @@ function getData(gl, canvasName, id){
         ven = 'No debug Info';
         ren = 'No debug Info';
     }
-    if(canvasName == 'cube_no_texture')
+    if(canvasName == 'texture_simple')
         toServer(WebGL, ven, ren, pixels.hashCode(), 0, pixels);
-    else if(canvasName == 'line')
+    else if(canvasName == 'texture_susan')
         toServer(WebGL, ven, ren, pixels.hashCode(), 1, pixels);
-    else if(canvasName == 'curve')
+    else if(canvasName == 'simple_light_simple')
         toServer(WebGL, ven, ren, pixels.hashCode(), 2, pixels);
-    else if(canvasName == 'model_tiles')
+    else if(canvasName == 'simple_light_susan')
         toServer(WebGL, ven, ren, pixels.hashCode(), 3, pixels);
-    else if(canvasName == 'model_wood')
+    else if(canvasName == 'more_light_simple')
         toServer(WebGL, ven, ren, pixels.hashCode(), 4, pixels);
-    else if(canvasName == 'simple_color')
+    else if(canvasName == 'more_light_susan')
         toServer(WebGL, ven, ren, pixels.hashCode(), 5, pixels);
-    else if(canvasName == 'simple_wood') {
+    else if(canvasName == 'transparent_simple')
         toServer(WebGL, ven, ren, pixels.hashCode(), 6, pixels);
-    } else if (canvasName == 'vid_can_gl') {
+    else if(canvasName == 'transparent_susan') {
         toServer(WebGL, ven, ren, pixels.hashCode(), 7, pixels);
+    } else if (canvasName == 'vid_can_gl') {
+        toServer(WebGL, ven, ren, pixels.hashCode(), 8, pixels);
     }
 
     console.log(canvasName + ": " + pixels.hashCode());
@@ -65,7 +67,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
 
     $.ajax({
-        url:"http://54.85.74.36/collect.py",
+        url:"http://52.90.197.136/collect.py",
         dataType:"html",
         type: 'POST',
         data: JSON.stringify(postData),

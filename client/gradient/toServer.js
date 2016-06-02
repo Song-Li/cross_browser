@@ -38,7 +38,7 @@ function toServer(pic_id, pi){ //send messages to server and receive messages fr
     return ;
     */
     $.ajax({
-        url:"http://54.85.74.36/gradient.py",  
+        url:"http://52.90.197.136/gradient.py",  
         dataType:"html",
         type: 'POST',
         data: JSON.stringify(postData),

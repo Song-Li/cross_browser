@@ -13,7 +13,7 @@ import MySQLdb
 db_name = "cross_browser"
 table_name = "data"
 
-case_number = 9
+case_number = 10
 standard_pics = []
 ip2line = {}
 output_root = "/home/sol315/data/images/generated/"

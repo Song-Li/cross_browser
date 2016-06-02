@@ -1,4 +1,4 @@
-cp -rf ./gradient ./result ./show ~/Page/mf/;
+cp -rf ./gradient ./result ./show ./difference ~/Page/mf/;
 cd ~/Page;
 git add -A;
 git commit -m "sthnew";
