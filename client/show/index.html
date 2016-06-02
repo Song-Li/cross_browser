@@ -1,29 +1,30 @@
 <html>
 <head>
 <title>Cross Browser Test</title>
-
-<script type="text/javascript" src="./util/utils.js"></script>
 </head>
-<body onload="DrawModel();DrawLine();DrawCurve();">
-<canvas id="cube_no_texture" width="256" height="256">
+<body onload="drawTexture();drawSimpleLight();drawMoreLight();drawTransparent();">
+<canvas id="texture_simple" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
-<canvas id="line" width="256" height="256">
+<canvas id="texture_susan" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
-<canvas id="curve" width="256" height="256">
+<canvas id="simple_light_simple" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
-<canvas id="model_tiles" width="256" height="256">
+<canvas id="simple_light_susan" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
-<canvas id="model_wood" width="256" height="256">
+<canvas id="more_light_simple" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
-<canvas id="simple_color" width="256" height="256">
+<canvas id="more_light_susan" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
-<canvas id="simple_wood" width="256" height="256">
+<canvas id="transparent_simple" width="256" height="256">
+    Your browser does not support HTML5
+</canvas>
+<canvas id="transparent_susan" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
 <canvas id="vid_can_ctx" width="256" height="256">
@@ -34,14 +35,13 @@
 </canvas>
 <div id="counter"></div>
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="./model/util.js"></script>
-<script src="./model/gl-matrix.js"></script>
-<script src="./model/app.js"></script>
-<script src="./line/app.js"></script>
-<script src="./curve/app.js"></script>
-<img id="wood" src="./cube/wood.png" width="0" height="0"></img>
-<img id="color" src="./cube/color.png" width="0" height="0"></img>
-<script src="toServer.js"></script>
+<script src="./js/util.js"></script>
+<script src="./js/gl-matrix.js"></script>
+<script src="./texture/app.js"></script>
+<script src="./simpleLight/app.js"></script>
+<script src="./moreLight/app.js"></script>
+<script src="./transparent/app.js"></script>
+<script src="./js/toServer.js"></script>
 <script src="./video/video.js" type="text/javascript"></script>
 </body>
 </html>

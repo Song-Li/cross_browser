@@ -1,5 +1,6 @@
 import os
 import matplotlib.pyplot as plt
+import array
 from PIL import Image, ImageChops, ImageFilter
 
 root = '/home/sol315/data/images/gradient/'
@@ -9,7 +10,7 @@ num = 0
 def getDifference(img1, img2):
     sub = ImageChops.subtract(img1,img2, 0.005)
     subt = ImageChops.subtract(img2, img1, 0.005)
-    return ImageChops.add(sub, subt).convert('RGB')  #edge picture
+    return ImageChops.add(sub, subt).convert('RGB')
 
 def getDiff(img1, img2, pic_id):
     global num
@@ -31,9 +32,10 @@ def getDiff(img1, img2, pic_id):
 
 
 dirs = os.listdir(root + "origin/")
-res = []
+res = array.array('f')
 
 for i in range(1,256):
+    total = 0;
     num = 0
     print i
     res.append(0)
@@ -43,6 +45,8 @@ for i in range(1,256):
             img2 = Image.open(root + "origin/" + dir_name2 + '/' + str(i) + '.png')
             dif = getDiff(img1, img2, i)
             res[i - 1] += dif 
+            total += 256 * 256
+    #res[i - 1] = res[i - 1] * 100 / total
 
 plt.plot(range(255), res)
 plt.savefig(root + 'res.png')
