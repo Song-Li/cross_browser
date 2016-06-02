@@ -13,14 +13,14 @@ import subprocess, sys, os
 argv = sys.argv
 
 if len(argv) != 4 and len(argv) !=3 :
-	print("Usage : python videoToImages.py <input_video> <output_folder/>")
-	print("OR Usage :python videoToImages.py <input_video> <output_folder/> <frame_rate>")
-	sys.exit();
+  print("Usage : python videoToImages.py <input_video> <output_folder/>")
+  print("OR Usage :python videoToImages.py <input_video> <output_folder/> <frame_rate>")
+  sys.exit();
 subprocess.call(['rm','-rf', argv[2]])
 subprocess.call(['mkdir', argv[2]])
 output = '{}/image-%5d.png'.format(argv[2])
 if len(argv) == 4:
-	subprocess.call(['ffmpeg', '-i', argv[1], '-r', argv[3], output])
+  subprocess.call(['ffmpeg', '-i', argv[1], '-r', argv[3], output])
 
 else:
-	subprocess.call(['ffmpeg', '-i', argv[1], output])
+  subprocess.call(['ffmpeg', '-i', argv[1], output])
