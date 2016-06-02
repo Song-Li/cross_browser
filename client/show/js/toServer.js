@@ -1,5 +1,5 @@
 var ven, ren;
-var canvas_number = 9;
+var canvas_number = 10;
 var urls = [];
 var finished = 0;
 
