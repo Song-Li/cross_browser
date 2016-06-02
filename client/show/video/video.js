@@ -4,7 +4,7 @@
 */
 // Document on ready jquery shortcut
 $(function() {
-  var vid = $('#vid');
+  var vid = $('<video style="display:none;"/>');
   // [0] after jquery selector gets the pure dom element instead of
   // the jquery extended object
   var canvas = $('#vid_can_ctx')[0];

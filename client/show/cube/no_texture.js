@@ -1,4 +1,4 @@
-var vertexShaderText = 
+var vertexShaderText =
 [
 'precision mediump float;',
 '',
@@ -51,7 +51,7 @@ var DrawCubeNoTexture = function () {
 
 	//
 	// Create shaders
-	// 
+	//
 	var vertexShader = gl.createShader(gl.VERTEX_SHADER);
 	var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 
@@ -87,7 +87,7 @@ var DrawCubeNoTexture = function () {
 	//
 	// Create buffer
 	//
-	var boxVertices = 
+	var boxVertices =
 	[ // X, Y, Z           R, G, B
 		// Top
 		-1.0, 1.0, -1.0,   0.5, 0.5, 0.5,

@@ -11,3 +11,10 @@ getGL = function(canvasSelector) {
   }
   return gl;
 }
+
+computeKernelWeight = function (kernel) {
+  var weight = kernel.reduce(function(prev, curr) {
+    return prev + curr;
+  });
+  return weight <= 0 ? 1 : weight;
+}
