@@ -20,7 +20,6 @@ function getData(gl, canvasName, id){
         WebGL = false;
 
     var pixels = new Uint8Array(256*256*4);
-
     gl.readPixels(0,0,256,256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
 
     var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');

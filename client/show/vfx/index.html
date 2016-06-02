@@ -1,10 +1,10 @@
 <html>
 <head>
 <title>Cross Browser Test</title>
-
-<script type="text/javascript" src="./util/utils.js"></script>
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="../util/utils.js"></script>
 </head>
-<body onload="DrawModel();DrawLine();DrawCurve();">
+<body>
 <canvas id="cube_no_texture" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
@@ -26,6 +26,7 @@
 <canvas id="simple_wood" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
+<video id="vid" style="display:none;"></video>
 <canvas id="vid_can_ctx" width="256" height="256">
   Your browser does not support HTML5
 </canvas>
@@ -33,15 +34,11 @@
   Your browser does not support HTML5
 </canvas>
 <div id="counter"></div>
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="./model/util.js"></script>
-<script src="./model/gl-matrix.js"></script>
-<script src="./model/app.js"></script>
-<script src="./line/app.js"></script>
-<script src="./curve/app.js"></script>
-<img id="wood" src="./cube/wood.png" width="0" height="0"></img>
-<img id="color" src="./cube/color.png" width="0" height="0"></img>
-<script src="toServer.js"></script>
-<script src="./video/video.js" type="text/javascript"></script>
+<script src="util.js"></script>
+<script src="gl-matrix.js"></script>
+<script src="app.js"></script>
+<img id="wood" src="wood.png" style="display:none;"></img>
+<img id="color" src="color.png" style="display:none;"></img>
+<script src="../toServer.js"></script>
 </body>
 </html>

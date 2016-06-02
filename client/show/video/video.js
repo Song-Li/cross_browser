@@ -4,7 +4,6 @@
 */
 // Document on ready jquery shortcut
 $(function() {
-  var vid = $('#vid');
   // [0] after jquery selector gets the pure dom element instead of
   // the jquery extended object
   var canvas = $('#vid_can_ctx')[0];
@@ -47,15 +46,16 @@ $(function() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-  vid.prop('src', 'video/video.mp4');
-  vid.load();
-  vid.on('play', function() {
-    drawVid(canvas.width, canvas.height, 0);
+  var video = $('<video style="display:none;"/>');
+  video.prop('src', 'video/frozen.mp4');
+  video.load();
+  video.on('play', function() {
+    drawVid(canvas.width, canvas.height, this);
   });
-  vid.prop('muted', true);
+  video.prop('muted', true);
   var done = false;
   var level = 0;
-  vid.on('timeupdate', function() {
+  video.on('timeupdate', function() {
     if (++level == 14) {
       getDataFromCanvas(ctx, 'vid_can_ctx');
     } else if (level == 15) {
@@ -63,25 +63,31 @@ $(function() {
     }
     $("#counter").text(level);
   });
-  vid[0].play();
+  // vid[0].play();
+
+  var image = new Image();
+  image.onload = function() {
+    drawImg(canvas.width, canvas.height, this, 0);
+  };
+  image.src = 'video/image.png';
 
   // Render loop
-  function drawVid(w, h, level) {
+  function drawVid(w, h, vid) {
     var frame = null;
     if (!done) {
       frame = requestAnimationFrame(function() {
-        drawVid(w, h, level + 1);
+        drawVid(w, h, vid);
       });
 
       var vidH = 9/16*w;
       var offset = (h - vidH)/2.0;
-      ctx.drawImage(vid[0], 0, offset, w, vidH);
+      ctx.drawImage(vid, 0, offset, w, vidH);
 
       gl.viewport(0, offset, w, vidH);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, vid[0]);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, vid);
       gl.bindBuffer(gl.ARRAY_BUFFER, vx);
       gl.vertexAttribPointer(vx_ptr, 2, gl.FLOAT, false, 0, 0);
 
@@ -90,6 +96,34 @@ $(function() {
       // Here is where the pixel data will be sent
     } else if (frame) {
       cancelAnimationFrame(frame);
+    }
+  }
+
+  function drawImg(w, h, img, level) {
+    var frame = null;
+    frame = requestAnimationFrame(function() {
+      drawImg(w, h, img, level + 1);
+    });
+
+    var vidH = 9/16*w;
+    var offset = (h - vidH)/2.0;
+    ctx.drawImage(img, 0, offset, w, vidH);
+
+    gl.viewport(0, offset, w, vidH);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vx);
+    gl.vertexAttribPointer(vx_ptr, 2, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ix);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+    // Here is where the pixel data will be sent
+    if (level == 10) {
+      cancelAnimationFrame(frame);
+      getDataFromCanvas(ctx, 'vid_can_ctx');
+      getData(gl, 'vid_can_gl', 0);
     }
   }
 });
