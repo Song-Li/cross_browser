@@ -82,7 +82,8 @@ var RunDemo = function (vertexShaderText, fragmentShaderText, SusanImage, SusanM
     var WebGL;
     var gl;
     var canvas = document.getElementById(canvasName);
-    gl = canvas.getContext('webgl', {antialias: false});
+    //gl = canvas.getContext('webgl', {antialias: false});
+    gl = canvas.getContext('webgl');
     WebGL = true;
 
     if (!gl) {
@@ -266,9 +267,10 @@ var RunDemo = function (vertexShaderText, fragmentShaderText, SusanImage, SusanM
     var ven, ren;
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-    gl.disable(gl.DEPTH_TEST);
-    gl.enable(gl.BLEND);
+    //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    //gl.disable(gl.DEPTH_TEST);
+    //gl.enable(gl.BLEND);
+    gl.enable(gl.DEPTH_TEST);
     var loop = function () {
         angle = count++ / 20;
         mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
