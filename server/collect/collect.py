@@ -27,6 +27,7 @@ def saveImg(pixel, name):
     img = Image.new('RGBA', (256,256))
     pixel_map = img.load()
     img_data = json.loads(pixel)
+#    img_data = pixel
     curr = 0
     for i in range(256):
         for j in range(256):
@@ -84,7 +85,9 @@ def index(req):
     db.close()
 
     line_number = uid
-    pixels = one_test['pixels']
+    pixels = one_test['pixels'].split(" ")
+    # pixels = one_test['pixels']
+
     for pi in pixels:
         saveImg(pi, str(line_number) + '_' + str(sub_number))
         sub_number += 1
