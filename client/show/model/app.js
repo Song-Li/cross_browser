@@ -82,8 +82,8 @@ var RunDemo = function (vertexShaderText, fragmentShaderText, SusanImage, SusanM
     var WebGL;
     var gl;
     var canvas = document.getElementById(canvasName);
-    //gl = canvas.getContext('webgl', {antialias: false});
-    gl = canvas.getContext('webgl');
+    gl = canvas.getContext('webgl', {antialias: false});
+    //gl = canvas.getContext('webgl');
     WebGL = true;
 
     if (!gl) {
