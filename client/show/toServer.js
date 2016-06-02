@@ -1,8 +1,7 @@
 var ven, ren;
-var urls = [];
 var canvas_number = 9;
+var urls = [];
 var finished = 0;
-var pixels = new Uint8Array(256*256*4);
 
 function getDataFromCanvas(ctx, canvasName){
     var w = 256, h = 256;
@@ -19,6 +18,8 @@ function getData(gl, canvasName, id){
         WebGL = true;
     else
         WebGL = false;
+
+    var pixels = new Uint8Array(256*256*4);
 
     gl.readPixels(0,0,256,256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
 
@@ -57,13 +58,12 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     finished ++;
     if(finished < canvas_number) return;
 
-
-    /*var pixels = "";
+    var pixels = "";
     for(var i = 0;i < canvas_number;++ i){
         pixels += stringify(urls[i]);
         if(i != canvas_number - 1) pixels += ' ';
-    }*/
-    postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: urls};
+    }
+    postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
 
     $.ajax({
         url:"http://54.85.74.36/collect.py",
