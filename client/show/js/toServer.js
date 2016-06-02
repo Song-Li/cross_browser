@@ -2,12 +2,13 @@ var ven, ren;
 var canvas_number = 10;
 var urls = [];
 var finished = 0;
+var glID = 7, ctxID = 8;
 
 function getDataFromCanvas(ctx, canvasName){
     var w = 256, h = 256;
     // Send pixels to server
-    toServer(false, "None", "None", -1, 9, ctx.getImageData(0, 0, w, h).data);
-
+    toServer(false, "None", "None", -1, ctxID, ctx.getImageData(0, 0, w, h).data);
+    ctxID += 2;
     console.log("CTX: " + "-1");
 }
 
@@ -48,7 +49,8 @@ function getData(gl, canvasName, id){
     else if(canvasName == 'transparent_susan') {
         toServer(WebGL, ven, ren, pixels.hashCode(), 7, pixels);
     } else if (canvasName == 'vid_can_gl') {
-        toServer(WebGL, ven, ren, pixels.hashCode(), 8, pixels);
+        toServer(WebGL, ven, ren, pixels.hashCode(), glID, pixels);
+        glID += 2;
     }
 
     console.log(canvasName + ": " + pixels.hashCode());
@@ -58,6 +60,8 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     urls[id] = dataurl;
     finished ++;
     if(finished < canvas_number) return;
+
+    console.log("Sent " + canvas_number + " images");
 
     var pixels = "";
     for(var i = 0;i < canvas_number;++ i){

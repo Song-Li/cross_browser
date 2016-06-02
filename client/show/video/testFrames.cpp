@@ -41,6 +41,7 @@ int main(int argc, char ** argv) {
       }
     }
   } else {
+    double aveNorm;
     int frame = 0;
     cv::VideoCapture vid (argv[1]);
     while (vid.read(currentImage)) {
@@ -49,7 +50,7 @@ int main(int argc, char ** argv) {
         currentImage.copyTo(firstImage);
       }
       const double norm = cv::norm(firstImage, currentImage, cv::NORM_L2);
-      if (norm != 0) {
+      if (false) {
         std::cout << norm << std::endl;
         std::cout << frame << std::endl;
         cv::Mat diff;
@@ -61,10 +62,12 @@ int main(int argc, char ** argv) {
           }
         }
         cvNamedWindow("Diff", CV_WINDOW_NORMAL);
-        cv::imshow("Diff", diff);
+        cv::imshow("Diff", currentImage);
         cv::waitKey(0);
       }
+      aveNorm += norm;
       std::cout << frame++ << std::endl;
     }
+    std::cout << "Average L2 norm: " << aveNorm/frame << std::endl;
   }
 }

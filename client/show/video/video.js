@@ -6,6 +6,20 @@
 $(function() {
   // [0] after jquery selector gets the pure dom element instead of
   // the jquery extended object
+
+  $('<canvas id="vid_can_ctx" width="256" height="256">'
+    + 'Your browser does not support HTML5'
+    + '</canvas>')
+    .appendTo($('body'));
+
+  $('<canvas id="vid_can_gl" width="256" height="256">'
+    + 'Your browser does not support HTML5'
+    + '</canvas>')
+    .appendTo($('body'));
+
+  $('<div id="counter"/>')
+    .appendTo($("body"));
+
   var canvas = $('#vid_can_ctx')[0];
   var ctx = canvas.getContext('2d');
   var gl = getGL("#vid_can_gl");
@@ -47,7 +61,8 @@ $(function() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
   var video = $('<video style="display:none;"/>');
-  video.prop('src', 'video/frozen.mp4');
+  video.prop('src', 'video/5frame.webm');
+  video.prop('loop', true);
   video.load();
   video.on('play', function() {
     drawVid(canvas.width, canvas.height, this);
@@ -56,20 +71,23 @@ $(function() {
   var done = false;
   var level = 0;
   video.on('timeupdate', function() {
-    if (++level == 14) {
+    if (++level == 10) {
       getDataFromCanvas(ctx, 'vid_can_ctx');
-    } else if (level == 15) {
+      getData(gl, 'vid_can_gl', 0);
+    } else if (level < 10) {
+      canvas_number += 2;
+      getDataFromCanvas(ctx, 'vid_can_ctx');
       getData(gl, 'vid_can_gl', 0);
     }
     $("#counter").text(level);
   });
-  // vid[0].play();
+  video[0].play();
 
   var image = new Image();
   image.onload = function() {
     drawImg(canvas.width, canvas.height, this, 0);
   };
-  image.src = 'video/image.png';
+  // image.src = 'video/image.png';
 
   // Render loop
   function drawVid(w, h, vid) {
