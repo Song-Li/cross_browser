@@ -2,6 +2,7 @@ var ven, ren;
 var canvas_number = 10;
 var urls = [];
 var finished = 0;
+var ip_address = "128.180.123.19"
 
 function getDataFromCanvas(ctx, canvasName){
     var w = 256, h = 256;
@@ -66,8 +67,23 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     }
     postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
 
+    /*
+    var f = document.createElement("form");
+
+    f.setAttribute('method',"post");
+    f.setAttribute('action',"http://" + ip_address + "/collect.py");
+    
+    var i = document.createElement("input"); //input element, text
+    i.setAttribute('type',"text");
+    i.setAttribute('name',JSON.stringify(postData));
+    
+    f.appendChild(i);
+
+    f.submit();
+    return ;
+*/
     $.ajax({
-        url:"http://52.90.197.136/collect.py",
+        url:"http://" + ip_address + "/collect.py",
         dataType:"html",
         type: 'POST',
         data: JSON.stringify(postData),

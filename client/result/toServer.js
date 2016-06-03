@@ -1,7 +1,8 @@
 var case_number = 10;
 var browser_number = 3;
 var canvas_number = case_number * browser_number * 4;
-var root = "http://52.90.197.136/images/generated/"
+var ip_address = "128.180.123.19"
+var root = "http://" + ip_address + "/images/generated/"
 var img_number = 0;
 
 function generateButton(name){
@@ -66,7 +67,7 @@ function generatePage(){
     return ;
     */
     $.ajax({
-        url:"http://52.90.197.136/result.py",  
+        url:"http://" + ip_address + "/result.py",  
         dataType:"text",
         type: 'POST',
         data: postData,
@@ -102,29 +103,28 @@ function toServer(id){ //send messages to server and receive messages from serve
         generatePage();
         return ;
     }
-
     /*
     var f = document.createElement("form");
     f.setAttribute('method',"post");
-    f.setAttribute('action',"http://52.90.197.136/result.py");
+    f.setAttribute('action',"http://" + ip_address + "/result.py");
     
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
-    i.setAttribute('name',"S,128.180.123.11,1");
+    i.setAttribute('name',"128.180.123.11");
     
     f.appendChild(i);
 
     f.submit();
     return ;
-*/
+    */
     $.ajax({
-        url:"http://52.90.197.136/result.py",  
+        url:"http://" + ip_address + "/result.py",  
         dataType:"text",
         type: 'POST',
         data:postData,
         success:function(data) {
             if (postData[0] == 'S'){
-                window.location.replace("http://www.songli.us/mf/difference/");
+                window.location.replace("http://128.180.123.19/mf/difference/");
             }
             clearPage();
             var res = JSON.parse(data.toString());
