@@ -1,7 +1,6 @@
 import BaseHTTPServer
 import sys
 from mod_python import apache, Session, util
-import filelock
 import os.path
 import datetime
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -19,7 +18,7 @@ table_name = "data"
 global inited
 inited = 0
 global root
-root = '/home/sol315/data/'
+root = '/home/site/data/'
 
 def saveImg(pixel, name):
     global root
@@ -34,6 +33,8 @@ def saveImg(pixel, name):
             pixel_map[i,j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2], img_data[curr + 3])
             curr += 4
     img = img.rotate(270)
+    if not os.path.exists(img_root):
+        os.makedirs(img_root)
     img.save(img_root + name + '.png')
 
 def gen_UID(cursor, table_name, MAX_UID):
