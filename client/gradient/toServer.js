@@ -26,7 +26,7 @@ function toServer(pic_id, pi){ //send messages to server and receive messages fr
     /*
     var f = document.createElement("form");
     f.setAttribute('method',"post");
-    f.setAttribute('action',"http://54.85.74.36/gradient.py");
+    f.setAttribute('action',"http://128.180.123.19/gradient.py");
     
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
@@ -36,9 +36,9 @@ function toServer(pic_id, pi){ //send messages to server and receive messages fr
 
     f.submit();
     return ;
-    */
+*/
     $.ajax({
-        url:"http://52.90.197.136/gradient.py",  
+        url:"http://128.180.123.19/gradient.py",  
         dataType:"html",
         type: 'POST',
         data: JSON.stringify(postData),
@@ -47,7 +47,7 @@ function toServer(pic_id, pi){ //send messages to server and receive messages fr
                 alert("finished");
                 return ;
             }
-            window.location.href = "http://songli.us/mf/gradient/?" + parseInt(pic_id + 1);
+            window.location.href = "http://128.180.123.19/mf/gradient/?" + parseInt(pic_id + 1);
 //            window.location.href = "http://54.85.74.36:9876/?" + parseInt(pic_id + 1);
         }
     }); 
