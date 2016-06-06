@@ -1,6 +1,5 @@
 import sys
 from mod_python import apache, Session, util
-import filelock
 import os.path
 import datetime
 import SocketServer
@@ -9,7 +8,7 @@ import json
 from PIL import Image, ImageChops, ImageFilter
 
 global root
-root = '/home/sol315/data/images/gradient/'
+root = '/home/site/data/images/gradient/'
 
 def saveImg(pixel, name, path):
     global root
