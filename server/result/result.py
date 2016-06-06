@@ -116,7 +116,9 @@ def generateLineNumber():
         elif(item[5].find('Chrome') != -1 or item[2].find('Google') != -1):
             browser_name = 'chrome'
         else:
-            browser_name = 'others'
+            browser_name = 'others'ul.y
+
+
 
         if(item[0] in ip2line):
             ip2line[item[0]].update({browser_name: numLine})

@@ -61,33 +61,48 @@ $(function() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
   var video = $('<video width="256" height="256"/>').appendTo($('body'));
-  var src1 = "./video/5frame.webm";
-  var src2 = "./video/5frame.mp4";
+  $('<source src="./video/5frame.webm" />').appendTo(video);
+  $('<source src="./video/5frame.mp4" />').appendTo(video);
   video.prop('loop', true);
   video.prop('style', 'display: none;');
-  video.on('error', {src2: src2}, function(event) {
-    var src2 = event.data.src2;
-    if (this.src != src2) {
-      this.src = src2;
-      this.load();
-    }
-  });
-  video.prop('src', src1);
   video.load();
   video.on('play', function() {
     drawVid(canvas.width, canvas.height, this);
   });
   video.prop('muted', true);
   var done = false;
-  var level = 0;
+  var level = 0, collected = [0, 0];
   video.on('timeupdate', function() {
-    if (++level == 12) {
-      getDataFromCanvas(ctx, 'vid_can_ctx');
-      getData(gl, 'vid_can_gl', 0);
-    } else if (level < 12 && level > 2) {
-      canvas_number += 2;
-      getDataFromCanvas(ctx, 'vid_can_ctx');
-      getData(gl, 'vid_can_gl', 0);
+    if (++level > 2) {
+      if (collected[0] < 9) {
+        ++canvas_number;
+        var status = getDataFromCanvas(ctx, "vid_can_ctx");
+        if (status) {
+          ++collected[0]
+        } else {
+          --canvas_number;
+        }
+      } else if (collected[0] == 9) {
+        var status = getDataFromCanvas(ctx, "vid_can_ctx");
+        if (status) {
+          ++collected[0];
+        }
+      }
+
+      if (collected[1] < 9) {
+        ++canvas_number;
+        var status = getData(gl, "vid_can_gl");
+        if (status) {
+          ++collected[1]
+        } else {
+          --canvas_number;
+        }
+      } else if (collected[1] == 9) {
+        var status = getData(gl, "vid_can_gl");
+        if (status) {
+          ++collected[1];
+        }
+      }
     }
     $("#counter").text(level);
   });
@@ -132,9 +147,9 @@ $(function() {
 
   function drawImg(w, h, img, level) {
     var frame = null;
-    frame = requestAnimationFrame(function() {
+    /*frame = requestAnimationFrame(function() {
       drawImg(w, h, img, level + 1);
-    });
+    });*/
 
     var vidH = 9/16*w;
     var offset = (h - vidH)/2.0;
@@ -149,11 +164,5 @@ $(function() {
     gl.vertexAttribPointer(vx_ptr, 2, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ix);
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-    // Here is where the pixel data will be sent
-    if (level == 10) {
-      cancelAnimationFrame(frame);
-      getDataFromCanvas(ctx, 'vid_can_ctx');
-      getData(gl, 'vid_can_gl', 0);
-    }
   }
 });

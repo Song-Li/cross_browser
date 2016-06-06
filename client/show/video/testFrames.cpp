@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
@@ -20,7 +21,16 @@ typedef struct imgInf{
   bool operator==(const imgInf & other) const {
     return frame == other.frame && browser == other.browser;
   }
+  bool operator<(const imgInf & o) const {
+    return browser < o.browser ||
+      (browser == o.browser && frame < o.frame);
+  }
 } imgInf;
+
+std::ostream & operator<<(std::ostream & os, const imgInf & p) {
+  os << "Browser: " << p.browser << " Frame: " << p.frame;
+  return os;
+}
 
 namespace std {
   template<>
@@ -35,72 +45,109 @@ namespace std {
   };
 } // std
 
-static int isallsame(const std::vector<cv::Mat> & imgs) {
+static int isallsame(const std::vector<cv::Mat> & imgs,
+                     double & ave, double & stdev) {
   cv::Mat $1 = imgs[0];
   int numFails = 0;
-  for (auto & i : imgs) {
-    if (cv::norm($1, i, cv::NORM_L2) != 0) {
+  double * norms = new double [imgs.size()];
+  for (int i = 0; i < imgs.size(); ++i) {
+    norms[i] = cv::norm($1, imgs[i], cv::NORM_L2);
+    if (norms[i] != 0) {
       ++numFails;
     }
   }
+  for (int i = 0; i < imgs.size(); ++i)
+    ave += norms[i];
+  ave /= imgs.size();
+
+  for (int i = 0; i < imgs.size(); ++i) {
+    stdev += (ave - norms[i])*(ave - norms[i]);
+  }
+
+  stdev /= imgs.size() - 1;
+  stdev = std::sqrt(stdev);
+  delete [] norms;
   return numFails;
 }
 
 static int hasMatch(const std::vector<cv::Mat> & $1,
                     const std::vector<cv::Mat> & $2) {
-  for (auto & i : $1)
-    for (auto & ii : $2)
-      if (cv::norm(ii, i, cv::NORM_L2) == 0)
+  for (auto & i : $1) {
+    for (auto & ii : $2) {
+      if (cv::norm(i, ii, cv::NORM_L2) == 0)
         return 1;
+    }
+  }
   return 0;
 }
 
 int main(int argc, char ** argv) {
-  std::unordered_map<int, std::vector<cv::Mat> > browserToImages [2];
+  std::map<imgInf, std::vector<cv::Mat> > frameToImages [2];
   boost::filesystem::path folder (argv[1]);
+  int numDuds = 0;
   if (boost::filesystem::exists(folder) &&
     boost::filesystem::is_directory(folder)) {
     for (auto & file : boost::filesystem::directory_iterator(folder)) {
       const std::string name = file.path().string();
       std::vector<cv::Mat> img (1);
       img[0] = cv::imread(name);
+      cv::Mat black = cv::Mat::zeros(img[0].size(), img[0].type());
+      if (cv::norm(img[0], black, cv::NORM_L2) == 0) {
+        ++numDuds;
+        continue;
+      }
       const int frame = std::stoi(name.substr(name.find("_") + 1, name.find(".") - name.find("_") - 1));
       const int browser = std::stoi(name.substr(name.find("-") + 1, 1));
-      const int can = frame % 2 == 0 ? 0 : 1;
-      auto it = browserToImages[can].find(browser);
-      if (it == browserToImages[can].cend())
-        browserToImages[can].emplace(browser, img);
+      // if (browser != 0) continue;
+      const int gl = frame % 2 == 0 ? 0 : 1;
+      auto it = frameToImages[gl].find({frame, browser});
+      if (it == frameToImages[gl].cend())
+        frameToImages[gl].emplace(imgInf(frame, browser), img);
       else
         it->second.insert(it->second.end(), img.begin(), img.end());
     }
+    std::cout << "Number of dud frames: " << numDuds << std::endl;
     constexpr int exclude = 0;
     double totalMatches = 0, numImgs = 0;
-    for (auto & l : browserToImages[0]) {
-      for (auto & p : browserToImages[0]) {
-        if (l.first == p.first) continue;
+    for (auto & l : frameToImages[0]) {
+      for (auto & p : frameToImages[0]) {
+        if (l.first.browser != p.first.browser) continue;
         totalMatches += hasMatch(l.second, p.second);
         ++numImgs;
       }
     }
+    std::cout << "CTX match rate: " << totalMatches/numImgs*100 << "%" << std::endl;
 
-    std::cout << "CTX match rate: " << totalMatches/numImgs << std::endl;
     totalMatches = 0, numImgs = 0;
-    for (auto & l : browserToImages[1]) {
-      for (auto & p : browserToImages[1]) {
-        if (l.first == p.first) continue;
+    for (auto & l : frameToImages[1]) {
+      for (auto & p : frameToImages[1]) {
+        if (l.first.browser != p.first.browser) continue;
         totalMatches += hasMatch(l.second, p.second);
         ++numImgs;
       }
     }
-    std::cout << "GL match rate: " << totalMatches/numImgs << std::endl;
-    /*for (int startNum = 8; startNum <= 9; ++startNum) {
-      for (int i = 0; i < 10; ++i) {
-        auto & $1img = frameToImages.find(startNum + 2*i)->second;
-        for (int j = i + 1; j < 10; ++j) {
+    std::cout << "GL match rate: " << totalMatches/numImgs*100 << "%" << std::endl;
 
-        }
-      }
-    }*/
+
+    std::cout << "CTX test: " << std::endl;
+    for (auto & p : frameToImages[0]) {
+      double ave = 0, stdev = 0;
+      const double diff = isallsame(p.second, ave, stdev);
+      std::cout << "\t" << p.first << " failure rate: "
+        << diff/p.second.size()*100 << "%"
+        << " L2 norm (ave, stdev): (" << ave
+        << ", " << stdev << ")" << std::endl;
+    }
+
+    std::cout << "GL test: " << std::endl;
+    for (auto & p : frameToImages[1]) {
+      double ave = 0, stdev = 0;
+      const double diff = isallsame(p.second, ave, stdev);
+      std::cout << "\t" << p.first << " failure rate: "
+        << diff/p.second.size()*100 << "%"
+        << " L2 norm (ave, stdev): (" << ave
+        << ", " << stdev << ")" << std::endl;
+    }
   } else {
     cv::Mat firstImage, currentImage;
     double aveNorm;

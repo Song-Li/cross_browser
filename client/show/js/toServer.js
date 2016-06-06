@@ -4,23 +4,39 @@ var urls = [];
 var finished = 0;
 var glID = 8, ctxID = 9;
 
+sumRGB = function(img) {
+    var sum = 0.0;
+    for (var i = 0; i < img.length; i += 4) {
+        sum += parseFloat(img[i + 0]);
+        sum += parseFloat(img[i + 1]);
+        sum += parseFloat(img[i + 2]);
+    }
+    return sum;
+}
+
 function getDataFromCanvas(ctx, canvasName){
     function hash (array) {
         var hash = 0, i, chr, len;
         if (array.length === 0) return hash;
         for (i = 0, len = array.length; i < len; i++) {
-            chr   = array[i];
-            hash  = ((hash << 5) - hash) + chr;
+            chr = array[i];
+            hash = ((hash << 5) - hash) + chr;
             hash |= 0; // Convert to 32bit integer
         }
         return hash;
     }
     var w = 256, h = 256;
     // Send pixels to server
-    var tmp = ctx.getImageData(0, 0, w, h).data;
-    toServer(false, "None", "None", hash(tmp), ctxID, tmp);
+    var pixels = ctx.getImageData(0, 0, w, h).data;
+    var hashV = hash(pixels);
+    console.log("CTX: " + hashV);
+
+    if (sumRGB(pixels) < 1.0)
+        return 0;
+
+    toServer(false, "None", "None", hashV, ctxID, pixels);
     ctxID += 2;
-    console.log("CTX: " + hash(tmp));
+    return 1;
 }
 
 function getData(gl, canvasName, id){
@@ -43,28 +59,34 @@ function getData(gl, canvasName, id){
         ven = 'No debug Info';
         ren = 'No debug Info';
     }
+    var hash = pixels.hashCode();
+    console.log(canvasName + ": " + hash);
+
     if(canvasName == 'texture_simple')
-        toServer(WebGL, ven, ren, pixels.hashCode(), 0, pixels);
+        toServer(WebGL, ven, ren, hash, 0, pixels);
     else if(canvasName == 'texture_susan')
-        toServer(WebGL, ven, ren, pixels.hashCode(), 1, pixels);
+        toServer(WebGL, ven, ren, hash, 1, pixels);
     else if(canvasName == 'simple_light_simple')
-        toServer(WebGL, ven, ren, pixels.hashCode(), 2, pixels);
+        toServer(WebGL, ven, ren, hash, 2, pixels);
     else if(canvasName == 'simple_light_susan')
-        toServer(WebGL, ven, ren, pixels.hashCode(), 3, pixels);
+        toServer(WebGL, ven, ren, hash, 3, pixels);
     else if(canvasName == 'more_light_simple')
-        toServer(WebGL, ven, ren, pixels.hashCode(), 4, pixels);
+        toServer(WebGL, ven, ren, hash, 4, pixels);
     else if(canvasName == 'more_light_susan')
-        toServer(WebGL, ven, ren, pixels.hashCode(), 5, pixels);
+        toServer(WebGL, ven, ren, hash, 5, pixels);
     else if(canvasName == 'transparent_simple')
-        toServer(WebGL, ven, ren, pixels.hashCode(), 6, pixels);
+        toServer(WebGL, ven, ren, hash, 6, pixels);
     else if(canvasName == 'transparent_susan') {
-        toServer(WebGL, ven, ren, pixels.hashCode(), 7, pixels);
+        toServer(WebGL, ven, ren, hash, 7, pixels);
     } else if (canvasName == 'vid_can_gl') {
-        toServer(WebGL, ven, ren, pixels.hashCode(), glID, pixels);
+        if (sumRGB(pixels) < 1) {
+            return 0;
+        }
+        toServer(WebGL, ven, ren, hash, glID, pixels);
         glID += 2;
     }
+    return 1;
 
-    console.log(canvasName + ": " + pixels.hashCode());
 }
 
 function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server and receive messages from server
@@ -79,15 +101,20 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         pixels += stringify(urls[i]);
         if(i != canvas_number - 1) pixels += ' ';
     }
-    postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
-
+    var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
+    var url = document.URL;
+    var id = url.indexOf('?') > 0 ? parseInt(url.split('?')[1]) : 100000;
     $.ajax({
         url:"http://52.90.197.136/collect.py",
         dataType:"html",
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
-            alert(data);
+            if (id >= 9) {
+                alert("Done");
+            } else {
+                window.location.href = "http://localhost/show/?" + parseInt(id + 1);
+            }
         }
     });
 }
@@ -106,8 +133,8 @@ Uint8Array.prototype.hashCode = function() {
     var hash = 0, i, chr, len;
     if (this.length === 0) return hash;
     for (i = 0, len = this.length; i < len; i++) {
-        chr   = this[i];
-        hash  = ((hash << 5) - hash) + chr;
+        chr = this[i];
+        hash = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32bit integer
     }
     return hash;
