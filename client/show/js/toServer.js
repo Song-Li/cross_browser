@@ -2,14 +2,25 @@ var ven, ren;
 var canvas_number = 10;
 var urls = [];
 var finished = 0;
-var glID = 7, ctxID = 8;
+var glID = 8, ctxID = 9;
 
 function getDataFromCanvas(ctx, canvasName){
+    function hash (array) {
+        var hash = 0, i, chr, len;
+        if (array.length === 0) return hash;
+        for (i = 0, len = array.length; i < len; i++) {
+            chr   = array[i];
+            hash  = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
+    }
     var w = 256, h = 256;
     // Send pixels to server
-    toServer(false, "None", "None", -1, ctxID, ctx.getImageData(0, 0, w, h).data);
+    var tmp = ctx.getImageData(0, 0, w, h).data;
+    toServer(false, "None", "None", hash(tmp), ctxID, tmp);
     ctxID += 2;
-    console.log("CTX: " + "-1");
+    console.log("CTX: " + hash(tmp));
 }
 
 function getData(gl, canvasName, id){

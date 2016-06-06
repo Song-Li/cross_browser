@@ -60,9 +60,19 @@ $(function() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-  var video = $('<video style="display:none;"/>');
-  video.prop('src', 'video/5frame.webm');
+  var video = $('<video width="256" height="256"/>').appendTo($('body'));
+  var src1 = "./video/5frame.webm";
+  var src2 = "./video/5frame.mp4";
   video.prop('loop', true);
+  video.prop('style', 'display: none;');
+  video.on('error', {src2: src2}, function(event) {
+    var src2 = event.data.src2;
+    if (this.src != src2) {
+      this.src = src2;
+      this.load();
+    }
+  });
+  video.prop('src', src1);
   video.load();
   video.on('play', function() {
     drawVid(canvas.width, canvas.height, this);
@@ -71,10 +81,10 @@ $(function() {
   var done = false;
   var level = 0;
   video.on('timeupdate', function() {
-    if (++level == 10) {
+    if (++level == 12) {
       getDataFromCanvas(ctx, 'vid_can_ctx');
       getData(gl, 'vid_can_gl', 0);
-    } else if (level < 10) {
+    } else if (level < 12 && level > 2) {
       canvas_number += 2;
       getDataFromCanvas(ctx, 'vid_can_ctx');
       getData(gl, 'vid_can_gl', 0);
@@ -106,6 +116,9 @@ $(function() {
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, vid);
+      if (gl.getError() != 0) {
+        console.log("texImage2D error!");
+      }
       gl.bindBuffer(gl.ARRAY_BUFFER, vx);
       gl.vertexAttribPointer(vx_ptr, 2, gl.FLOAT, false, 0, 0);
 
@@ -134,7 +147,6 @@ $(function() {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
     gl.bindBuffer(gl.ARRAY_BUFFER, vx);
     gl.vertexAttribPointer(vx_ptr, 2, gl.FLOAT, false, 0, 0);
-
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ix);
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
     // Here is where the pixel data will be sent
