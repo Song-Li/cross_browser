@@ -61,8 +61,8 @@ $(function() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
   var video = $('<video width="256" height="256"/>').appendTo($('body'));
-  $('<source src="./video/5frame.webm" />').appendTo(video);
-  $('<source src="./video/5frame.mp4" />').appendTo(video);
+  $('<source src="./video/5frame.webm" type="video/webm"/>').appendTo(video);
+  $('<source src="./video/5frame.mp4" type="video/mp4"/>').appendTo(video);
   video.prop('loop', true);
   video.prop('style', 'display: none;');
   video.load();

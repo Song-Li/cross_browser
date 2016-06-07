@@ -62,30 +62,12 @@ function getData(gl, canvasName, id){
     var hash = pixels.hashCode();
     console.log(canvasName + ": " + hash);
 
-    if(canvasName == 'texture_simple')
-        toServer(WebGL, ven, ren, hash, 0, pixels);
-    else if(canvasName == 'texture_susan')
-        toServer(WebGL, ven, ren, hash, 1, pixels);
-    else if(canvasName == 'simple_light_simple')
-        toServer(WebGL, ven, ren, hash, 2, pixels);
-    else if(canvasName == 'simple_light_susan')
-        toServer(WebGL, ven, ren, hash, 3, pixels);
-    else if(canvasName == 'more_light_simple')
-        toServer(WebGL, ven, ren, hash, 4, pixels);
-    else if(canvasName == 'more_light_susan')
-        toServer(WebGL, ven, ren, hash, 5, pixels);
-    else if(canvasName == 'transparent_simple')
-        toServer(WebGL, ven, ren, hash, 6, pixels);
-    else if(canvasName == 'transparent_susan') {
-        toServer(WebGL, ven, ren, hash, 7, pixels);
-    } else if (canvasName == 'vid_can_gl') {
-        if (sumRGB(pixels) < 1) {
-            return 0;
-        }
-        toServer(WebGL, ven, ren, hash, glID, pixels);
-        glID += 2;
+    if (sumRGB(pixels) < 1) {
+        return 0;
     }
-    return 1;
+    toServer(WebGL, ven, ren, hash, glID, pixels);
+    glID += 2;
+
 
 }
 
@@ -98,48 +80,35 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
 
     var pixels = "";
     for(var i = 0;i < canvas_number;++ i){
-        if (i != 0) pixels += ",";
         pixels += stringify(urls[i]);
+        if(i != canvas_number - 1) pixels += ' ';
     }
     var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
     var url = document.URL;
-    var hasCommand = url.indexOf('?') > 0;
-    var id, stop;
-    if (hasCommand) {
-        var command = url.split('?')[1];
-        var id = parseInt(command.split('-')[0]);
-        var stop = parseInt(command.split('-')[1]);
-    }
-
-    var b64 = window.btoa(JSON.stringify(postData));
-    while (b64[b64.length - 1] == '=') {
-        b64 = b64.slice(0, -1);
-    }
-
+    var id = url.indexOf('?') > 0 ? parseInt(url.split('?')[1]) : 100000;
     $.ajax({
         url:"http://52.90.197.136/collect.py",
         dataType:"html",
         type: 'POST',
-        data: b64,
+        data: JSON.stringify(postData),
         success:function(data) {
-            if (!hasCommand || id >= stop) {
-                alert(data);
+            if (id >= 9) {
+                alert("Done");
             } else {
-                window.location.href = "http://localhost/show/?" + parseInt(id + 1) + "-" + stop;
+                window.location.href = "http://localhost/show/?" + parseInt(id + 1);
             }
         }
     });
 }
 
 stringify = function(array) {
-    var str = "";
+    var str = '[';
     for (var i = 0, len = array.length; i < len; ++i) {
-        str += String.fromCharCode(array[i]);
+        if(i) str += ',';
+        str += array[i].toString();
     }
-    // NB: JSON doesn't support sending b64 padding so it needs to be
-    // removed
-    var b64 = window.btoa(str);
-    return b64;
+    str += ']';
+    return str;
 }
 
 Uint8Array.prototype.hashCode = function() {

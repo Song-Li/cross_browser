@@ -14,21 +14,20 @@
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
 
-
-typedef struct imgInf{
+typedef struct imgInf {
   int frame, browser;
   imgInf (int f, int b) : frame {f}, browser {b} {};
   bool operator==(const imgInf & other) const {
-    return frame == other.frame && browser == other.browser;
+    return frame == other.frame /*&& browser == other.browser*/;
   }
   bool operator<(const imgInf & o) const {
-    return browser < o.browser ||
-      (browser == o.browser && frame < o.frame);
+    return /*browser < o.browser ||
+      (browser == o.browser &&*/ frame < o.frame/*)*/;
   }
 } imgInf;
 
 std::ostream & operator<<(std::ostream & os, const imgInf & p) {
-  os << "Browser: " << p.browser << " Frame: " << p.frame;
+  os /*<< "Browser: " << p.browser*/ << " Frame: " << p.frame;
   return os;
 }
 
@@ -111,7 +110,7 @@ int main(int argc, char ** argv) {
     double totalMatches = 0, numImgs = 0;
     for (auto & l : frameToImages[0]) {
       for (auto & p : frameToImages[0]) {
-        if (l.first.browser != p.first.browser) continue;
+        if (l.first.browser == p.first.browser) continue;
         totalMatches += hasMatch(l.second, p.second);
         ++numImgs;
       }
@@ -121,7 +120,7 @@ int main(int argc, char ** argv) {
     totalMatches = 0, numImgs = 0;
     for (auto & l : frameToImages[1]) {
       for (auto & p : frameToImages[1]) {
-        if (l.first.browser != p.first.browser) continue;
+        if (l.first.browser == p.first.browser) continue;
         totalMatches += hasMatch(l.second, p.second);
         ++numImgs;
       }
