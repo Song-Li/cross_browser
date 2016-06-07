@@ -7,6 +7,6 @@ install_manifest.txt
 *.sublime*
 *.a
 *.dat
-*images*
+*imgs*
 *still*
 .DS_store
