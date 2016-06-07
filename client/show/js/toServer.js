@@ -72,21 +72,25 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
 
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
-    
+
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
     i.setAttribute('name',JSON.stringify(postData));
-    
+
     f.appendChild(i);
 
     f.submit();
     return ;
 */
+    var b64 = window.btoa(JSON.stringify(postData));
+    while (b64[b64.length - 1] == '=') {
+        b64 = b64.slice(0, -1);
+    }
     $.ajax({
         url:"http://" + ip_address + "/collect.py",
         dataType:"html",
         type: 'POST',
-        data: JSON.stringify(postData),
+        data: b64,
         success:function(data) {
             alert(data);
         }
@@ -94,13 +98,14 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
 }
 
 stringify = function(array) {
-    var str = '[';
+    var str = "";
     for (var i = 0, len = array.length; i < len; ++i) {
-        if(i) str += ',';
-        str += array[i].toString();
+        str += String.fromCharCode(array[i]);
     }
-    str += ']';
-    return str;
+    // NB: JSON doesn't support sending b64 padding so it needs to be
+    // removed
+    var b64 = window.btoa(str);
+    return b64;
 }
 
 Uint8Array.prototype.hashCode = function() {
