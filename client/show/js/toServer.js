@@ -1,5 +1,5 @@
 var ven, ren;
-var canvas_number = 10;
+var canvas_number = 8;
 var urls = [];
 var finished = 0;
 var ip_address = "128.180.123.19"
@@ -61,9 +61,9 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     if(finished < canvas_number) return;
 
     var pixels = "";
-    for(var i = 0;i < canvas_number;++ i){
+    for(var i = 0; i < canvas_number; ++i){
         pixels += stringify(urls[i]);
-        if(i != canvas_number - 1) pixels += ' ';
+        if(i != canvas_number - 1) pixels += ',';
     }
     postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
 
@@ -86,6 +86,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     while (b64[b64.length - 1] == '=') {
         b64 = b64.slice(0, -1);
     }
+
     $.ajax({
         url:"http://" + ip_address + "/collect.py",
         dataType:"html",
