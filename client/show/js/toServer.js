@@ -97,7 +97,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     console.log("Sent " + canvas_number + " images");
 
     var pixels = "";
-    for(var i = 0;i < canvas_number;++ i){
+    for(var i = 0; i < canvas_number; ++i){
         if (i != 0) pixels += ",";
         pixels += stringify(urls[i]);
     }
