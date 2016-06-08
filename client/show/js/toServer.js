@@ -82,15 +82,11 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     f.submit();
     return ;
 */
-    var b64 = window.btoa(JSON.stringify(postData));
-    while (b64[b64.length - 1] == '=') {
-        b64 = b64.slice(0, -1);
-    }
     $.ajax({
         url:"http://" + ip_address + "/collect.py",
         dataType:"html",
         type: 'POST',
-        data: b64,
+        data: JSON.stringify(postData),
         success:function(data) {
             alert(data);
         }
