@@ -72,14 +72,12 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
 
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
-
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
     i.setAttribute('name',JSON.stringify(postData));
-
     f.appendChild(i);
-
     f.submit();
+
     return ;
 */
     $.ajax({
