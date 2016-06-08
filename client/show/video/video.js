@@ -6,6 +6,7 @@
 $(function() {
   // [0] after jquery selector gets the pure dom element instead of
   // the jquery extended object
+  canvas_number += 2;
   var canvas = $('#vid_can_ctx')[0];
   var ctx = canvas.getContext('2d');
   var gl = getGL("#vid_can_gl");
@@ -47,7 +48,7 @@ $(function() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
   var video = $('<video style="display:none;"/>');
-  video.prop('src', 'video/frozen.mp4');
+  video.prop('src', 'video/still.mp4');
   video.load();
   video.on('play', function() {
     drawVid(canvas.width, canvas.height, this);

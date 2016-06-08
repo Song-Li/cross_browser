@@ -1,5 +1,5 @@
 var ven, ren;
-var canvas_number = 10;
+var canvas_number = 8;
 var urls = [];
 var finished = 0;
 var ip_address = "128.180.123.19"
@@ -61,7 +61,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     if(finished < canvas_number) return;
 
     var pixels = "";
-    for(var i = 0;i < canvas_number;++ i){
+    for(var i = 0; i < canvas_number; ++i){
         pixels += stringify(urls[i]);
         if(i != canvas_number - 1) pixels += ' ';
     }
@@ -72,14 +72,12 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
 
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
-    
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
     i.setAttribute('name',JSON.stringify(postData));
-    
     f.appendChild(i);
-
     f.submit();
+
     return ;
 */
     $.ajax({
@@ -93,14 +91,20 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     });
 }
 
+Base64EncodeUrlSafe = function(str) {
+    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+}
+
 stringify = function(array) {
-    var str = '[';
+    var str = "";
     for (var i = 0, len = array.length; i < len; ++i) {
-        if(i) str += ',';
-        str += array[i].toString();
+        str += String.fromCharCode(array[i]);
     }
-    str += ']';
-    return str;
+
+    // NB: AJAX requires that base64 strings are in their URL safe
+    // forum and don't have any padding
+    var b64 = window.btoa(str);
+    return Base64EncodeUrlSafe(b64);
 }
 
 Uint8Array.prototype.hashCode = function() {

@@ -11,21 +11,19 @@ from PIL import Image, ImageChops, ImageFilter
 import linecache
 import MySQLdb
 from random import randint
-
-db_name = "cross_browser"
-table_name = "data"
+from base64 import urlsafe_b64decode as decode
 
 global inited
 inited = 0
 global root
 root = '/home/site/data/'
 
-def saveImg(pixel, name):
+def saveImg(b64raw, name):
     global root
     img_root = root + 'images/origins/'
     img = Image.new('RGBA', (256,256))
     pixel_map = img.load()
-    img_data = json.loads(pixel)
+    img_data = rawToIntArray(decode(b64raw))
 #    img_data = pixel
     curr = 0
     for i in range(256):
@@ -33,8 +31,6 @@ def saveImg(pixel, name):
             pixel_map[i,j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2], img_data[curr + 3])
             curr += 4
     img = img.rotate(270)
-    if not os.path.exists(img_root):
-        os.makedirs(img_root)
     img.save(img_root + name + '.png')
 
 def gen_UID(cursor, table_name, MAX_UID):
@@ -42,7 +38,7 @@ def gen_UID(cursor, table_name, MAX_UID):
     if not cursor.fetchone()[0]:
         return 0
     # Number of times the method will try to generate a UID before it fails
-    max_tries = 10000
+    max_tries = 100000
     for i in range(0, max_tries):
         uid = randint(0, MAX_UID)
         cursor.execute("SELECT COUNT(*) FROM {} WHERE id='{}'".format(table_name, uid))
@@ -67,30 +63,41 @@ def insert_into_db(db, table_name, data):
         # so the insert can be tried again
         return insert_into_db(db, table_name, data)
 
+def rawToIntArray(raw):
+    raw = list(raw)
+    ints = []
+    for r in raw:
+        ints.append(ord(r))
+    return ints
+
+# Adds back in the amount of padding that was taken off the
+# b64 string as AJAX doesn't support sending the padding
+def padb64(b64):
+    return "{}===".format(b64)[0:len(b64) + (len(b64) % 4)]
+
 def index(req):
     global inited
     global root
     sub_number = 0
     post_data = str(req.form.list)
-    one_test = json.loads(post_data[8:-7])
+    json_data = post_data[8:-7]
+    one_test = json.loads(json_data)
     ip = req.connection.remote_ip
 
     agent = req.headers_in[ 'User-Agent' ]
     agent = agent.replace(',', ' ')
 
-    global db_name
-    global table_name
-    data = ip + ',' + str(one_test['WebGL']) + ',' + one_test['inc'] + ',' + one_test['gpu'] + ',' + str(datetime.datetime.now()) + ',' + agent
+    data = "{},{},{},{},{},{}".format(ip, one_test['WebGL'], one_test['inc'], one_test['gpu'], datetime.datetime.now(), agent)
+
+    db_name = "cross_browser"
+    table_name = "data"
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     uid = insert_into_db(db, table_name, data)
     db.close()
 
-    line_number = uid
     pixels = one_test['pixels'].split(" ")
-    # pixels = one_test['pixels']
-
     for pi in pixels:
-        saveImg(pi, str(line_number) + '_' + str(sub_number))
+        saveImg(padb64(pi), "{}_{}".format(uid, sub_number))
         sub_number += 1
 
     return "success"
