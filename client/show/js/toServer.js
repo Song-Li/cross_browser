@@ -82,11 +82,15 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     f.submit();
     return ;
 */
+    var b64 = window.btoa(JSON.stringify(postData));
+    while (b64[b64.length - 1] == '=') {
+        b64 = b64.slice(0, -1);
+    }
     $.ajax({
         url:"http://" + ip_address + "/collect.py",
         dataType:"html",
         type: 'POST',
-        data: JSON.stringify(postData),
+        data: b64,
         success:function(data) {
             alert(data);
         }
@@ -102,6 +106,7 @@ stringify = function(array) {
     for (var i = 0, len = array.length; i < len; ++i) {
         str += String.fromCharCode(array[i]);
     }
+
     // NB: AJAX requires that base64 strings are in their URL safe
     // forum and don't have any padding
     var b64 = window.btoa(str);
