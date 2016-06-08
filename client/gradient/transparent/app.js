@@ -17,7 +17,7 @@ var drawTransparent = function () {
                             alert('Fatal error getting Susan model (see console)');
                             console.error(fsErr);
                         } else {
-                            loadImage(root + 'color.png', function (imgErr, img) {
+                            loadImage(root + 'color1.png', function (imgErr, img) {
                                 if (imgErr) {
                                     alert('Fatal error getting Susan texture (see console)');
                                     console.error(imgErr);
