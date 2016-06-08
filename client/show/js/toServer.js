@@ -63,7 +63,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     var pixels = "";
     for(var i = 0; i < canvas_number; ++i){
         pixels += stringify(urls[i]);
-        if(i != canvas_number - 1) pixels += ',';
+        if(i != canvas_number - 1) pixels += ' ';
     }
     postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
 
@@ -82,20 +82,19 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     f.submit();
     return ;
 */
-    var b64 = window.btoa(JSON.stringify(postData));
-    while (b64[b64.length - 1] == '=') {
-        b64 = b64.slice(0, -1);
-    }
-
     $.ajax({
         url:"http://" + ip_address + "/collect.py",
         dataType:"html",
         type: 'POST',
-        data: b64,
+        data: JSON.stringify(postData),
         success:function(data) {
             alert(data);
         }
     });
+}
+
+Base64EncodeUrlSafe = function(str) {
+    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
 }
 
 stringify = function(array) {
@@ -103,10 +102,10 @@ stringify = function(array) {
     for (var i = 0, len = array.length; i < len; ++i) {
         str += String.fromCharCode(array[i]);
     }
-    // NB: JSON doesn't support sending b64 padding so it needs to be
-    // removed
+    // NB: AJAX requires that base64 strings are in their URL safe
+    // forum and don't have any padding
     var b64 = window.btoa(str);
-    return b64;
+    return Base64EncodeUrlSafe(b64);
 }
 
 Uint8Array.prototype.hashCode = function() {

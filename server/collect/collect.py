@@ -1,7 +1,6 @@
 import BaseHTTPServer
 import sys
 from mod_python import apache, Session, util
-import filelock
 import os.path
 import datetime
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -12,12 +11,12 @@ from PIL import Image, ImageChops, ImageFilter
 import linecache
 import MySQLdb
 from random import randint
-from base64 import b64decode as decode
+from base64 import urlsafe_b64decode as decode
 
 global inited
 inited = 0
 global root
-root = '/home/sol315/data/'
+root = '/home/site/data/'
 
 def saveImg(b64raw, name):
     global root
@@ -72,22 +71,17 @@ def rawToIntArray(raw):
     return ints
 
 # Adds back in the amount of padding that was taken off the
-# b64 string as JSON doesn't support sending the padding
+# b64 string as AJAX doesn't support sending the padding
 def padb64(b64):
-    if len(b64) % 4 == 2:
-        return "{}==".format(b64)
-    elif len(b64) % 4 == 3:
-        return "{}=".format(b64)
-    else:
-        return b64
+    return "{}===".format(b64)[0:len(b64) + (len(b64) % 4)]
 
 def index(req):
     global inited
     global root
     sub_number = 0
     post_data = str(req.form.list)
-    b64 = padb64(post_data[8:-7])
-    one_test = json.loads(decode(b64))
+    json_data = post_data[8:-7]
+    one_test = json.loads(json_data)
     ip = req.connection.remote_ip
 
     agent = req.headers_in[ 'User-Agent' ]
@@ -101,9 +95,9 @@ def index(req):
     uid = insert_into_db(db, table_name, data)
     db.close()
 
-    pixels = one_test['pixels'].split(",")
+    pixels = one_test['pixels'].split(" ")
     for pi in pixels:
-        saveImg(pi, "{}_{}".format(uid, sub_number))
+        saveImg(padb64(pi), "{}_{}".format(uid, sub_number))
         sub_number += 1
 
     return "success"
