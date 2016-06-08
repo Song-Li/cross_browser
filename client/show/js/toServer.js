@@ -1,5 +1,5 @@
 var ven, ren;
-var canvas_number = 10;
+var canvas_number = 8;
 var urls = [];
 var finished = 0;
 var glID = 8, ctxID = 9;
@@ -98,7 +98,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
 
     var pixels = "";
     for(var i = 0; i < canvas_number; ++i){
-        if (i != 0) pixels += ",";
+        if (i != 0) pixels += ' ';
         pixels += stringify(urls[i]);
     }
     var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
@@ -111,16 +111,11 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         var stop = parseInt(command.split('-')[1]);
     }
 
-    var b64 = window.btoa(JSON.stringify(postData));
-    while (b64[b64.length - 1] == '=') {
-        b64 = b64.slice(0, -1);
-    }
-
     $.ajax({
         url:"http://52.90.197.136/collect.py",
         dataType:"html",
         type: 'POST',
-        data: b64,
+        data: JSON.stringify(postData),
         success:function(data) {
             if (!hasCommand || id >= stop) {
                 alert(data);
@@ -131,6 +126,14 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     });
 }
 
+
+/* Converts the charachters that aren't UrlSafe to ones that are and
+  removes the padding so the base64 string can be sent as is
+*/
+Base64EncodeUrlSafe = function(str){
+    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+}
+
 stringify = function(array) {
     var str = "";
     for (var i = 0, len = array.length; i < len; ++i) {
@@ -139,7 +142,7 @@ stringify = function(array) {
     // NB: JSON doesn't support sending b64 padding so it needs to be
     // removed
     var b64 = window.btoa(str);
-    return b64;
+    return Base64EncodeUrlSafe(b64);
 }
 
 Uint8Array.prototype.hashCode = function() {
