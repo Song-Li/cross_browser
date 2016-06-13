@@ -2,7 +2,6 @@ var ven, ren;
 var canvas_number = 8;
 var urls = [];
 var finished = 0;
-var glID = 8, ctxID = 9;
 
 sumRGB = function(img) {
     var sum = 0.0;
@@ -14,7 +13,7 @@ sumRGB = function(img) {
     return sum;
 }
 
-function getDataFromCanvas(ctx, canvasName){
+function getDataFromCanvas(ctx, id){
     function hash (array) {
         var hash = 0, i, chr, len;
         if (array.length === 0) return hash;
@@ -34,8 +33,7 @@ function getDataFromCanvas(ctx, canvasName){
     if (sumRGB(pixels) < 1.0)
         return 0;
 
-    toServer(false, "None", "None", hashV, ctxID, pixels);
-    ctxID += 2;
+    toServer(false, "None", "None", hashV, id, pixels);
     return 1;
 }
 
@@ -78,20 +76,18 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 6, pixels);
     else if(canvasName == 'transparent_susan') {
         toServer(WebGL, ven, ren, hash, 7, pixels);
-    } else if (canvasName == 'vid_can_gl') {
+    } else {
         if (sumRGB(pixels) < 1) {
             return 0;
         }
-        toServer(WebGL, ven, ren, hash, glID, pixels);
-        glID += 2;
+        toServer(WebGL, ven, ren, hash, id, pixels);
     }
     return 1;
-
 }
 
 function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server and receive messages from server
     urls[id] = dataurl;
-    finished ++;
+    finished++;
     if(finished < canvas_number) return;
 
     console.log("Sent " + canvas_number + " images");

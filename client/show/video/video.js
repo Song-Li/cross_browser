@@ -2,167 +2,141 @@
   Shows a video on screen, request it to be redrawn on a canvas and
   then collects those pixels from the canvas
 */
-// Document on ready jquery shortcut
-$(function() {
-  // [0] after jquery selector gets the pure dom element instead of
-  // the jquery extended object
+
+var VideoCollector = function(webmVid, mp4Vid, id) {
+  this.startID = parseInt(8 + 20*id);
+  this.ctxID = this.startID;
+  this.glID = this.startID + 1;
   canvas_number += 2;
-  $('<canvas id="vid_can_ctx" width="256" height="256">'
+  this.ctxCanName = "vid_can_ctx_" + id;
+  this.glCanName = "vid_can_gl_" + id;
+  var canvas = $(
+    '<canvas id="' + this.ctxCanName + '" width="256" height="256">'
+    + 'Your browser does not support HTML5'
+    + '</canvas>')
+    .appendTo($('body'))[0];
+  $('<canvas id="' + this.glCanName + '" width="256" height="256">'
     + 'Your browser does not support HTML5'
     + '</canvas>')
     .appendTo($('body'));
+  this.counterName = "counter_" + id;
+  $('<div id="' + this.counterName + '"/>').appendTo($('body'));
+  this.ctx = canvas.getContext('2d');
+  this.gl = getGL("#" + this.glCanName);
 
-  $('<canvas id="vid_can_gl" width="256" height="256">'
-    + 'Your browser does not support HTML5'
-    + '</canvas>')
-    .appendTo($('body'));
+  this.gl.enable(this.gl.BLEND);
+  this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
-  $('<div id="counter"/>')
-    .appendTo($("body"));
+  var vs = this.gl.createShader(this.gl.VERTEX_SHADER);
+  this.gl.shaderSource(vs, "attribute vec2 vx;varying vec2 tx;void main(){gl_Position=vec4(vx.x*2.0-1.0,1.0-vx.y*2.0,0,1);tx=vx;}");
+  this.gl.compileShader(vs);
 
-  var canvas = $('#vid_can_ctx')[0];
-  var ctx = canvas.getContext('2d');
-  var gl = getGL("#vid_can_gl");
+  var ps = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+  this.gl.shaderSource(ps, "precision mediump float;uniform sampler2D sm;varying vec2 tx;void main(){gl_FragColor=texture2D(sm,tx);}");
+  this.gl.compileShader(ps);
 
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  var shader  = this.gl.createProgram();
+  this.gl.attachShader(shader, vs);
+  this.gl.attachShader(shader, ps);
+  this.gl.linkProgram(shader);
+  this.gl.useProgram(shader);
 
-  var vs = gl.createShader(gl.VERTEX_SHADER);
-  gl.shaderSource(vs, "attribute vec2 vx;varying vec2 tx;void main(){gl_Position=vec4(vx.x*2.0-1.0,1.0-vx.y*2.0,0,1);tx=vx;}");
-  gl.compileShader(vs);
+  var vx_ptr = this.gl.getAttribLocation(shader, "vx");
+  this.gl.enableVertexAttribArray(vx_ptr);
+  this.gl.uniform1i(this.gl.getUniformLocation(shader, "sm"), 0);
 
-  var ps = gl.createShader(gl.FRAGMENT_SHADER);
-  gl.shaderSource(ps, "precision mediump float;uniform sampler2D sm;varying vec2 tx;void main(){gl_FragColor=texture2D(sm,tx);}");
-  gl.compileShader(ps);
+  var vx = this.gl.createBuffer();
+  this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vx);
+  this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array([0,0, 1,0, 1,1, 0,1]), this.gl.STATIC_DRAW);
 
-  var shader  = gl.createProgram();
-  gl.attachShader(shader, vs);
-  gl.attachShader(shader, ps);
-  gl.linkProgram(shader);
-  gl.useProgram(shader);
+  var ix = this.gl.createBuffer();
+  this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, ix);
+  this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0,1,2, 0,2,3]), this.gl.STATIC_DRAW);
 
-  var vx_ptr = gl.getAttribLocation(shader, "vx");
-  gl.enableVertexAttribArray(vx_ptr);
-  gl.uniform1i(gl.getUniformLocation(shader, "sm"), 0);
-
-  var vx = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, vx);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0, 1,0, 1,1, 0,1]), gl.STATIC_DRAW);
-
-  var ix = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ix);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0,1,2, 0,2,3]), gl.STATIC_DRAW);
-
-  var tex = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  var tex = this.gl.createTexture();
+  this.gl.bindTexture(this.gl.TEXTURE_2D, tex);
+  this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+  this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+  this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+  this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
 
   var video = $('<video width="256" height="256"/>').appendTo($('body'));
-  $('<source src="./video/stick.webm" type="video/webm"/>').appendTo(video);
-  $('<source src="./video/stick.mp4" type="video/mp4"/>').appendTo(video);
+  $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(video);
+  $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(video);
   video.prop('loop', true);
   video.prop('style', 'display: none;');
-  video.load();
-  video.on('play', function() {
-    drawVid(canvas.width, canvas.height, this);
+  video.prop('playing', false);
+  video.on('play', {self: this}, function(event) {
+    var self = event.data.self;
+    drawVid(canvas.width, canvas.height, this, self);
   });
   video.prop('muted', true);
-  var done = false;
-  var level = 0, collected = [0, 0];
-  video.on('timeupdate', function() {
-    if (++level > 2) {
-      if (collected[0] < 9) {
+  this.level = 0, this.collected = [0, 0];
+  video.on('timeupdate', {self: this}, function(event) {
+    var self = event.data.self;
+    if (++self.level > 2) {
+      if (self.collected[0] < 9) {
         ++canvas_number;
-        var status = getDataFromCanvas(ctx, "vid_can_ctx");
+        var status = getDataFromCanvas(self.ctx, self.ctxID);
         if (status) {
-          ++collected[0]
+          ++self.collected[0]
+          self.ctxID += 2;
         } else {
           --canvas_number;
         }
-      } else if (collected[0] == 9) {
-        var status = getDataFromCanvas(ctx, "vid_can_ctx");
+      } else if (self.collected[0] == 9) {
+        var status = getDataFromCanvas(self.ctx, self.ctxID);
         if (status) {
-          ++collected[0];
+          ++self.collected[0];
         }
       }
 
-      if (collected[1] < 9) {
+      if (self.collected[1] < 9) {
         ++canvas_number;
-        var status = getData(gl, "vid_can_gl");
+        var status = getData(self.gl, self.glCanName, self.glID);
         if (status) {
-          ++collected[1]
+          ++self.collected[1]
+          self.glID += 2;
         } else {
           --canvas_number;
         }
-      } else if (collected[1] == 9) {
-        var status = getData(gl, "vid_can_gl");
+      } else if (self.collected[1] == 9) {
+        var status = getData(self.gl, self.glCanName, self.glID);
         if (status) {
-          ++collected[1];
+          ++self.collected[1];
         }
       }
     }
-    $("#counter").text(level);
+    $("#" + self.counterName).text(self.level);
   });
+  video.load();
   video[0].play();
 
-  var image = new Image();
-  image.onload = function() {
-    drawImg(canvas.width, canvas.height, this, 0);
-  };
-  // image.src = 'video/image.png';
-
   // Render loop
-  function drawVid(w, h, vid) {
-    var frame = null;
-    if (!done) {
-      frame = requestAnimationFrame(function() {
-        drawVid(w, h, vid);
-      });
-
-      var vidH = 9/16*w;
-      var offset = (h - vidH)/2.0;
-      ctx.drawImage(vid, 0, offset, w, vidH);
-
-      gl.viewport(0, offset, w, vidH);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, vid);
-      if (gl.getError() != 0) {
-        console.log("texImage2D error!");
-      }
-      gl.bindBuffer(gl.ARRAY_BUFFER, vx);
-      gl.vertexAttribPointer(vx_ptr, 2, gl.FLOAT, false, 0, 0);
-
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ix);
-      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-      // Here is where the pixel data will be sent
-    } else if (frame) {
-      cancelAnimationFrame(frame);
-    }
-  }
-
-  function drawImg(w, h, img, level) {
-    var frame = null;
-    /*frame = requestAnimationFrame(function() {
-      drawImg(w, h, img, level + 1);
-    });*/
+  function drawVid(w, h, vid, self) {
+    requestAnimationFrame(function() {
+      drawVid(w, h, vid, self);
+    });
 
     var vidH = 9/16*w;
     var offset = (h - vidH)/2.0;
-    ctx.drawImage(img, 0, offset, w, vidH);
+    self.ctx.drawImage(vid, 0, offset, w, vidH);
 
-    gl.viewport(0, offset, w, vidH);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
-    gl.bindBuffer(gl.ARRAY_BUFFER, vx);
-    gl.vertexAttribPointer(vx_ptr, 2, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ix);
-    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+    self.gl.viewport(0, offset, w, vidH);
+    self.gl.clear(self.gl.COLOR_BUFFER_BIT);
+    self.gl.activeTexture(self.gl.TEXTURE0);
+    self.gl.bindTexture(self.gl.TEXTURE_2D, tex);
+    self.gl.texImage2D(self.gl.TEXTURE_2D, 0, self.gl.RGB, self.gl.RGB, self.gl.UNSIGNED_BYTE, vid);
+    self.gl.bindBuffer(self.gl.ARRAY_BUFFER, vx);
+    self.gl.vertexAttribPointer(vx_ptr, 2, self.gl.FLOAT, false, 0, 0);
+
+    self.gl.bindBuffer(self.gl.ELEMENT_ARRAY_BUFFER, ix);
+    self.gl.drawElements(self.gl.TRIANGLES, 6, self.gl.UNSIGNED_SHORT, 0);
   }
+}
+
+// Document on ready jquery shortcut
+$(function() {
+  var vidCollector = new VideoCollector("./video/rainbow.webm",
+                                    "./video/nativeRainbow.mp4", 0);
 });
