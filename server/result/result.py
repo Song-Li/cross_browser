@@ -16,8 +16,8 @@ table_name = "data"
 case_number = 10
 standard_pics = []
 ip2line = {}
-output_root = "/home/sol315/data/images/generated/"
-open_root = "/home/sol315/data/"
+open_root = "/home/site/data/"
+output_root = open_root + "images/generated/"
 
 def thicker(img):
     pixels = img.load()
@@ -54,26 +54,15 @@ def generateData(root, browser, line):
         img = Image.open(open_root + "images/origins/" + str(line) + '_' + str(i) + '.png')
         img.save(root + str(browser) + '_' + str(i) + '_0.png')  #origin picture
 
-        # get edge from images
-        if i == 3 or i == 4:
-            edge = Image.open(open_root + "images/thickEdge.png")
-        elif i == 5 or i == 6:
-            edge = Image.open(open_root + "images/thickBoxEdge.png")
-
         sub = ImageChops.difference(standard_pics[i],img)
-        sub.convert('RGB').save(root + str(browser) + '_' + str(i) + '_1.png')  #edge picture
+        sub = sub.convert('RGB')
+        sub.save(root + str(browser) + '_' + str(i) + '_1.png')  #edge picture
 
         sub = ImageChops.subtract(standard_pics[i],img, 0.005)
-        if i == 3 or i == 4 or i == 5 or i == 6:
-            sub = ImageChops.subtract(sub, edge)
         sub = sub.convert('RGB')
         sub.save(root + str(browser) + '_' + str(i) + '_2.png')  #standard - img
 
         sub = ImageChops.subtract(img, standard_pics[i], 0.005)
-        if i == 3 or i == 4 or i == 5 or i == 6:
-            sub = ImageChops.subtract(sub, edge)
-        #edge = getEdge(sub)
-        #sub = ImageChops.subtract(sub, edge)
         sub = sub.convert('RGB')
         sub.save(root + str(browser) + '_' + str(i) + '_3.png')  #img - standard
 

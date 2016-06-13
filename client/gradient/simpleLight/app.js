@@ -1,7 +1,7 @@
-var DrawModel = function () {
+var drawSimpleLight = function () {
+    var root = './simpleLight/'
     var url = document.URL;
     var pic_id = parseInt(url.split('?')[1]);
-    var root = './model_ex/';
     var pic_path = root + 'textures/'
     loadTextResource(root + 'shader.vs.glsl', function (vsErr, vsText) {
         if (vsErr) {
@@ -18,12 +18,12 @@ var DrawModel = function () {
                             alert('Fatal error getting Susan model (see console)');
                             console.error(fsErr);
                         } else {
-                            loadImage(pic_path + '1.png', function (imgErr, img) {
+                            loadImage(root + 'color.png', function (imgErr, img) {
                                 if (imgErr) {
                                     alert('Fatal error getting Susan texture (see console)');
                                     console.error(imgErr);
                                 } else { 
-                                    RunDemo(vsText, fsText, img, modelObj, "testCanvas", pic_id);
+                                    runSimpleLight(vsText, fsText, img, modelObj, pic_id, 'test_canvas');
                                 }
                             });
                         }
@@ -34,11 +34,12 @@ var DrawModel = function () {
     });
 };
 
-var RunDemo = function (vertexShaderText, fragmentShaderText, SusanImage, SusanModel, canvasName, pic_id) {
+var runSimpleLight = function (vertexShaderText, fragmentShaderText, SusanImage, SusanModel, pic_id, canvasName) {
     var WebGL;
     var gl;
     var canvas = document.getElementById(canvasName);
     gl = canvas.getContext('webgl', {antialias: false});
+    //gl = canvas.getContext('webgl');
     WebGL = true;
 
     if (!gl) {
@@ -52,7 +53,7 @@ var RunDemo = function (vertexShaderText, fragmentShaderText, SusanImage, SusanM
         alert('Your browser does not support WebGL');
     }
 
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.enable(gl.DEPTH_TEST);
 	gl.enable(gl.CULL_FACE);
@@ -182,7 +183,9 @@ var RunDemo = function (vertexShaderText, fragmentShaderText, SusanImage, SusanM
 	var projMatrix = new Float32Array(16);
 	mat4.identity(worldMatrix);
 	//mat4.lookAt(viewMatrix, [0, 0, -8], [0, 0, 0], [0, 1, 0]);
-    mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0]);
+    if(canvasName == 'simple_light_susan') mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0]);
+    else
+        mat4.lookAt(viewMatrix, [0, 0, -120], [0, 0, 0], [0, 1, 0]);
 	mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.width / canvas.height, 0.1, 1000.0);
 
 	gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
@@ -199,17 +202,11 @@ var RunDemo = function (vertexShaderText, fragmentShaderText, SusanImage, SusanM
 
 	var ambientUniformLocation = gl.getUniformLocation(program, 'ambientLightIntensity');
 	var sunlightDirUniformLocation = gl.getUniformLocation(program, 'sun.direction');
-	var sunlightDiffuse = gl.getUniformLocation(program, 'sun.diffuse');
-	var sunlightSpecular = gl.getUniformLocation(program, 'sun.specular');
-	var sunlightPower = gl.getUniformLocation(program, 'sun.power');
-	var uAlpha = gl.getUniformLocation(program, 'uAlpha');
+	var sunlightIntUniformLocation = gl.getUniformLocation(program, 'sun.color');
 
 	gl.uniform3f(ambientUniformLocation, 0.3, 0.3, 0.3);
-	gl.uniform3f(sunlightDirUniformLocation, 0.8, -0.8, -0.8);
-	gl.uniform3f(sunlightDiffuse, 0.75, 0.75, 1.0);
-	gl.uniform3f(sunlightSpecular, 0.8, 0.8, 0.8);
-	gl.uniform1f(sunlightPower, pic_id);
-	gl.uniform1f(uAlpha, 1.0);
+	gl.uniform3f(sunlightDirUniformLocation, 3.0, 4.0, -2.0);
+	gl.uniform3f(sunlightIntUniformLocation, pic_id / 10, pic_id / 10, pic_id / 10);
 
 	//
 	// Main render loop
@@ -217,14 +214,10 @@ var RunDemo = function (vertexShaderText, fragmentShaderText, SusanImage, SusanM
 	var identityMatrix = new Float32Array(16);
 	mat4.identity(identityMatrix);
     var angle = 0;
-    var count = 45;
-    var ven, ren;
+    var count = 10;
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-    gl.disable(gl.DEPTH_TEST);
-    gl.enable(gl.BLEND);
-    //gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.DEPTH_TEST);
     var loop = function () {
         angle = count++ / 20;
         mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
@@ -234,11 +227,13 @@ var RunDemo = function (vertexShaderText, fragmentShaderText, SusanImage, SusanM
 
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+
         gl.bindTexture(gl.TEXTURE_2D, susanTexture);
         gl.activeTexture(gl.TEXTURE0);
+
         gl.drawElements(gl.TRIANGLES, susanIndices.length, gl.UNSIGNED_SHORT, 0);
 
-        if(count == 59){
+        if(count == 50){
             getData(gl, canvasName, pic_id);
         }
 

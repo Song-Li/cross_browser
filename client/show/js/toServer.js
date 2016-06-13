@@ -2,6 +2,7 @@ var ven, ren;
 var canvas_number = 8;
 var urls = [];
 var finished = 0;
+var ip_address = "128.180.123.19"
 
 sumRGB = function(img) {
     var sum = 0.0;
@@ -107,8 +108,21 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         var stop = parseInt(command.split('-')[1]);
     }
 
+    /*
+    var f = document.createElement("form");
+
+    f.setAttribute('method',"post");
+    f.setAttribute('action',"http://" + ip_address + "/collect.py");
+    var i = document.createElement("input"); //input element, text
+    i.setAttribute('type',"text");
+    i.setAttribute('name',JSON.stringify(postData));
+    f.appendChild(i);
+    f.submit();
+
+    return ;
+*/
     $.ajax({
-        url:"http://52.90.197.136/collect.py",
+        url:"http://" + ip_address + "/collect.py",
         dataType:"html",
         type: 'POST',
         data: JSON.stringify(postData),
@@ -135,8 +149,9 @@ stringify = function(array) {
     for (var i = 0, len = array.length; i < len; ++i) {
         str += String.fromCharCode(array[i]);
     }
-    // NB: JSON doesn't support sending b64 padding so it needs to be
-    // removed
+
+    // NB: AJAX requires that base64 strings are in their URL safe
+    // forum and don't have any padding
     var b64 = window.btoa(str);
     return Base64EncodeUrlSafe(b64);
 }
