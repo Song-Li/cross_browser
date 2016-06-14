@@ -236,6 +236,9 @@ var runTransparent = function (vertexShaderText, fragmentShaderText, SusanImage,
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+    //ctx.font = "48px";
     var loop = function () {
         angle = count++ / 20;
         mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
@@ -243,11 +246,11 @@ var runTransparent = function (vertexShaderText, fragmentShaderText, SusanImage,
         mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
         gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
         gl.bindTexture(gl.TEXTURE_2D, susanTexture);
         gl.activeTexture(gl.TEXTURE0);
         gl.drawElements(gl.TRIANGLES, susanIndices.length, gl.UNSIGNED_SHORT, 0);
+        //ctx.fillText("Hello world", 9, 50);
 
         if(count == 50){
             getData(gl, canvasName, 0);

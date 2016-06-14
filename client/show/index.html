@@ -2,6 +2,28 @@
 <head>
 <title>Cross Browser Test</title>
 </head>
+<style>
+* {
+  box-sizing: border-box;
+}
+#ui {
+    width: 200px;
+}
+
+.container {
+    position: relative;
+    overflow: none;
+}
+
+#text {
+    background-color: transparent;  /* needed because webgl-tutoraisl.css sets canvas bg color to white */
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 10;
+}
+
+</style>
 <body onload="drawTexture();drawSimpleLight();drawMoreLight();drawTransparent();">
 <canvas id="texture_simple" width="256" height="256">
     Your browser does not support HTML5
