@@ -2,7 +2,8 @@ var ven, ren;
 var canvas_number = 8;
 var urls = [];
 var finished = 0;
-var ip_address = "128.180.123.19"
+var ip_address = "128.180.123.19";
+// var ip_address = "52.90.197.136";
 
 sumRGB = function(img) {
     var sum = 0.0;
@@ -101,11 +102,12 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
     var url = document.URL;
     var hasCommand = url.indexOf('?') > 0;
-    var id, stop;
+    var id, stop, base;
     if (hasCommand) {
+        base = url.split('?')[0];
         var command = url.split('?')[1];
-        var id = parseInt(command.split('-')[0]);
-        var stop = parseInt(command.split('-')[1]);
+        id = parseInt(command.split('-')[0]);
+        stop = parseInt(command.split('-')[1]);
     }
 
     /*
@@ -127,10 +129,10 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
-            if (!hasCommand || id >= stop) {
+            if (!hasCommand || id + 1 >= stop) {
                 alert(data);
             } else {
-                window.location.href = "http://localhost/show/?" + parseInt(id + 1) + "-" + stop;
+                window.location.href = base + "?" + parseInt(id + 1) + "-" + stop;
             }
         }
     });
