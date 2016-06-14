@@ -22,7 +22,7 @@ function generateButton(name){
 
 function generateImg(src, fatherName){
     var img = document.createElement("img");
-    img.id = 'img' + img_number; 
+    img.id = 'img' + img_number;
     img.src = src;
     img.width = 256;
     img.height = 256;
@@ -56,18 +56,18 @@ function generatePage(){
     var f = document.createElement("form");
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://52.90.197.136/result.py");
-    
+
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
     i.setAttribute('name',"Refresh");
-    
+
     f.appendChild(i);
 
     f.submit();
     return ;
     */
     $.ajax({
-        url:"http://" + ip_address + "/result.py",  
+        url:"http://" + ip_address + "/result.py",
         dataType:"text",
         type: 'POST',
         data: postData,
@@ -80,7 +80,7 @@ function generatePage(){
                 generateButton(res[i]);
             }
         }
-    }); 
+    });
 
 }
 
@@ -107,18 +107,18 @@ function toServer(id){ //send messages to server and receive messages from serve
     var f = document.createElement("form");
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/result.py");
-    
+
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
     i.setAttribute('name',"128.180.123.11");
-    
+
     f.appendChild(i);
 
     f.submit();
     return ;
     */
     $.ajax({
-        url:"http://" + ip_address + "/result.py",  
+        url:"http://" + ip_address + "/result.py",
         dataType:"text",
         type: 'POST',
         data:postData,
@@ -131,6 +131,6 @@ function toServer(id){ //send messages to server and receive messages from serve
             console.log(res);
             draw(postData);
         }
-    }); 
+    });
 }
 

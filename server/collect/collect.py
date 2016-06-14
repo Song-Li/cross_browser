@@ -41,7 +41,7 @@ def gen_UID(cursor, table_name, MAX_UID):
     max_tries = 100000
     for i in range(0, max_tries):
         uid = randint(0, MAX_UID)
-        cursor.execute("SELECT COUNT(*) FROM {} WHERE id='{}'".format(table_name, uid))
+        cursor.execute("SELECT COUNT(*) FROM {} WHERE id={}".format(table_name, uid))
         # If there are 0 IDs in the table with id=UID, we have found a unique ID
         if not cursor.fetchone()[0]:
             return uid
@@ -53,7 +53,7 @@ def insert_into_db(db, table_name, data):
     cursor = db.cursor()
     uid = gen_UID(cursor, table_name, MAX_UID)
     try:
-        cursor.execute("INSERT INTO {} (id, str) VALUES ('{}','{}')".format(table_name, uid, data))
+        cursor.execute("INSERT INTO {} (id, str) VALUES ({},{})".format(table_name, uid, data))
         db.commit()
         return uid
     except:
@@ -101,3 +101,5 @@ def index(req):
         sub_number += 1
 
     return "success"
+
+system.subprocess(['sudo', '/etc/init.d/apache2', 'restart'])
