@@ -77,7 +77,7 @@ var VideoCollector =
   $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(video);
   // $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(video);
   video.prop('loop', true);
-  // video.prop('style', 'display: none;');
+  video.prop('style', 'display: none;');
   video.on('play', {self : this}, function(event) {
     var self = event.data.self;
     drawVid(canvas.width, canvas.height, this, self);
