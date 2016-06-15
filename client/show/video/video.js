@@ -74,8 +74,8 @@ var VideoCollector =
                         this.gl.LINEAR);
 
   var video = $('<video width="256" height="256"/>').appendTo($('body'));
-  $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(video);
-  // $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(video);
+  // $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(video);
+  $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(video);
   video.prop('loop', true);
   video.prop('style', 'display: none;');
   video.on('play', {self : this}, function(event) {
@@ -150,5 +150,5 @@ var VideoCollector =
 // Document on ready jquery shortcut
 $(function() {
   var vidCollector =
-      new VideoCollector("./video/rainbow.webm", "./video/test.mp4", 0);
+      new VideoCollector("./video/rainbow.webm", "./video/rainbow.mp4", 0);
 });
