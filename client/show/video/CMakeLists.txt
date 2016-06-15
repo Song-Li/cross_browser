@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
-
-set(CMAKE_CXX_COMPILER clang++)
+if (APPLE)
+  set(CMAKE_CXX_COMPILER clang++)
+else()
+  set(CMAKE_CXX_COMPILER g++)
+endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14 -g -O3")
 
 project( testFrames )
