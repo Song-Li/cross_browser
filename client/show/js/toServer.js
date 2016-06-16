@@ -64,10 +64,6 @@ function getData(gl, canvasName, id){
 
     if(canvasName == 'texture_simple')
         toServer(WebGL, ven, ren, hash, 0, pixels);
-    else if(canvasName == 'curve')
-        toServer(WebGL, ven, ren, hash, 1, pixels);
-    else if(canvasName == 'line')
-        toServer(WebGL, ven, ren, hash, 1, pixels);
     else if(canvasName == 'texture_susan')
         toServer(WebGL, ven, ren, hash, 1, pixels);
     else if(canvasName == 'simple_light_simple')
@@ -80,6 +76,10 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 5, pixels);
     else if(canvasName == 'transparent_simple')
         toServer(WebGL, ven, ren, hash, 6, pixels);
+    else if(canvasName == 'curve')
+        toServer(WebGL, ven, ren, hash, 8, pixels);
+    else if(canvasName == 'line')
+        toServer(WebGL, ven, ren, hash, 9, pixels);
     else if(canvasName == 'transparent_susan') {
         toServer(WebGL, ven, ren, hash, 7, pixels);
     } else {
