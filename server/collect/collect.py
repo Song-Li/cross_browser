@@ -1,6 +1,6 @@
 import BaseHTTPServer
 import sys
-from mod_python import apache, Session, util
+#from mod_python import apache, Session, util
 import os.path
 import datetime
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -54,7 +54,7 @@ def insert_into_db(db, table_name, data):
     cursor = db.cursor()
     uid = gen_UID(cursor, table_name, MAX_UID)
     try:
-        cursor.execute("INSERT INTO {} (id, str) VALUES ({},{})".format(table_name, uid, data))
+        cursor.execute("INSERT INTO {} (id, str) VALUES ('{}','{}')".format(table_name, uid, data))
         db.commit()
         return uid
     except:
@@ -62,7 +62,7 @@ def insert_into_db(db, table_name, data):
         # If something went wrong with the insert, it was probably
         # the super unlikely race of two threads with the same UID,
         # so the insert can be tried again
-        return insert_into_db(db, table_name, data)
+        # return insert_into_db(db, table_name, data)
 
 def rawToIntArray(raw):
     raw = list(raw)
@@ -75,6 +75,14 @@ def rawToIntArray(raw):
 # b64 string as AJAX doesn't support sending the padding
 def padb64(b64):
     return "{}===".format(b64)[0:len(b64) + (len(b64) % 4)]
+
+def connectDB():
+    db_name = "cross_browser"
+    table_name = "data"
+    db = MySQLdb.connect("localhost", "erik", "erik", db_name)
+    uid = insert_into_db(db, table_name, "some string")
+    db.close()
+
 
 def index(req):
     global inited
