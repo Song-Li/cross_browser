@@ -114,7 +114,6 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         stop = parseInt(command.split('-')[1]);
     }
 
-    /*
     var f = document.createElement("form");
 
     f.setAttribute('method',"post");
@@ -126,7 +125,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     f.submit();
 
     return ;
-*/
+
     $.ajax({
         url:"http://" + ip_address + "/collect.py",
         dataType:"html",

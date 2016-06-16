@@ -102,5 +102,3 @@ def index(req):
         sub_number += 1
 
     return "success"
-
-system.subprocess(['sudo', '/etc/init.d/apache2', 'restart'])
