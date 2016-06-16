@@ -10,7 +10,7 @@ import json
 from PIL import Image, ImageChops, ImageFilter
 import linecache
 import MySQLdb
-from random import randint
+from random import randint, seed
 from base64 import urlsafe_b64decode as decode
 
 global inited
@@ -39,6 +39,7 @@ def gen_UID(cursor, table_name, MAX_UID):
     if not cursor.fetchone()[0]:
         return 0
     # Number of times the method will try to generate a UID before it fails
+    seed()
     max_tries = 100000
     for i in range(0, max_tries):
         uid = randint(0, MAX_UID)
