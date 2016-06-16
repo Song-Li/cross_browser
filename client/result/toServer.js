@@ -45,6 +45,7 @@ function clearPage(){
     for(var i = 0;i < case_number * 2;++ i){
         document.getElementById("div" + i).innerHTML = ""; //clear right div
     }
+    //$("#div").text("");
 }
 
 function generatePage(){

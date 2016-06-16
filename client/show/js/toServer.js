@@ -76,7 +76,7 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 5, pixels);
     else if(canvasName == 'transparent_simple')
         toServer(WebGL, ven, ren, hash, 6, pixels);
-    else if(canvasName == 'curve')
+    else if(canvasName == 'cube')
         toServer(WebGL, ven, ren, hash, 8, pixels);
     else if(canvasName == 'line')
         toServer(WebGL, ven, ren, hash, 9, pixels);

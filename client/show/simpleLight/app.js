@@ -223,8 +223,6 @@ var runSimpleLight = function (vertexShaderText, fragmentShaderText, SusanImage,
 	//
 	// Main render loop
 	//
-	var identityMatrix = new Float32Array(16);
-	mat4.identity(identityMatrix);
     var angle = 0;
     var count = 10;
     var identityMatrix = new Float32Array(16);
