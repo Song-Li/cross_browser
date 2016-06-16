@@ -82,7 +82,7 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 9, pixels);
     else if(canvasName == 'transparent_susan') {
         toServer(WebGL, ven, ren, hash, 7, pixels);
-    } else {
+    } else if (canvasName.indexOf("vid_can_gl_") > 0) {
         if (sumRGB(pixels) < 1) {
             return 0;
         }

@@ -3,10 +3,11 @@
   then collects those pixels from the canvas
 */
 
-var videoStartId = 10;
 
-var VideoCollector =
-    function(webmVid, mp4Vid, id) {
+var VideoCollector = function(webmVid, mp4Vid, id) {
+  var videoStartId = 10;
+  var numImages = 10;
+
   this.startID = parseInt(videoStartId + 20 * id);
   this.ctxID = this.startID;
   this.glID = this.startID + 1;
@@ -76,7 +77,7 @@ var VideoCollector =
                         this.gl.LINEAR);
 
   var video = $('<video width="256" height="256"/>').appendTo($('body'));
-  // $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(video);
+  $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(video);
   $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(video);
   video.prop('loop', true);
   video.prop('style', 'display: none;');
@@ -90,7 +91,7 @@ var VideoCollector =
     var self = event.data.self;
     if (++self.level > 2) {
       if (self.level % 2 == 0) {
-        if (self.collected[0] < 9) {
+        if (self.collected[0] + 1 < numImages) {
           ++canvas_number;
           var status = getDataFromCanvas(self.ctx, self.ctxID);
           if (status) {
@@ -99,14 +100,14 @@ var VideoCollector =
           } else {
             --canvas_number;
           }
-        } else if (self.collected[0] == 9) {
+        } else if (self.collected[0] + 1 == numImages) {
           var status = getDataFromCanvas(self.ctx, self.ctxID);
           if (status) {
             ++self.collected[0];
           }
         }
       } else {
-        if (self.collected[1] < 9) {
+        if (self.collected[1] + 1 < numImages) {
           ++canvas_number;
           var status = getData(self.gl, self.glCanName, self.glID);
           if (status) {
@@ -115,7 +116,7 @@ var VideoCollector =
           } else {
             --canvas_number;
           }
-        } else if (self.collected[1] == 9) {
+        } else if (self.collected[1] + 1 == numImages) {
           var status = getData(self.gl, self.glCanName, self.glID);
           if (status) {
             ++self.collected[1];

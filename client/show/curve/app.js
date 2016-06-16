@@ -10,9 +10,7 @@ function getPoints(){
 
 var drawCurve = function() {
     var canvas = document.getElementById('curve');
-    var gl = canvas.getContext('webgl', {antialias: false});
-    if(!gl)
-        gl = canvas.getContext('experimental-webgl', {antialias: false});
+    var gl = getGL("#curve");
 
     /*======= Defining and storing the geometry ======*/
     var vertices = getPoints();

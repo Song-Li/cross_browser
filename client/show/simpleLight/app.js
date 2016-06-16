@@ -19,7 +19,7 @@ var drawSimpleLight = function () {
                                 if (imgErr) {
                                     alert('Fatal error getting Susan texture (see console)');
                                     console.error(imgErr);
-                                } else { 
+                                } else {
                                     runSimpleLight(vsText, fsText, img, modelObj, 'simple_light_susan');
                                 }
                             });
@@ -34,7 +34,7 @@ var drawSimpleLight = function () {
                                 if (imgErr) {
                                     alert('Fatal error getting Susan texture (see console)');
                                     console.error(imgErr);
-                                } else { 
+                                } else {
                                     runSimpleLight(vsText, fsText, img, modelObj, 'simple_light_simple');
                                 }
                             });
@@ -50,8 +50,7 @@ var runSimpleLight = function (vertexShaderText, fragmentShaderText, SusanImage,
     var WebGL;
     var gl;
     var canvas = document.getElementById(canvasName);
-    gl = canvas.getContext('webgl', {antialias: false});
-    //gl = canvas.getContext('webgl');
+    gl = getGL("#" + canvasName);
     WebGL = true;
 
     if (!gl) {
@@ -74,7 +73,7 @@ var runSimpleLight = function (vertexShaderText, fragmentShaderText, SusanImage,
 
 	//
 	// Create shaders
-	// 
+	//
 	var vertexShader = gl.createShader(gl.VERTEX_SHADER);
 	var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 

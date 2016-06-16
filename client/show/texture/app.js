@@ -19,7 +19,7 @@ var drawTexture = function () {
                                 if (imgErr) {
                                     alert('Fatal error getting Susan texture (see console)');
                                     console.error(imgErr);
-                                } else { 
+                                } else {
                                     runTexture(vsText, fsText, img, modelObj, 'texture_susan');
                                 }
                             });
@@ -34,7 +34,7 @@ var drawTexture = function () {
                                 if (imgErr) {
                                     alert('Fatal error getting Susan texture (see console)');
                                     console.error(imgErr);
-                                } else { 
+                                } else {
                                     runTexture(vsText, fsText, img, modelObj, 'texture_simple');
                                 }
                             });
@@ -50,7 +50,7 @@ var runTexture = function (vertexShaderText, fragmentShaderText, SusanImage, Sus
     var WebGL;
     var gl;
     var canvas = document.getElementById(canvasName);
-    gl = canvas.getContext('webgl', {antialias: false});
+    gl = getGL("#" + canvasName);
     WebGL = true;
 
     if (!gl) {
@@ -73,7 +73,7 @@ var runTexture = function (vertexShaderText, fragmentShaderText, SusanImage, Sus
 
 	//
 	// Create shaders
-	// 
+	//
 	var vertexShader = gl.createShader(gl.VERTEX_SHADER);
 	var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 

@@ -1,8 +1,6 @@
 var drawLine = function() {
     var canvas = document.getElementById('line');
-    var gl = canvas.getContext('webgl', {antialias: false});
-    if(!gl)
-        gl = canvas.getContext('experimental-webgl', {antialias: false});
+    var gl = getGL("#line");
 
     /*======= Defining and storing the geometry ======*/
     var vertices = [
@@ -11,7 +9,7 @@ var drawLine = function() {
         -0.3,-0.3,0,
         0.2,0.6,0,
         0.3,-0.3,0,
-        0.7,0.6,0 
+        0.7,0.6,0
             ]
 
             // Create an empty buffer object
