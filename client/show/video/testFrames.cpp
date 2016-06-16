@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <boost/math/distributions/students_t.hpp>
 
 struct imgInf {
   const int frame, browser, sortBy;
@@ -131,31 +132,28 @@ static double entropy(const cv::Mat_<cv::Vec3b> &img) {
 
 static double isallsame(const std::vector<cv::Mat> &a,
                         const std::vector<cv::Mat> &b, double &ave,
-                        double &stdev) {
+                        double &stdev, double &c) {
 
   double numFails = 0, count = 0;
   std::vector<double> norms;
-  for (auto &i : a) {
-    for (auto &ii : b) {
-      if (i.ptr<uchar>(0) == ii.ptr<uchar>(0))
-        continue;
-      const double norm = cv::norm(i, ii, cv::NORM_L2);
-      ++count;
-      if (norm != 0) {
-        ++numFails;
-        // diffImgs(i, ii);
-        cv::Mat diff;
-        cv::absdiff(i, ii, diff);
-        cv::Mat_<cv::Vec3b> _diff = diff;
-        const double ent = entropy(_diff);
-        norms.push_back(ent);
-      }
+  for (int i = 0; i < std::min(a.size(), b.size()); ++i) {
+    const double norm = cv::norm(a[i], b[i], cv::NORM_L2);
+    ++count;
+    if (norm != 0) {
+      ++numFails;
+      // diffImgs(i, b[i]);
+      cv::Mat diff;
+      cv::absdiff(a[i], b[i], diff);
+      cv::Mat_<cv::Vec3b> _diff = diff;
+      const double ent = entropy(_diff);
+      norms.push_back(ent);
     }
   }
+
   ave = 0;
   for (int i = 0; i < norms.size(); ++i)
     ave += norms[i];
-  ave /= norms.size();
+  ave /= norms.size() > 0 ? norms.size() : 1;
 
   stdev = 0;
   for (int i = 1; i < norms.size(); ++i)
@@ -163,6 +161,7 @@ static double isallsame(const std::vector<cv::Mat> &a,
 
   stdev /= norms.size() - 1;
   stdev = std::sqrt(stdev);
+  c = norms.size();
 
   return numFails / count * 100;
 }
@@ -176,39 +175,50 @@ static double hasMatch(const std::vector<cv::Mat> &$1,
   return minNorm;
 }
 
-static void tester(const std::map<imgInf, std::vector<cv::Mat>> &a,
+static double tester(const std::map<imgInf, std::vector<cv::Mat>> &a,
                    const std::map<imgInf, std::vector<cv::Mat>> &b, double &out,
-                   double &out2) {
-  double aveAve = 0, avestd = 0, count = 0;
+                   double &out2, double &out3) {
+  double ave = 0, stdev = 0;
+  double count = 0, diff = 0;
   for (auto &p : a) {
     for (auto &l : b) {
-      if (p.first > l.first)
-        continue;
-      double ave = 0, stdev = 0;
-      const double diff = isallsame(p.second, l.second, ave, stdev);
+      diff = isallsame(p.second, l.second, ave, stdev, count);
       std::cout << "\t" << p.first << " vs. " << l.first
                 << " failure rate: " << diff << "%"
                 << " entropy (ave, stdev): (" << ave << ", " << stdev << ")"
                 << std::endl;
-      aveAve += ave;
-      avestd += stdev;
-      ++count;
     }
   }
-  aveAve /= count;
-  avestd /= count;
-  out += aveAve;
-  out2 += avestd;
+  out = ave;
+  out2 = stdev;
+  out3 = count;
+  return diff;
+}
+
+static void checkIfSame(const double * sig, const double * o) {
+  const double v = sig[2] + o[2] - 2;
+  double sp = sqrt(((sig[2] - 1) * sig[1] * sig[1] + (o[2] - 1) * o[1] * o[1]) / v);
+  double t_stat = (sig[0] - o[0]) / (sp * sqrt(1.0 / sig[2] + 1.0 / o[2]));
+  boost::math::students_t dist(v);
+  double q = boost::math::cdf(boost::math::complement(dist, std::fabs(t_stat)));
+  std::cout << "\t" << q;
+  if (q < 0.025)
+    std::cout << "\tDIFFERENT" << std::endl;
+  else
+    std::cout << "\tSAME" << std::endl;
 }
 
 int main(int argc, char **argv) {
-  std::map<std::string, std::map<imgInf, std::vector<cv::Mat>>> ipToImages[2];
+  std::string baseKey = "128.180.137.2";
+  std::map<std::string, std::map<imgInf, std::vector<cv::Mat>>> uidToImages[2];
   boost::filesystem::path folder(argv[1]);
 
   if (boost::filesystem::exists(folder) &&
       boost::filesystem::is_directory(folder)) {
     for (auto &inner : boost::filesystem::directory_iterator(folder)) {
-      const std::string ip = inner.path().filename().string();
+      const std::string uid = inner.path().filename().string();
+      if (baseKey.length() == 0)
+        baseKey = uid;
       std::map<imgInf, std::vector<cv::Mat>> frameToImages[2];
       for (auto &file : boost::filesystem::directory_iterator(inner)) {
         const std::string name = file.path().string();
@@ -217,68 +227,33 @@ int main(int argc, char **argv) {
         const int frame = std::stoi(name.substr(
             name.find("_") + 1, name.find(".") - name.find("_") - 1));
         const int browser = std::stoi(name.substr(name.find("-") + 1, 1));
-        const int gl = frame % 2 == 0 ? 0 : 1;
+        const int gl = frame % 2 == 0 ? 0 : 0;
         // if (browser != 0 || gl != 1) continue;
         if (browser == 1) continue;
-        constexpr int sortBy = imgInf::brow;
+        constexpr int sortBy = imgInf::none;
         auto it = frameToImages[gl].find({frame, browser, sortBy});
         if (it == frameToImages[gl].cend())
           frameToImages[gl].emplace(imgInf(frame, browser, sortBy), img);
         else
           it->second.insert(it->second.end(), img.begin(), img.end());
       }
-      ipToImages[0].emplace(ip, frameToImages[0]);
-      ipToImages[1].emplace(ip, frameToImages[1]);
+      uidToImages[0].emplace(uid, frameToImages[0]);
+      uidToImages[1].emplace(uid, frameToImages[1]);
     }
-    double sig[] = {0, 0, 0}, noise[] = {0, 0, 0};
+    double sig[] = {0, 0, 0};
+    auto &base = *uidToImages[0].find(baseKey);
+    tester(base.second, base.second, sig[0], sig[1], sig[2]);
     std::cout << "CTX test: " << std::endl;
-    for (auto &a : ipToImages[0]) {
-      for (auto &b : ipToImages[0]) {
-        /*if (a.first == b.first)
-          continue;*/
-        std::cout << a.first << " vs. " << b.first << std::endl;
-        if (a.first == b.first) {
-          tester(a.second, b.second, noise[0], noise[1]);
-          ++noise[2];
-        } else {
-          tester(a.second, b.second, sig[0], sig[1]);
-          ++sig[2];
-        }
-      }
+    for (auto &a : uidToImages[0]) {
+      std::cout << a.first << " vs. " << base.first << std::endl;
+      double out [] = {0, 0, 0};
+      double diff = tester(base.second, a.second, out[0], out[1], out[2]);
+      /*if (true)
+        checkIfSame(sig, out);
+      else
+        std::cout << "\tSAME" << std::endl;*/
     }
 
-    std::cout << std::endl
-              << std::endl
-              << "Signal: (" << sig[0] / sig[2] << ", " << sig[1] / sig[2] << ")"
-              << std::endl
-              << "Noise: (" << noise[0] / noise[2] << ", " << noise[1] / noise[2]
-              << ")" << std::endl
-              << std::endl;
-
-    memset(sig, 0, 3 * sizeof(double));
-    memset(noise, 0, 3 * sizeof(double));
-    std::cout << "GL test: " << std::endl;
-    for (auto &a : ipToImages[1]) {
-      for (auto &b : ipToImages[1]) {
-        /*if (a.first == b.first)
-          continue;*/
-        std::cout << a.first << " vs. " << b.first << std::endl;
-        if (a.first == b.first) {
-          tester(a.second, b.second, noise[0], noise[1]);
-          ++noise[2];
-        } else {
-          tester(a.second, b.second, sig[0], sig[1]);
-          ++sig[2];
-        }
-      }
-    }
-    std::cout << std::endl
-              << std::endl
-              << "Signal: (" << sig[0] / sig[2] << ", " << sig[1] / sig[2] << ")"
-              << std::endl
-              << "Noise: (" << noise[0] / noise[2] << ", " << noise[1] / noise[2]
-              << ")" << std::endl
-              << std::endl;
   } else {
     cv::Mat ground, test;
     double aveNorm = 0;
