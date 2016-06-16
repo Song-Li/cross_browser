@@ -1,5 +1,5 @@
 var ven, ren;
-var canvas_number = 8;
+var canvas_number = 10;
 var urls = [];
 var finished = 0;
 var ip_address = "128.180.123.19";

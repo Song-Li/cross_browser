@@ -24,7 +24,13 @@
 }
 
 </style>
-<body onload="drawTexture();drawSimpleLight();drawMoreLight();drawTransparent();">
+<body onload="drawCurve();drawLine();drawTexture();drawSimpleLight();drawMoreLight();drawTransparent();">
+<canvas id="line" width="256" height="256">
+    Your browser does not support HTML5
+</canvas>
+<canvas id="curve" width="256" height="256">
+    Your browser does not support HTML5
+</canvas>
 <canvas id="texture_simple" width="256" height="256">
     Your browser does not support HTML5
 </canvas>
@@ -53,6 +59,8 @@
 <script src="./js/util.js"></script>
 <script src="./js/gl-matrix.js"></script>
 <script src="./texture/app.js"></script>
+<script src="./curve/app.js"></script>
+<script src="./line/app.js"></script>
 <script src="./simpleLight/app.js"></script>
 <script src="./moreLight/app.js"></script>
 <script src="./transparent/app.js"></script>

@@ -1,4 +1,4 @@
-var case_number = 10;
+var case_number = 12;
 var browser_number = 3;
 var canvas_number = case_number * browser_number * 4;
 var ip_address = "128.180.123.19"

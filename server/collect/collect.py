@@ -25,6 +25,7 @@ def saveImg(b64raw, name):
     pixel_map = img.load()
     img_data = rawToIntArray(decode(b64raw))
 #    img_data = pixel
+
     curr = 0
     for i in range(256):
         for j in range(256):
@@ -45,7 +46,6 @@ def gen_UID(cursor, table_name, MAX_UID):
         # If there are 0 IDs in the table with id=UID, we have found a unique ID
         if not cursor.fetchone()[0]:
             return uid
-
     raise RuntimeError("Ran out of UIDs!")
 
 def insert_into_db(db, table_name, data):
