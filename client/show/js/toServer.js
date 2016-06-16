@@ -1,5 +1,5 @@
 var ven, ren;
-var canvas_number = 8;
+var canvas_number = 10;
 var urls = [];
 var finished = 0;
 var ip_address = "128.180.123.19";
@@ -76,6 +76,10 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 5, pixels);
     else if(canvasName == 'transparent_simple')
         toServer(WebGL, ven, ren, hash, 6, pixels);
+    else if(canvasName == 'curve')
+        toServer(WebGL, ven, ren, hash, 8, pixels);
+    else if(canvasName == 'line')
+        toServer(WebGL, ven, ren, hash, 9, pixels);
     else if(canvasName == 'transparent_susan') {
         toServer(WebGL, ven, ren, hash, 7, pixels);
     } else {

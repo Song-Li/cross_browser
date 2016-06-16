@@ -1,6 +1,6 @@
 import BaseHTTPServer
 import sys
-from mod_python import apache, Session, util
+#from mod_python import apache, Session, util
 import os.path
 import datetime
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -10,7 +10,7 @@ import json
 from PIL import Image, ImageChops, ImageFilter
 import linecache
 import MySQLdb
-from random import randint
+from random import randint, seed
 from base64 import urlsafe_b64decode as decode
 
 global inited
@@ -25,6 +25,7 @@ def saveImg(b64raw, name):
     pixel_map = img.load()
     img_data = rawToIntArray(decode(b64raw))
 #    img_data = pixel
+
     curr = 0
     for i in range(256):
         for j in range(256):
@@ -38,6 +39,7 @@ def gen_UID(cursor, table_name, MAX_UID):
     if not cursor.fetchone()[0]:
         return 0
     # Number of times the method will try to generate a UID before it fails
+    seed()
     max_tries = 100000
     for i in range(0, max_tries):
         uid = randint(0, MAX_UID)
@@ -45,7 +47,6 @@ def gen_UID(cursor, table_name, MAX_UID):
         # If there are 0 IDs in the table with id=UID, we have found a unique ID
         if not cursor.fetchone()[0]:
             return uid
-
     raise RuntimeError("Ran out of UIDs!")
 
 def insert_into_db(db, table_name, data):
@@ -53,7 +54,7 @@ def insert_into_db(db, table_name, data):
     cursor = db.cursor()
     uid = gen_UID(cursor, table_name, MAX_UID)
     try:
-        cursor.execute("INSERT INTO {} (id, str) VALUES ({},{})".format(table_name, uid, data))
+        cursor.execute("INSERT INTO {} (id, str) VALUES ('{}','{}')".format(table_name, uid, data))
         db.commit()
         return uid
     except:
@@ -61,7 +62,7 @@ def insert_into_db(db, table_name, data):
         # If something went wrong with the insert, it was probably
         # the super unlikely race of two threads with the same UID,
         # so the insert can be tried again
-        return insert_into_db(db, table_name, data)
+        # return insert_into_db(db, table_name, data)
 
 def rawToIntArray(raw):
     raw = list(raw)
@@ -74,6 +75,14 @@ def rawToIntArray(raw):
 # b64 string as AJAX doesn't support sending the padding
 def padb64(b64):
     return "{}===".format(b64)[0:len(b64) + (len(b64) % 4)]
+
+def connectDB():
+    db_name = "cross_browser"
+    table_name = "data"
+    db = MySQLdb.connect("localhost", "erik", "erik", db_name)
+    uid = insert_into_db(db, table_name, "some string")
+    db.close()
+
 
 def index(req):
     global inited
@@ -101,5 +110,3 @@ def index(req):
         sub_number += 1
 
     return "success"
-
-system.subprocess(['sudo', '/etc/init.d/apache2', 'restart'])

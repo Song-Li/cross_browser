@@ -13,7 +13,7 @@ import MySQLdb
 db_name = "cross_browser"
 table_name = "data"
 
-case_number = 10
+case_number = 12
 standard_pics = []
 ip2line = {}
 open_root = "/home/site/data/"
@@ -105,7 +105,7 @@ def generateLineNumber():
         elif(item[5].find('Chrome') != -1 or item[2].find('Google') != -1):
             browser_name = 'chrome'
         else:
-            browser_name = 'others'ul.y
+            browser_name = 'others'
 
 
 

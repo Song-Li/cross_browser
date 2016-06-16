@@ -1,4 +1,4 @@
-var case_number = 10;
+var case_number = 12;
 var browser_number = 3;
 var canvas_number = case_number * browser_number * 4;
 var ip_address = "128.180.123.19"
@@ -55,7 +55,7 @@ function generatePage(){
     /*
     var f = document.createElement("form");
     f.setAttribute('method',"post");
-    f.setAttribute('action',"http://52.90.197.136/result.py");
+    f.setAttribute('action',"http://" + ip_address + "/result.py");
 
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
@@ -65,7 +65,7 @@ function generatePage(){
 
     f.submit();
     return ;
-    */
+*/
     $.ajax({
         url:"http://" + ip_address + "/result.py",
         dataType:"text",
