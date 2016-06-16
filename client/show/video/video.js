@@ -3,9 +3,11 @@
   then collects those pixels from the canvas
 */
 
+var videoStartId = 10;
+
 var VideoCollector =
     function(webmVid, mp4Vid, id) {
-  this.startID = parseInt(8 + 20 * id);
+  this.startID = parseInt(videoStartId + 20 * id);
   this.ctxID = this.startID;
   this.glID = this.startID + 1;
   canvas_number += 2;
