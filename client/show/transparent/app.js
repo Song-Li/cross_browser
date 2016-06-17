@@ -242,7 +242,7 @@ var runTransparent = function (vertexShaderText, fragmentShaderText, SusanImage,
     var loop = function () {
         angle = count++ / 20;
         mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
-        mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
+        mat4.rotate(xRotationMatrix, identityMatrix, -1.5, [1, 0, 0]);
         mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
         gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 

@@ -76,13 +76,13 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 5, pixels);
     else if(canvasName == 'transparent_simple')
         toServer(WebGL, ven, ren, hash, 6, pixels);
-    else if(canvasName == 'curve')
+    else if(canvasName == 'transparent_susan')
+        toServer(WebGL, ven, ren, hash, 7, pixels);
+    else if(canvasName == 'cube')
         toServer(WebGL, ven, ren, hash, 8, pixels);
     else if(canvasName == 'line')
         toServer(WebGL, ven, ren, hash, 9, pixels);
-    else if(canvasName == 'transparent_susan') {
-        toServer(WebGL, ven, ren, hash, 7, pixels);
-    } else if (canvasName.indexOf("vid_can_gl_") > 0) {
+    else if (canvasName.indexOf("vid_can_gl_") > 0) {
         if (sumRGB(pixels) < 1) {
             return 0;
         }
