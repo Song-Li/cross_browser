@@ -1,5 +1,5 @@
 var ven, ren;
-var canvas_number = 10;
+var canvas_number = 11;
 var urls = [];
 var finished = 0;
 var ip_address = "128.180.123.19";
@@ -34,7 +34,6 @@ function getDataFromCanvas(ctx, id){
 
     if (sumRGB(pixels) < 1.0)
         return 0;
-
     toServer(false, "None", "None", hashV, id, pixels);
     return 1;
 }
@@ -82,7 +81,7 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 8, pixels);
     else if(canvasName == 'line')
         toServer(WebGL, ven, ren, hash, 9, pixels);
-    else if (canvasName.indexOf("vid_can_gl_") > 0) {
+    else if (canvasName.indexOf("vid_can_gl_") >= 0) {
         if (sumRGB(pixels) < 1) {
             return 0;
         }
@@ -105,7 +104,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     }
     var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
     var url = document.URL;
-    var hasCommand = url.indexOf('?') > 0;
+    var hasCommand = url.indexOf('?') >= 0;
     var id, stop, base;
     if (hasCommand) {
         base = url.split('?')[0];

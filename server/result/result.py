@@ -13,7 +13,7 @@ import MySQLdb
 db_name = "cross_browser"
 table_name = "data"
 
-case_number = 12
+case_number = 13
 standard_pics = []
 ip2line = {}
 open_root = "/home/site/data/"

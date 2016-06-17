@@ -5,10 +5,10 @@
 
 
 var VideoCollector = function(webmVid, mp4Vid, id) {
-  var videoStartId = 10;
-  var numImages = 10;
+  var videoStartId = 11;
+  var numImages = 5;
 
-  this.startID = parseInt(videoStartId + 20 * id);
+  this.startID = parseInt(videoStartId + 2 * numImages * id);
   this.ctxID = this.startID;
   this.glID = this.startID + 1;
   canvas_number += 2;
@@ -124,7 +124,7 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
         }
       }
     }
-    $("#" + self.counterName).text(self.level);
+    // $("#" + self.counterName).text(self.level);
   });
   video.load();
   video[0].play();
