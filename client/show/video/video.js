@@ -3,11 +3,12 @@
   then collects those pixels from the canvas
 */
 
-var videoStartId = 10;
 
-var VideoCollector =
-    function(webmVid, mp4Vid, id) {
-  this.startID = parseInt(videoStartId + 20 * id);
+var VideoCollector = function(webmVid, mp4Vid, id) {
+  var videoStartId = 11;
+  var numImages = 5;
+
+  this.startID = parseInt(videoStartId + 2 * numImages * id);
   this.ctxID = this.startID;
   this.glID = this.startID + 1;
   canvas_number += 2;
@@ -77,7 +78,7 @@ var VideoCollector =
 
   var video = $('<video width="256" height="256"/>').appendTo($('body'));
   $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(video);
-  // $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(video);
+  $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(video);
   video.prop('loop', true);
   video.prop('style', 'display: none;');
   video.on('play', {self : this}, function(event) {
@@ -90,7 +91,7 @@ var VideoCollector =
     var self = event.data.self;
     if (++self.level > 2) {
       if (self.level % 2 == 0) {
-        if (self.collected[0] < 9) {
+        if (self.collected[0] + 1 < numImages) {
           ++canvas_number;
           var status = getDataFromCanvas(self.ctx, self.ctxID);
           if (status) {
@@ -99,14 +100,14 @@ var VideoCollector =
           } else {
             --canvas_number;
           }
-        } else if (self.collected[0] == 9) {
+        } else if (self.collected[0] + 1 == numImages) {
           var status = getDataFromCanvas(self.ctx, self.ctxID);
           if (status) {
             ++self.collected[0];
           }
         }
       } else {
-        if (self.collected[1] < 9) {
+        if (self.collected[1] + 1 < numImages) {
           ++canvas_number;
           var status = getData(self.gl, self.glCanName, self.glID);
           if (status) {
@@ -115,7 +116,7 @@ var VideoCollector =
           } else {
             --canvas_number;
           }
-        } else if (self.collected[1] == 9) {
+        } else if (self.collected[1] + 1 == numImages) {
           var status = getData(self.gl, self.glCanName, self.glID);
           if (status) {
             ++self.collected[1];
@@ -123,7 +124,7 @@ var VideoCollector =
         }
       }
     }
-    $("#" + self.counterName).text(self.level);
+    // $("#" + self.counterName).text(self.level);
   });
   video.load();
   video[0].play();
@@ -152,5 +153,5 @@ var VideoCollector =
 // Document on ready jquery shortcut
 $(function() {
   var vidCollector =
-      new VideoCollector("./video/rainbow.webm", "./video/test.mp4", 0);
+      new VideoCollector("./video/rainbow.webm", "./video/rainbow.mp4", 0);
 });

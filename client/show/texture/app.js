@@ -50,7 +50,7 @@ var runTexture = function (vertexShaderText, fragmentShaderText, SusanImage, Sus
     var WebGL;
     var gl;
     var canvas = document.getElementById(canvasName);
-    gl = canvas.getContext('webgl', {antialias: false});
+    gl = getGL("#" + canvasName);
     WebGL = true;
 
     if (!gl) {

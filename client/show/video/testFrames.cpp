@@ -5,6 +5,7 @@
 */
 
 #include <boost/filesystem.hpp>
+#include <eigen3/Eigen/Eigen>
 #include <iostream>
 #include <map>
 #include <opencv2/highgui.hpp>
@@ -13,32 +14,39 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <boost/math/distributions/students_t.hpp>
 
 struct imgInf {
   const int frame, browser, sortBy;
-  static constexpr int f = 1;
-  static constexpr int b = 2;
-  static constexpr int n = 10;
+  static constexpr int fram = 1;
+  static constexpr int brow = 2;
+  static constexpr int none = 10;
   imgInf(int f, int b, int s) : frame{f}, browser{b}, sortBy{s} {};
   bool operator==(const imgInf &other) const {
-    if (sortBy == (f | b))
+    if (sortBy == (fram | brow))
       return frame == other.frame && browser == other.browser;
-    else if (sortBy == f)
+    else if (sortBy == fram)
       return frame == other.frame;
-    else if (sortBy == b)
+    else if (sortBy == brow)
       return browser == other.browser;
     else
       return true;
   }
   bool operator<(const imgInf &o) const {
-    if (sortBy == (f | b))
+    if (sortBy == (fram | brow))
       return browser < o.browser || (browser == o.browser && frame < o.frame);
-    else if (sortBy == f)
+    else if (sortBy == fram)
       return frame < o.frame;
-    else if (sortBy == b)
+    else if (sortBy == brow)
       return browser < o.browser;
     else
       return false;
+  }
+  bool operator>=(const imgInf &o) const {
+    return !operator<(o);
+  }
+  bool operator>(const imgInf &o) const {
+    return !(operator<(o) || operator==(o));
   }
 };
 
@@ -59,29 +67,103 @@ template <> struct hash<imgInf> {
 };
 } // std
 
-static int isallsame(const std::vector<cv::Mat> &imgs, double &ave,
-                     double &stdev) {
-  cv::Mat $1 = imgs[0];
-  int numFails = 0;
-  double *norms = new double[imgs.size()];
-  for (int i = 1; i < imgs.size(); ++i) {
-    norms[i] = cv::norm($1, imgs[i], cv::NORM_L2);
-    if (norms[i] != 0) {
-      ++numFails;
+static void diffImgs(const cv::Mat &imgA, const cv::Mat &imgB) {
+
+  cv::Mat diff;
+  cv::absdiff(imgA, imgB, diff);
+  cv::Mat out(imgA.size(), imgA.type());
+  imgA.copyTo(out);
+  for (int j = 0; j < diff.rows; ++j) {
+    uchar *data = diff.ptr<uchar>(j);
+    uchar *dst = out.ptr<uchar>(j);
+    for (int i = 0; i < diff.cols * diff.channels(); ++i) {
+      data[i] = cv::saturate_cast<uchar>(100 * data[i]);
+      if (data[i]) {
+        dst[3 * (i / 3) + 0] = 0;
+        dst[3 * (i / 3) + 1] = 0;
+        dst[3 * (i / 3) + 2] = 255;
+      }
     }
   }
-  for (int i = 1; i < imgs.size(); ++i)
-    ave += norms[i];
-  ave /= imgs.size() - 1;
-
-  for (int i = 1; i < imgs.size(); ++i) {
-    stdev += (ave - norms[i]) * (ave - norms[i]);
+  if (true) {
+    cvNamedWindow("Diff", CV_WINDOW_NORMAL);
+    cv::imshow("Diff", diff);
+    cvNamedWindow("Out", CV_WINDOW_NORMAL);
+    cv::imshow("Out", out);
+    cv::waitKey(0);
   }
 
-  stdev /= imgs.size() - 2;
+  /*if (false) {
+    const std::string diffName = "results/diff_" + std::to_string(frame) +
+                                 "_" + std::to_string(count) + ".png";
+    cv::imwrite(diffName, diff);
+
+    const std::string markedName = "results/marked_" + std::to_string(frame) +
+                                   "_" + std::to_string(count) + ".png";
+    cv::imwrite(markedName, out);
+    ++count;
+  }*/
+}
+
+static double entropy(const cv::Mat_<cv::Vec3b> &img) {
+  Eigen::Vector3d sum = Eigen::Vector3d::Zero();
+  for (int j = 0; j < img.rows; ++j) {
+    for (int i = 0; i < img.cols; ++i) {
+      for (int c = 0; c < img.channels(); ++c) {
+        sum[c] += img(j, i)[c];
+      }
+    }
+  }
+
+  Eigen::Vector3d entropy = Eigen::Vector3d::Zero();
+  for (int j = 0; j < img.rows; ++j) {
+    for (int i = 0; i < img.cols; ++i) {
+      for (int c = 0; c < img.channels(); ++c) {
+        const double frac = img(j, i)[c] / sum[c];
+        if (frac > 0) {
+          entropy[c] -= frac * std::log(frac);
+        }
+      }
+    }
+  }
+
+  return entropy.sum() / 3;
+}
+
+static double isallsame(const std::vector<cv::Mat> &a,
+                        const std::vector<cv::Mat> &b, double &ave,
+                        double &stdev, double &c) {
+
+  double numFails = 0, count = 0;
+  std::vector<double> norms;
+  for (int i = 0; i < std::min(a.size(), b.size()); ++i) {
+    const double norm = cv::norm(a[i], b[i], cv::NORM_L2);
+    ++count;
+    if (norm != 0) {
+      ++numFails;
+      // diffImgs(i, b[i]);
+      cv::Mat diff;
+      cv::absdiff(a[i], b[i], diff);
+      cv::Mat_<cv::Vec3b> _diff = diff;
+      const double ent = entropy(_diff);
+      norms.push_back(ent);
+    }
+  }
+
+  ave = 0;
+  for (int i = 0; i < norms.size(); ++i)
+    ave += norms[i];
+  ave /= norms.size() > 0 ? norms.size() : 1;
+
+  stdev = 0;
+  for (int i = 1; i < norms.size(); ++i)
+    stdev += (ave - norms[i]) * (ave - norms[i]);
+
+  stdev /= norms.size() - 1;
   stdev = std::sqrt(stdev);
-  delete[] norms;
-  return numFails;
+  c = norms.size();
+
+  return numFails / count * 100;
 }
 
 static double hasMatch(const std::vector<cv::Mat> &$1,
@@ -93,116 +175,85 @@ static double hasMatch(const std::vector<cv::Mat> &$1,
   return minNorm;
 }
 
-static void diffAll(const std::vector<cv::Mat> &imgs, int frame) {
-  int count = 0;
-  for (int i = 1; i < imgs.size(); ++i) {
-    const double norm = cv::norm(imgs[0], imgs[i], cv::NORM_L2);
-    if (norm == 0)
-      continue;
-    cv::Mat diff;
-    cv::absdiff(imgs[0], imgs[i], diff);
-    cv::Mat out(imgs[0].size(), imgs[0].type());
-    imgs[0].copyTo(out);
-    for (int j = 0; j < diff.rows; ++j) {
-      uchar *data = diff.ptr<uchar>(j);
-      uchar *dst = out.ptr<uchar>(j);
-      for (int i = 0; i < diff.cols * diff.channels(); ++i) {
-        data[i] = cv::saturate_cast<uchar>(100 * data[i]);
-        if (data[i]) {
-          dst[3 * (i / 3) + 0] = 0;
-          dst[3 * (i / 3) + 1] = 0;
-          dst[3 * (i / 3) + 2] = 255;
-        }
-      }
-    }
-    if (false) {
-      std::cout << norm << std::endl;
-      cvNamedWindow("Diff", CV_WINDOW_NORMAL);
-      cv::imshow("Diff", diff);
-      cvNamedWindow("Out", CV_WINDOW_NORMAL);
-      cv::imshow("Out", out);
-      cv::waitKey(0);
-    }
-
-    if (true) {
-      const std::string diffName = "results/diff_" + std::to_string(frame) +
-                                   "_" + std::to_string(count) + ".png";
-      cv::imwrite(diffName, diff);
-
-      const std::string markedName = "results/marked_" + std::to_string(frame) +
-                                     "_" + std::to_string(count) + ".png";
-      cv::imwrite(markedName, out);
-      ++count;
+static double tester(const std::map<imgInf, std::vector<cv::Mat>> &a,
+                   const std::map<imgInf, std::vector<cv::Mat>> &b, double &out,
+                   double &out2, double &out3) {
+  double ave = 0, stdev = 0;
+  double count = 0, diff = 0;
+  for (auto &p : a) {
+    for (auto &l : b) {
+      diff = isallsame(p.second, l.second, ave, stdev, count);
+      std::cout << "\t" << p.first << " vs. " << l.first
+                << " failure rate: " << diff << "%"
+                << " entropy (ave, stdev): (" << ave << ", " << stdev << ")"
+                << std::endl;
     }
   }
+  out = ave;
+  out2 = stdev;
+  out3 = count;
+  return diff;
+}
+
+static void checkIfSame(const double * sig, const double * o) {
+  const double v = sig[2] + o[2] - 2;
+  double sp = sqrt(((sig[2] - 1) * sig[1] * sig[1] + (o[2] - 1) * o[1] * o[1]) / v);
+  double t_stat = (sig[0] - o[0]) / (sp * sqrt(1.0 / sig[2] + 1.0 / o[2]));
+  boost::math::students_t dist(v);
+  double q = boost::math::cdf(boost::math::complement(dist, std::fabs(t_stat)));
+  std::cout << "\t" << q;
+  if (q < 0.025)
+    std::cout << "\tDIFFERENT" << std::endl;
+  else
+    std::cout << "\tSAME" << std::endl;
 }
 
 int main(int argc, char **argv) {
-  std::map<imgInf, std::vector<cv::Mat>> frameToImages[2];
+  std::string baseKey = "128.180.137.2";
+  std::map<std::string, std::map<imgInf, std::vector<cv::Mat>>> uidToImages[2];
   boost::filesystem::path folder(argv[1]);
-  int numDuds = 0;
+
   if (boost::filesystem::exists(folder) &&
       boost::filesystem::is_directory(folder)) {
-    for (auto &file : boost::filesystem::directory_iterator(folder)) {
-      const std::string name = file.path().string();
-      std::vector<cv::Mat> img(1);
-      img[0] = cv::imread(name);
-      const int frame = std::stoi(
-          name.substr(name.find("_") + 1, name.find(".") - name.find("_") - 1));
-      const int browser = std::stoi(name.substr(name.find("-") + 1, 1));
-      const int gl = frame % 2 == 0 ? 0 : 1;
-      // if (browser != 0 || gl != 1) continue;
-      auto it = frameToImages[gl].find({frame, browser, imgInf::f | imgInf::b});
-      if (it == frameToImages[gl].cend())
-        frameToImages[gl].emplace(imgInf(frame, browser, imgInf::f | imgInf::b), img);
-      else
-        it->second.insert(it->second.end(), img.begin(), img.end());
-    }
-    std::cout << "Number of dud frames: " << numDuds << std::endl;
-    for (auto &i : frameToImages[1]) {
-      if (i.first.browser != 0)
-        continue;
-      std::cout << i.first << std::endl;
-      diffAll(i.second, i.first.frame);
-    }
-
-    double totalMatches = 0, numImgs = 0;
-    for (auto &l : frameToImages[0]) {
-      for (auto &p : frameToImages[0]) {
-        totalMatches += hasMatch(l.second, p.second) == 0 ? 1 : 0;
-        ++numImgs;
+    for (auto &inner : boost::filesystem::directory_iterator(folder)) {
+      const std::string uid = inner.path().filename().string();
+      if (baseKey.length() == 0)
+        baseKey = uid;
+      std::map<imgInf, std::vector<cv::Mat>> frameToImages[2];
+      for (auto &file : boost::filesystem::directory_iterator(inner)) {
+        const std::string name = file.path().string();
+        std::vector<cv::Mat> img(1);
+        img[0] = cv::imread(name);
+        const int frame = std::stoi(name.substr(
+            name.find("_") + 1, name.find(".") - name.find("_") - 1));
+        const int browser = std::stoi(name.substr(name.find("-") + 1, 1));
+        const int gl = frame % 2 == 0 ? 0 : 0;
+        // if (browser != 0 || gl != 1) continue;
+        if (browser == 1) continue;
+        constexpr int sortBy = imgInf::none;
+        auto it = frameToImages[gl].find({frame, browser, sortBy});
+        if (it == frameToImages[gl].cend())
+          frameToImages[gl].emplace(imgInf(frame, browser, sortBy), img);
+        else
+          it->second.insert(it->second.end(), img.begin(), img.end());
       }
+      uidToImages[0].emplace(uid, frameToImages[0]);
+      uidToImages[1].emplace(uid, frameToImages[1]);
     }
-    std::cout << "CTX match rate: " << totalMatches / numImgs << std::endl;
-
-    totalMatches = 0, numImgs = 0;
-    for (auto &l : frameToImages[1]) {
-      for (auto &p : frameToImages[1]) {
-        totalMatches += hasMatch(l.second, p.second) == 0 ? 1 : 0;
-        ++numImgs;
-      }
-    }
-    std::cout << "GL match rate: " << totalMatches / numImgs << std::endl;
-
+    double sig[] = {0, 0, 0};
+    auto &base = *uidToImages[0].find(baseKey);
+    tester(base.second, base.second, sig[0], sig[1], sig[2]);
     std::cout << "CTX test: " << std::endl;
-    for (auto &p : frameToImages[0]) {
-      double ave = 0, stdev = 0;
-      const double diff = isallsame(p.second, ave, stdev);
-      std::cout << "\t" << p.first
-                << " failure rate: " << diff / p.second.size() * 100 << "%"
-                << " L2 norm (ave, stdev): (" << ave << ", " << stdev << ")"
-                << std::endl;
+    for (auto &a : uidToImages[0]) {
+      std::cout << a.first << " vs. " << base.first << std::endl;
+      double out [] = {0, 0, 0};
+      double diff = tester(base.second, a.second, out[0], out[1], out[2]);
+      /*if (true)
+        checkIfSame(sig, out);
+      else
+        std::cout << "\tSAME" << std::endl;*/
     }
 
-    std::cout << "GL test: " << std::endl;
-    for (auto &p : frameToImages[1]) {
-      double ave = 0, stdev = 0;
-      const double diff = isallsame(p.second, ave, stdev);
-      std::cout << "\t" << p.first
-                << " failure rate: " << diff / p.second.size() * 100 << "%"
-                << " L2 norm (ave, stdev): (" << ave << ", " << stdev << ")"
-                << std::endl;
-    }
   } else {
     cv::Mat ground, test;
     double aveNorm = 0;

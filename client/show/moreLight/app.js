@@ -19,7 +19,7 @@ var drawMoreLight = function () {
                                 if (imgErr) {
                                     alert('Fatal error getting Susan texture (see console)');
                                     console.error(imgErr);
-                                } else { 
+                                } else {
                                     runMoreLight(vsText, fsText, img, modelObj, 'more_light_susan');
                                 }
                             });
@@ -34,7 +34,7 @@ var drawMoreLight = function () {
                                 if (imgErr) {
                                     alert('Fatal error getting Susan texture (see console)');
                                     console.error(imgErr);
-                                } else { 
+                                } else {
                                     runMoreLight(vsText, fsText, img, modelObj, 'more_light_simple');
                                 }
                             });
@@ -48,10 +48,8 @@ var drawMoreLight = function () {
 
 var runMoreLight = function (vertexShaderText, fragmentShaderText, SusanImage, SusanModel, canvasName) {
     var WebGL;
-    var gl;
     var canvas = document.getElementById(canvasName);
-    gl = canvas.getContext('webgl', {antialias: false});
-    //gl = canvas.getContext('webgl');
+    var gl = getGL("#" + canvasName);
     WebGL = true;
 
     if (!gl) {
@@ -74,7 +72,7 @@ var runMoreLight = function (vertexShaderText, fragmentShaderText, SusanImage, S
 
 	//
 	// Create shaders
-	// 
+	//
 	var vertexShader = gl.createShader(gl.VERTEX_SHADER);
 	var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 
