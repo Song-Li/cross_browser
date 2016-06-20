@@ -1,6 +1,8 @@
 $(function() {
     var game = new Phaser.Game(256, 256, Phaser.WEBGL, 'phaser',
                                {preload : preload, create : create});
+    game.antialias = false;
+    game.preserveDrawingBuffer = true;
 
     var startY = [
       32, 38, 10, 66, 36, 70, 7,  71, 15, 59, 68, 71, 55, 11, 53, 81, 55,
@@ -14,8 +16,6 @@ $(function() {
       111, 90,  113, 176, 241, 130, 69,  118, 19,  236, 169
     ];
     function preload() {
-        game.antialias = false;
-        game.preserveDrawingBuffer = true;
         game.load.image('ball', './physics/pangball.png');
         var level = 0;
         var state = game.state;
