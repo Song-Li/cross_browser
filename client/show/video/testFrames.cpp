@@ -175,6 +175,17 @@ static double hasMatch(const std::vector<cv::Mat> &$1,
   return minNorm;
 }
 
+static bool diffAll(const std::vector<cv::Mat> &A,
+                    const std::vector<cv::Mat> &B) {
+  for (auto & a : A) {
+    for (auto & b : B) {
+      if (cv::norm(a, b, cv::NORM_L2))
+        return false;
+    }
+  }
+  return true;
+}
+
 static double tester(const std::map<imgInf, std::vector<cv::Mat>> &a,
                    const std::map<imgInf, std::vector<cv::Mat>> &b, double &out,
                    double &out2, double &out3) {
@@ -209,7 +220,7 @@ static void checkIfSame(const double * sig, const double * o) {
 }
 
 int main(int argc, char **argv) {
-  std::string baseKey = "128.180.137.2";
+  std::string baseKey = "";
   std::map<std::string, std::map<imgInf, std::vector<cv::Mat>>> uidToImages[2];
   boost::filesystem::path folder(argv[1]);
 
@@ -227,7 +238,7 @@ int main(int argc, char **argv) {
         const int frame = std::stoi(name.substr(
             name.find("_") + 1, name.find(".") - name.find("_") - 1));
         const int browser = std::stoi(name.substr(name.find("-") + 1, 1));
-        const int gl = frame % 2 == 0 ? 0 : 0;
+        const int gl = frame % 2 == 0 ? 0 : 1;
         // if (browser != 0 || gl != 1) continue;
         if (browser == 1) continue;
         constexpr int sortBy = imgInf::none;
@@ -240,7 +251,7 @@ int main(int argc, char **argv) {
       uidToImages[0].emplace(uid, frameToImages[0]);
       uidToImages[1].emplace(uid, frameToImages[1]);
     }
-    double sig[] = {0, 0, 0};
+    double sig [] = {0, 0, 0};
     auto &base = *uidToImages[0].find(baseKey);
     tester(base.second, base.second, sig[0], sig[1], sig[2]);
     std::cout << "CTX test: " << std::endl;
@@ -248,10 +259,16 @@ int main(int argc, char **argv) {
       std::cout << a.first << " vs. " << base.first << std::endl;
       double out [] = {0, 0, 0};
       double diff = tester(base.second, a.second, out[0], out[1], out[2]);
-      /*if (true)
-        checkIfSame(sig, out);
-      else
-        std::cout << "\tSAME" << std::endl;*/
+    }
+
+    double sig2 [] = {0, 0, 0};
+    auto &base2 = *uidToImages[1].find(baseKey);
+    tester(base2.second, base2.second, sig2[0], sig2[1], sig2[2]);
+    std::cout << "CTX test: " << std::endl;
+    for (auto &a : uidToImages[1]) {
+      std::cout << a.first << " vs. " << base2.first << std::endl;
+      double out [] = {0, 0, 0};
+      double diff = tester(base2.second, a.second, out[0], out[1], out[2]);
     }
 
   } else {

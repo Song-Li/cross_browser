@@ -1,5 +1,5 @@
 var ven, ren;
-var canvas_number = 11;
+var canvas_number = 12;
 var urls = [];
 var finished = 0;
 var ip_address = "128.180.123.19";
@@ -39,12 +39,7 @@ function getDataFromCanvas(ctx, id){
 }
 
 function getData(gl, canvasName, id){
-    var canvas = document.getElementById(canvasName);
-    var WebGL;
-    if(canvas.getContext('webgl'))
-        WebGL = true;
-    else
-        WebGL = false;
+    var WebGL = true;
 
     var pixels = new Uint8Array(256*256*4);
     gl.readPixels(0,0,256,256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
@@ -81,6 +76,10 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 8, pixels);
     else if(canvasName == 'line')
         toServer(WebGL, ven, ren, hash, 9, pixels);
+    else if (canvasName == 'three_lighting')
+        toServer(WebGL, ven, ren, hash, 10, pixels);
+    else if (canvasName == 'three_bubbles')
+        toServer(WebGL, ven, ren, hash, 11, pixels);
     else if (canvasName.indexOf("vid_can_gl_") >= 0) {
         if (sumRGB(pixels) < 1) {
             return 0;

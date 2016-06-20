@@ -5,7 +5,7 @@
 
 
 var VideoCollector = function(webmVid, mp4Vid, id) {
-  var videoStartId = 11;
+  var videoStartId = canvas_number;
   var numImages = 5;
 
   this.startID = parseInt(videoStartId + 2 * numImages * id);
