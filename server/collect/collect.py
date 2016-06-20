@@ -31,7 +31,7 @@ def saveImg(b64raw, name):
         for j in range(256):
             pixel_map[i,j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2], img_data[curr + 3])
             curr += 4
-    img = img.rotate(270)
+    img = img.rotate(90)
     img.save(img_root + name + '.png')
 
 def gen_UID(cursor, table_name, MAX_UID):
