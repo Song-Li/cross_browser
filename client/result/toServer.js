@@ -1,56 +1,56 @@
-var case_number = 12;
+var case_number = 14;
 var browser_number = 3;
 var canvas_number = case_number * browser_number * 4;
 var ip_address = "128.180.123.19"
 var root = "http://" + ip_address + "/images/generated/"
 var img_number = 0;
 
-function generateButton(name){
-    var btn = document.createElement("BUTTON");        // Create a <button> element
-    var t = document.createTextNode(name);       // Create a text node
-    btn.appendChild(t);                                // Append the text to <button>
-    btn.onclick = function() {
-        text = this.textContent;
-        toServer(text);
+$(function() {
+    for (var i = 0; i < case_number; i++) {
+        $('<div id="div' + parseFloat(2*i) + '" class="imgDiv"/><br />').appendTo($('#right'));
+        $('<div> This - Standard and Standard - This </div> <br />').appendTo($('#right'));
+        $('<div id="div' + parseFloat(2*i + 1) + '" class="imgDiv"></div><br />').appendTo($('#right'));
     }
-    document.getElementById("left").appendChild(btn);                    // Append <button> to <body>
-    var br = document.createElement("br");
-    document.getElementById("left").appendChild(br);
-    var br = document.createElement("br");
-    document.getElementById("left").appendChild(br);
+    generatePage();
+});
+
+function generateButton(name){
+    $('<button type="button" class="btn">'
+        + name
+        + "</button>")
+        .click(function() {
+            text = this.textContent;
+            toServer(text);
+        })
+        .appendTo($("#left"));
+    $('<br/>').appendTo($("#left"));
 }
 
 function generateImg(src, fatherName){
-    var img = document.createElement("img");
-    img.id = 'img' + img_number;
-    img.src = src;
-    img.width = 256;
-    img.height = 256;
-    document.getElementById(fatherName).appendChild(img);
+    $('<img id="img' + img_number + '"'
+        + 'src="' + src + '"'
+        + 'class="img"/>').appendTo($('#' + fatherName));
     img_number ++;
 }
 
 function subtractButton(name, fatherName){
-    var btn = document.createElement("button");
-    var t = document.createTextNode("subtract");       // Create a text node
-    btn.appendChild(t);                                // Append the text to <button>
-    btn.value = name;
-    btn.onclick = function() {
-        toServer(name);
-    }
-    document.getElementById(fatherName).appendChild(btn);
+    $('<button type="button">'
+        + "subtract"
+        + "</button>")
+        .click({name: name}, function(event) {
+            toServer(event.data.name);
+        })
+        .appendTo($("#" + fatherName));
 }
 
 function clearPage(){
-    for(var i = 0;i < case_number * 2;++ i){
-        document.getElementById("div" + i).innerHTML = ""; //clear right div
-    }
-    //$("#div").text("");
+    $(".imgDiv").children().remove();
 }
 
 function generatePage(){
+
     clearPage();
-    document.getElementById("left").innerHTML = ""; //clear left div
+    $("#left").children().remove(); //clear left div
     postData = 'Refresh';
 
 
@@ -104,6 +104,7 @@ function toServer(id){ //send messages to server and receive messages from serve
         generatePage();
         return ;
     }
+
     /*
     var f = document.createElement("form");
     f.setAttribute('method',"post");
@@ -111,7 +112,7 @@ function toServer(id){ //send messages to server and receive messages from serve
 
     var i = document.createElement("input"); //input element, text
     i.setAttribute('type',"text");
-    i.setAttribute('name',"128.180.123.11");
+    i.setAttribute('name',postData);
 
     f.appendChild(i);
 

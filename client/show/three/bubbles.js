@@ -29,7 +29,7 @@ $(function() {
     //
 
     var path = "./three/textures/cube/Park2/";
-    var format = '.jpg';
+    var format = '.png';
     var urls = [
       path + 'posx' + format, path + 'negx' + format, path + 'posy' + format,
       path + 'negy' + format, path + 'posz' + format, path + 'negz' + format
