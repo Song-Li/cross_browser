@@ -31,7 +31,7 @@ $(function() {
 
     var textureLoader = new THREE.TextureLoader();
 
-    var texture = textureLoader.load("./three/textures/disturb.jpg");
+    var texture = textureLoader.load("./three/textures/disturb.png");
     texture.repeat.set(20, 10);
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.format = THREE.RGBFormat;
