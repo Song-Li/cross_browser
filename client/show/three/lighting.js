@@ -14,7 +14,7 @@ $(function() {
 
   function init() {
 
-    var container = $("<div/>").appendTo($('body'))[0];
+    var container = $('body')[0];
 
     // CAMERA
 
@@ -31,7 +31,7 @@ $(function() {
 
     var textureLoader = new THREE.TextureLoader();
 
-    var texture = textureLoader.load("./three/disturb.jpg");
+    var texture = textureLoader.load("./three/textures/disturb.jpg");
     texture.repeat.set(20, 10);
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.format = THREE.RGBFormat;
@@ -180,23 +180,7 @@ $(function() {
     renderer.render(scene, camera);
 
     if (level == 50) {
-      var ven, ren;
-      var gl = renderer.getContext();
-      var pixels = new Uint8Array(256*256*4);
-      gl.readPixels(0,0,256,256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-
-      var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-      if(debugInfo){
-          ven = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-          ren = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-      }else{
-          console.log("debugInfo is not accessable");
-          ven = 'No debug Info';
-          ren = 'No debug Info';
-      }
-      var hash = pixels.hashCode();
-      console.log("Three Lighting: " + hash);
-      toServer(true, ven, ren, hash, lightingID, pixels);
+      getData(renderer.getContext(), 'three_lighting', -1);
     }
   }
 });
