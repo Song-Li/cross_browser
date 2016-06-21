@@ -129,7 +129,7 @@ function toServer(id){ //send messages to server and receive messages from serve
         data:postData,
         success:function(data) {
             if (postData[0] == 'S'){
-                window.location.replace("http://" + ip_address + "/mf/difference/");
+                window.location.replace("http://www.songli.us/mf/difference/");
             }
             clearPage();
             var res = JSON.parse(data.toString());
