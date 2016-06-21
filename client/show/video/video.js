@@ -11,7 +11,6 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
   this.startID = parseInt(videoStartId + 2 * numImages * id);
   this.ctxID = this.startID;
   this.glID = this.startID + 1;
-  canvas_number += 2;
   this.ctxCanName = "vid_can_ctx_" + id;
   this.glCanName = "vid_can_gl_" + id;
   var canvas =
@@ -82,6 +81,7 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
   video.prop('loop', true);
   video.prop('style', 'display: none;');
   video.on('play', {self : this}, function(event) {
+    canvas_number += 2;
     var self = event.data.self;
     drawVid(canvas.width, canvas.height, this, self);
   });

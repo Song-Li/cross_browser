@@ -40,11 +40,16 @@ $(function() {
       path + 'ny' + format, path + 'pz' + format, path + 'nz' + format
     ];*/
 
+    /*var urls = [
+      path + 'blue' + format, path + 'blue' + format, path + 'blue' + format,
+      path + 'blue' + format, path + 'blue' + format, path + 'blue' + format
+    ];*/
+
     var textureCube = new THREE.CubeTextureLoader().load(urls);
     textureCube.format = THREE.RGBFormat;
 
     scene = new THREE.Scene();
-    scene.background = textureCube;
+
 
     //
 
@@ -86,6 +91,7 @@ $(function() {
       willReadFrequently : false,
       depth : true
     });
+    renderer.autoClear = true;
     renderer.setPixelRatio(1);
     renderer.setSize(256, 256);
     container.appendChild(renderer.domElement);

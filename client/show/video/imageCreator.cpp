@@ -58,17 +58,16 @@ int main(int agrc, char ** argv) {
     for (int i = 0; i < 1920; ++i) {
       const int r = 0*cv::saturate_cast<uint16_t>(
           std::sin(nu * i + degreesToRadians(0)) * range + range);
-      const int g = cv::saturate_cast<uint16_t>(
+      const int g = 0*cv::saturate_cast<uint16_t>(
           std::sin(nu * i + degreesToRadians(120)) * range + range);
-      const int b = 0*cv::saturate_cast<uint16_t>(
-          std::sin(nu * i + degreesToRadians(240)) * range + range);
+      const int b = 2*range;
       dst[3 * i + 0] = b;
       dst[3 * i + 1] = g;
       dst[3 * i + 2] = r;
     }
   }
 
-  cv::imwrite("rainbow.png", out);
+  cv::imwrite("blue.png", out);
 
   cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_COLOR);
   cv::Mat out2;
