@@ -2,7 +2,8 @@ var ven, ren;
 var canvas_number = 12;
 var urls = [];
 var finished = 0;
-var ip_address = "128.180.123.19";
+var ip_address = "184.73.16.65";
+//var ip_address = "128.180.123.19";
 // var ip_address = "52.90.197.136";
 
 sumRGB = function(img) {
@@ -113,7 +114,8 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     }
 
 
-    /*var f = document.createElement("form");
+    /*
+    var f = document.createElement("form");
 
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
@@ -123,7 +125,8 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     f.appendChild(i);
     f.submit();
 
-    return ;*/
+    return ;
+*/
 
     $.ajax({
         url:"http://" + ip_address + "/collect.py",

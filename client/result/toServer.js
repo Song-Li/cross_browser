@@ -1,7 +1,8 @@
 var case_number = 14;
 var browser_number = 3;
 var canvas_number = case_number * browser_number * 4;
-var ip_address = "128.180.123.19"
+//var ip_address = "128.180.123.19"
+var ip_address = "184.73.16.65"
 var root = "http://" + ip_address + "/images/generated/"
 var img_number = 0;
 
@@ -54,7 +55,8 @@ function generatePage(){
     postData = 'Refresh';
 
 
-    /*var f = document.createElement("form");
+    /*
+    var f = document.createElement("form");
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/result.py");
 
@@ -65,8 +67,8 @@ function generatePage(){
     f.appendChild(i);
 
     f.submit();
-    return ;*/
-
+    return ;
+*/
     $.ajax({
         url:"http://" + ip_address + "/result.py",
         dataType:"text",
@@ -119,6 +121,7 @@ function toServer(id){ //send messages to server and receive messages from serve
     f.submit();
     return ;
     */
+
     $.ajax({
         url:"http://" + ip_address + "/result.py",
         dataType:"text",
@@ -126,7 +129,7 @@ function toServer(id){ //send messages to server and receive messages from serve
         data:postData,
         success:function(data) {
             if (postData[0] == 'S'){
-                window.location.replace("http://128.180.123.19/mf/difference/");
+                window.location.replace("http://" + ip_address + "/mf/difference/");
             }
             clearPage();
             var res = JSON.parse(data.toString());

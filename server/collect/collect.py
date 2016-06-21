@@ -21,6 +21,9 @@ root = '/home/site/data/'
 def saveImg(b64raw, name):
     global root
     img_root = root + 'images/origins/'
+    if not os.path.exists(img_root):
+        os.makedirs(img_root)
+
     img = Image.new('RGBA', (256,256))
     pixel_map = img.load()
     img_data = rawToIntArray(decode(b64raw))
