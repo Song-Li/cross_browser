@@ -31,7 +31,7 @@ $(function() {
 
     var textureLoader = new THREE.TextureLoader();
 
-    var texture = textureLoader.load("./three/textures/disturb.png");
+    var texture = textureLoader.load("./three/textures/color.png");
     texture.repeat.set(20, 10);
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.format = THREE.RGBFormat;
@@ -133,18 +133,7 @@ $(function() {
 
     renderer.gammaInput = true;
     renderer.gammaOutput = true;
-
-    window.addEventListener('resize', onWindowResize, false);
   }
-
-  function onWindowResize() {
-
-    camera.aspect = 256 / 256;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(256, 256);
-  }
-
   //
 
   function animate() {

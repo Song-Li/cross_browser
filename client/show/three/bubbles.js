@@ -28,12 +28,17 @@ $(function() {
 
     //
 
-    var path = "./three/textures/cube/Park2/";
+    var path = "./three/textures/cube/skybox/";
     var format = '.png';
     var urls = [
-      path + 'posx' + format, path + 'negx' + format, path + 'posy' + format,
-      path + 'negy' + format, path + 'posz' + format, path + 'negz' + format
+      path + 'st_rt' + format, path + 'st_lf' + format, path + 'st_up' + format,
+      path + 'st_dn' + format, path + 'st_bk' + format, path + 'st_ft' + format
     ];
+
+    /*var urls = [
+      path + 'px' + format, path + 'nx' + format, path + 'py' + format,
+      path + 'ny' + format, path + 'pz' + format, path + 'nz' + format
+    ];*/
 
     var textureCube = new THREE.CubeTextureLoader().load(urls);
     textureCube.format = THREE.RGBFormat;
@@ -86,22 +91,7 @@ $(function() {
     container.appendChild(renderer.domElement);
 
     //
-
-    window.addEventListener('resize', onWindowResize, false);
   }
-
-  function onWindowResize() {
-
-    windowHalfX = 256 / 2;
-    windowHalfY = 256 / 2;
-
-    camera.aspect = 256 / 256;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(256, 256);
-  }
-
-  //
 
   function animate() {
 
@@ -113,11 +103,6 @@ $(function() {
   function render() {
 
     var timer = 0.005 * level;
-
-    camera.position.x += (camera.position.x) * .05;
-    camera.position.y += (camera.position.y) * .05;
-
-    camera.lookAt(scene.position);
 
     for (var i = 0, il = spheres.length; i < il; i++) {
 

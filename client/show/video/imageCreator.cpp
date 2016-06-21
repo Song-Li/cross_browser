@@ -49,7 +49,7 @@ std::string type2str(int type) {
   return r;
 }
 
-int main() {
+int main(int agrc, char ** argv) {
   cv::Mat out(1080, 1920, CV_16UC3);
   constexpr double range = ((1<<16) - 1)/2.0;
   constexpr double nu = 2 * PI / 1920;
@@ -70,24 +70,9 @@ int main() {
 
   cv::imwrite("rainbow.png", out);
 
-  cv::Mat test (256, 256, CV_16UC3);
-  std::random_device seed;
-  std::mt19937_64 gen (seed());
-  std::uniform_int_distribution<> dist (0, 1<<16);
-  for (int j = 0; j < test.rows; ++j) {
-    uint16_t * dst = test.ptr<uint16_t>(j);
-    for (int i = 0; i < test.cols; ++i) {
-      dst[3*i + 0] = dist(gen);
-      dst[3*i + 1] = dist(gen);
-      dst[3*i + 2] = dist(gen);
-    }
-  }
-
-  cvNamedWindow("Out", CV_WINDOW_NORMAL);
-  cv::imshow("Out", test);
-  cv::waitKey(0);
-  cv::imwrite("test.png", test);
-
-  cv::Mat in = cv::imread("test.png", CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_COLOR);
-  std::cout << type2str(in.type()) << "  " << type2str(test.type()) << std::endl;
+  cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_COLOR);
+  cv::Mat out2;
+  constexpr double alpha = static_cast<double>((1 << 8) - 1)/((1 << 16) - 1);
+  in.convertTo(out2, CV_8UC3, alpha);
+  cv::imwrite("test.png", out2);
 }
