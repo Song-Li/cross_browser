@@ -1,44 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>three.js webgl - materials - shaders [Fresnel]</title>
+    <title>three.js webgl - physically based shading</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <style>
       body {
-        background:#000;
-        padding:0;
-        margin:0;
+        color: #fff;
+        font-family: Monospace;
+        font-size: 13px;
+        text-align: center;
         font-weight: bold;
-        overflow:hidden;
+
+        background-color: #000;
+        margin: 0px;
+        overflow: hidden;
       }
 
       #info {
         position: absolute;
-        top: 0px; width: 100%;
-        color: #ffffff;
+        width: 100%;
+        text-align: center;
         padding: 5px;
-        font-family:Monospace;
-        font-size:13px;
-        text-align:center;
-        z-index:1000;
       }
 
-      a { color: #ffffff; }
-
-      #oldie a { color:#0b0 }
+      a { color: skyblue; }
     </style>
   </head>
 
   <body>
+    <script src="three.js"></script>
     <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.10/seedrandom.min.js"></script>
-    <script src="three.min.js"></script>
-
-    <script src="js/shaders/FresnelShader.js"></script>
-
     <script src="js/Detector.js"></script>
-    <script type="text/javascript" src="bubbles.js"></script>
-
+    <script type="text/javascript" src="shadow.js"></script>
   </body>
 </html>

@@ -5,6 +5,7 @@
 */
 
 #include <boost/filesystem.hpp>
+#include <boost/math/distributions/students_t.hpp>
 #include <eigen3/Eigen/Eigen>
 #include <iostream>
 #include <map>
@@ -14,7 +15,6 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <boost/math/distributions/students_t.hpp>
 
 struct imgInf {
   const int frame, browser, sortBy;
@@ -42,9 +42,7 @@ struct imgInf {
     else
       return false;
   }
-  bool operator>=(const imgInf &o) const {
-    return !operator<(o);
-  }
+  bool operator>=(const imgInf &o) const { return !operator<(o); }
   bool operator>(const imgInf &o) const {
     return !(operator<(o) || operator==(o));
   }
@@ -138,15 +136,16 @@ static double isallsame(const std::vector<cv::Mat> &a,
   std::vector<double> norms;
   for (int i = 0; i < std::min(a.size(), b.size()); ++i) {
     const double norm = cv::norm(a[i], b[i], cv::NORM_L2);
+    norms.push_back(norm);
     ++count;
     if (norm != 0) {
       ++numFails;
-      // diffImgs(i, b[i]);
+      diffImgs(a[i], b[i]);
       cv::Mat diff;
       cv::absdiff(a[i], b[i], diff);
       cv::Mat_<cv::Vec3b> _diff = diff;
-      const double ent = entropy(_diff);
-      norms.push_back(ent);
+      // const double ent = entropy(_diff);
+      // norms.push_back(ent);
     }
   }
 
@@ -177,8 +176,8 @@ static double hasMatch(const std::vector<cv::Mat> &$1,
 
 static bool diffAll(const std::vector<cv::Mat> &A,
                     const std::vector<cv::Mat> &B) {
-  for (auto & a : A) {
-    for (auto & b : B) {
+  for (auto &a : A) {
+    for (auto &b : B) {
       if (cv::norm(a, b, cv::NORM_L2))
         return false;
     }
@@ -187,12 +186,14 @@ static bool diffAll(const std::vector<cv::Mat> &A,
 }
 
 static double tester(const std::map<imgInf, std::vector<cv::Mat>> &a,
-                   const std::map<imgInf, std::vector<cv::Mat>> &b, double &out,
-                   double &out2, double &out3) {
+                     const std::map<imgInf, std::vector<cv::Mat>> &b,
+                     double &out, double &out2, double &out3) {
   double ave = 0, stdev = 0;
   double count = 0, diff = 0;
   for (auto &p : a) {
     for (auto &l : b) {
+      if (p.first.frame != l.first.frame)
+        continue;
       diff = isallsame(p.second, l.second, ave, stdev, count);
       std::cout << "\t" << p.first << " vs. " << l.first
                 << " failure rate: " << diff << "%"
@@ -206,9 +207,10 @@ static double tester(const std::map<imgInf, std::vector<cv::Mat>> &a,
   return diff;
 }
 
-static void checkIfSame(const double * sig, const double * o) {
+static void checkIfSame(const double *sig, const double *o) {
   const double v = sig[2] + o[2] - 2;
-  double sp = sqrt(((sig[2] - 1) * sig[1] * sig[1] + (o[2] - 1) * o[1] * o[1]) / v);
+  double sp =
+      sqrt(((sig[2] - 1) * sig[1] * sig[1] + (o[2] - 1) * o[1] * o[1]) / v);
   double t_stat = (sig[0] - o[0]) / (sp * sqrt(1.0 / sig[2] + 1.0 / o[2]));
   boost::math::students_t dist(v);
   double q = boost::math::cdf(boost::math::complement(dist, std::fabs(t_stat)));
@@ -238,10 +240,10 @@ int main(int argc, char **argv) {
         const int frame = std::stoi(name.substr(
             name.find("_") + 1, name.find(".") - name.find("_") - 1));
         const int browser = std::stoi(name.substr(name.find("-") + 1, 1));
-        const int gl = frame % 2 == 0 ? 0 : 1;
+        const int gl = frame % 2 == 0 ? 0 : 0;
         // if (browser != 0 || gl != 1) continue;
-        if (browser == 1) continue;
-        constexpr int sortBy = imgInf::none;
+        // if (browser == 1) continue;
+        constexpr int sortBy = imgInf::brow | imgInf::fram;
         auto it = frameToImages[gl].find({frame, browser, sortBy});
         if (it == frameToImages[gl].cend())
           frameToImages[gl].emplace(imgInf(frame, browser, sortBy), img);
@@ -251,23 +253,27 @@ int main(int argc, char **argv) {
       uidToImages[0].emplace(uid, frameToImages[0]);
       uidToImages[1].emplace(uid, frameToImages[1]);
     }
-    double sig [] = {0, 0, 0};
+    double sig[] = {0, 0, 0};
     auto &base = *uidToImages[0].find(baseKey);
+    std::cout << "Base test:" << std::endl;
     tester(base.second, base.second, sig[0], sig[1], sig[2]);
     std::cout << "CTX test: " << std::endl;
     for (auto &a : uidToImages[0]) {
-      std::cout << a.first << " vs. " << base.first << std::endl;
-      double out [] = {0, 0, 0};
-      double diff = tester(base.second, a.second, out[0], out[1], out[2]);
+      for (auto &b : uidToImages[0]) {
+        std::cout << a.first << " vs. " << b.first << std::endl;
+        double out[] = {0, 0, 0};
+        double diff = tester(b.second, a.second, out[0], out[1], out[2]);
+      }
     }
 
-    double sig2 [] = {0, 0, 0};
+    double sig2[] = {0, 0, 0};
     auto &base2 = *uidToImages[1].find(baseKey);
+    std::cout << "Base test:" << std::endl;
     tester(base2.second, base2.second, sig2[0], sig2[1], sig2[2]);
     std::cout << "CTX test: " << std::endl;
     for (auto &a : uidToImages[1]) {
       std::cout << a.first << " vs. " << base2.first << std::endl;
-      double out [] = {0, 0, 0};
+      double out[] = {0, 0, 0};
       double diff = tester(base2.second, a.second, out[0], out[1], out[2]);
     }
 

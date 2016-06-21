@@ -215,7 +215,6 @@ var runTexture = function (vertexShaderText, fragmentShaderText, SusanImage, Sus
         gl.bindTexture(gl.TEXTURE_2D, susanTexture);
         gl.activeTexture(gl.TEXTURE0);
         gl.drawElements(gl.TRIANGLES, susanIndices.length, gl.UNSIGNED_SHORT, 0);
-
         if(count == 50){
             getData(gl, canvasName, 0);
         }

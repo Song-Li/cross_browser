@@ -6,7 +6,7 @@
 #include <random>
 
 constexpr double PI = 3.14159265358979323846;
-static constexpr double degreesToRadians(double degrees) {
+static double degreesToRadians(double degrees) {
   return degrees * PI / 180.0;
 }
 
@@ -49,19 +49,19 @@ std::string type2str(int type) {
   return r;
 }
 
-int main() {
-  cv::Mat out(1080, 1920, CV_16UC3);
+int main(int agrc, char ** argv) {
+  cv::Mat out(1024, 2048, CV_16UC3);
   constexpr double range = ((1<<16) - 1)/2.0;
-  constexpr double nu = 2 * PI / 1920;
-  for (int j = 0; j < 1080; ++j) {
+  constexpr double nu = 5*2 * PI / 1920;
+  for (int j = 0; j < out.rows; ++j) {
     uint16_t *dst = out.ptr<uint16_t>(j);
-    for (int i = 0; i < 1920; ++i) {
-      const int r = 0*cv::saturate_cast<uint16_t>(
-          std::sin(nu * i + degreesToRadians(0)) * range + range);
+    for (int i = 0; i < out.cols; ++i) {
+      const int r = cv::saturate_cast<uint16_t>(
+          std::sin(nu * i + degreesToRadians(0 + 5*j)) * range + range);
       const int g = cv::saturate_cast<uint16_t>(
-          std::sin(nu * i + degreesToRadians(120)) * range + range);
-      const int b = 0*cv::saturate_cast<uint16_t>(
-          std::sin(nu * i + degreesToRadians(240)) * range + range);
+          std::sin(nu * i + degreesToRadians(120 + 5*j)) * range + range);
+      const int b = cv::saturate_cast<uint16_t>(
+          std::sin(nu * i + degreesToRadians(240 + 5*j)) * range + range);
       dst[3 * i + 0] = b;
       dst[3 * i + 1] = g;
       dst[3 * i + 2] = r;
@@ -70,24 +70,9 @@ int main() {
 
   cv::imwrite("rainbow.png", out);
 
-  cv::Mat test (256, 256, CV_16UC3);
-  std::random_device seed;
-  std::mt19937_64 gen (seed());
-  std::uniform_int_distribution<> dist (0, 1<<16);
-  for (int j = 0; j < test.rows; ++j) {
-    uint16_t * dst = test.ptr<uint16_t>(j);
-    for (int i = 0; i < test.cols; ++i) {
-      dst[3*i + 0] = dist(gen);
-      dst[3*i + 1] = dist(gen);
-      dst[3*i + 2] = dist(gen);
-    }
-  }
-
-  cvNamedWindow("Out", CV_WINDOW_NORMAL);
-  cv::imshow("Out", test);
-  cv::waitKey(0);
-  cv::imwrite("test.png", test);
-
-  cv::Mat in = cv::imread("test.png", CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_COLOR);
-  std::cout << type2str(in.type()) << "  " << type2str(test.type()) << std::endl;
+  /*cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_COLOR);
+  cv::Mat out2;
+  constexpr double alpha = static_cast<double>((1 << 8) - 1)/((1 << 16) - 1);
+  in.convertTo(out2, CV_8UC3, alpha);
+  cv::imwrite("test.png", out2);*/
 }
