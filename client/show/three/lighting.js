@@ -146,24 +146,24 @@ $(function() {
   var level = 0;
   var distance = 75;
   function render() {
+    var time = freq * level;
+    light1.position.x = Math.sin(time * 0.7) * distance;
+    light1.position.z = Math.cos(time * 0.3) * distance;
 
-    light1.position.x = Math.sin(freq * level * 0.7) * distance;
-    light1.position.z = Math.cos(freq * level * 0.3) * distance;
+    light2.position.x = Math.cos(time * 0.3) * distance;
+    light2.position.z = Math.sin(time * 0.7) * distance;
 
-    light2.position.x = Math.cos(freq * level * 0.3) * distance;
-    light2.position.z = Math.sin(freq * level * 0.7) * distance;
+    light3.position.x = Math.sin(time * 0.7) * distance;
+    light3.position.z = Math.sin(time * 0.5) * distance;
 
-    light3.position.x = Math.sin(freq * level * 0.7) * distance;
-    light3.position.z = Math.sin(freq * level * 0.5) * distance;
+    light4.position.x = Math.sin(time * 0.3) * distance;
+    light4.position.z = Math.sin(time * 0.5) * distance;
 
-    light4.position.x = Math.sin(freq * level * 0.3) * distance;
-    light4.position.z = Math.sin(freq * level * 0.5) * distance;
+    light5.position.x = Math.cos(time * 0.3) * distance;
+    light5.position.z = Math.sin(time * 0.5) * distance;
 
-    light5.position.x = Math.cos(freq * level * 0.3) * distance;
-    light5.position.z = Math.sin(freq * level * 0.5) * distance;
-
-    light6.position.x = Math.cos(freq * level * 0.7) * distance;
-    light6.position.z = Math.cos(freq * level * 0.5) * distance;
+    light6.position.x = Math.cos(time * 0.7) * distance;
+    light6.position.z = Math.cos(time * 0.5) * distance;
     ++level;
 
     renderer.render(scene, camera);

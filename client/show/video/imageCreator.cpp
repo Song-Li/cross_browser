@@ -6,7 +6,7 @@
 #include <random>
 
 constexpr double PI = 3.14159265358979323846;
-static constexpr double degreesToRadians(double degrees) {
+static double degreesToRadians(double degrees) {
   return degrees * PI / 180.0;
 }
 
@@ -50,28 +50,29 @@ std::string type2str(int type) {
 }
 
 int main(int agrc, char ** argv) {
-  cv::Mat out(1080, 1920, CV_16UC3);
+  cv::Mat out(1024, 2048, CV_16UC3);
   constexpr double range = ((1<<16) - 1)/2.0;
-  constexpr double nu = 2 * PI / 1920;
-  for (int j = 0; j < 1080; ++j) {
+  constexpr double nu = 5*2 * PI / 1920;
+  for (int j = 0; j < out.rows; ++j) {
     uint16_t *dst = out.ptr<uint16_t>(j);
-    for (int i = 0; i < 1920; ++i) {
-      const int r = 0*cv::saturate_cast<uint16_t>(
-          std::sin(nu * i + degreesToRadians(0)) * range + range);
-      const int g = 0*cv::saturate_cast<uint16_t>(
-          std::sin(nu * i + degreesToRadians(120)) * range + range);
-      const int b = 2*range;
+    for (int i = 0; i < out.cols; ++i) {
+      const int r = cv::saturate_cast<uint16_t>(
+          std::sin(nu * i + degreesToRadians(0 + 5*j)) * range + range);
+      const int g = cv::saturate_cast<uint16_t>(
+          std::sin(nu * i + degreesToRadians(120 + 5*j)) * range + range);
+      const int b = cv::saturate_cast<uint16_t>(
+          std::sin(nu * i + degreesToRadians(240 + 5*j)) * range + range);
       dst[3 * i + 0] = b;
       dst[3 * i + 1] = g;
       dst[3 * i + 2] = r;
     }
   }
 
-  cv::imwrite("blue.png", out);
+  cv::imwrite("rainbow.png", out);
 
-  cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_COLOR);
+  /*cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_COLOR);
   cv::Mat out2;
   constexpr double alpha = static_cast<double>((1 << 8) - 1)/((1 << 16) - 1);
   in.convertTo(out2, CV_8UC3, alpha);
-  cv::imwrite("test.png", out2);
+  cv::imwrite("test.png", out2);*/
 }

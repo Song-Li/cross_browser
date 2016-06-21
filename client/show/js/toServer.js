@@ -79,7 +79,7 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 9, pixels);
     else if (canvasName == 'three_lighting')
         toServer(WebGL, ven, ren, hash, 10, pixels);
-    else if (canvasName == 'three_bubbles')
+    else if (canvasName == 'three_shadow')
         toServer(WebGL, ven, ren, hash, 11, pixels);
     else if (canvasName.indexOf("vid_can_gl_") >= 0) {
         if (sumRGB(pixels) < 1) {
