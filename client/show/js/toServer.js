@@ -4,6 +4,7 @@ var urls = [];
 var finished = 0;
 var ip_address = "184.73.16.65";
 var error_page = "http://www.songli.us/error.html"
+// var ip_address = "128.180.123.19";
 // var ip_address = "52.90.197.136";
 
 sumRGB = function(img) {
@@ -102,23 +103,11 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         if (i != 0) pixels += ' ';
         pixels += stringify(urls[i]);
     }
-    var url = document.URL;
-    var hasCommand = url.indexOf('?') >= 0;
-
-    var uid, stop, base;
-    if (hasCommand) {
-        base = url.split('?')[0];
-        var command = url.split('?')[1];
-        uid = parseInt(command.split('-')[0]);
-    }else{
-        window.location.href = error_page;
-    }
 
     var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, user_id:uid, pixels: pixels};
 
 
-    /*
-    var f = document.createElement("form");
+    /*var f = document.createElement("form");
 
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
@@ -128,8 +117,8 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     f.appendChild(i);
     f.submit();
 
-    return ;
-*/
+    return ;*/
+
 
     $.ajax({
         url:"http://" + ip_address + "/collect.py",
@@ -152,12 +141,14 @@ Base64EncodeUrlSafe = function(str){
 
 stringify = function(array) {
     var str = "";
-    for (var i = 0, len = array.length; i < len; ++i) {
-        str += String.fromCharCode(array[i]);
+    for (var i = 0, len = array.length; i < len; i += 4) {
+        str += String.fromCharCode(array[i + 0]);
+        str += String.fromCharCode(array[i + 1]);
+        str += String.fromCharCode(array[i + 2]);
     }
 
     // NB: AJAX requires that base64 strings are in their URL safe
-    // forum and don't have any padding
+    // form and don't have any padding
     var b64 = window.btoa(str);
     return Base64EncodeUrlSafe(b64);
 }
