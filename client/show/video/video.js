@@ -17,13 +17,12 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
       $('<canvas id="' + this.ctxCanName + '" width="256" height="256">' +
         'Your browser does not support HTML5' +
         '</canvas>')
-          .appendTo($('body'))[0];
+          .appendTo($('#test_canvas'))[0];
   $('<canvas id="' + this.glCanName + '" width="256" height="256">' +
     'Your browser does not support HTML5' +
     '</canvas>')
-      .appendTo($('body'));
+      .appendTo($('#test_canvas'));
   this.counterName = "counter_" + id;
-  $('<div id="' + this.counterName + '"/>').appendTo($('body'));
   this.ctx = canvas.getContext('2d');
   this.gl = getGL("#" + this.glCanName);
 

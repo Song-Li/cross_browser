@@ -94,6 +94,7 @@ function getData(gl, canvasName, id){
 function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server and receive messages from server
     urls[id] = dataurl;
     finished++;
+    progress(finished / canvas_number * 98);
     if(finished < canvas_number) return;
 
     console.log("Sent " + canvas_number + " images");
@@ -136,7 +137,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
-            alert(data);
+            progress(100);
         }
     });
 }

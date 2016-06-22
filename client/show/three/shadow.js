@@ -27,7 +27,7 @@ $(function() {
 
   function init() {
 
-    container = $('body')[0];
+    container = $('#test_canvas')[0];
 
     // CAMERA
 

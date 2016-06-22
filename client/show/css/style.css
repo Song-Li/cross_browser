@@ -1,0 +1,72 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:700);
+
+progress {
+ appearance: none;
+ position: relative;
+ overflow: hidden;
+ width: 1.5em;
+ height: 1em;
+ padding: 0;
+ border: none;
+ font-family: "Ubuntu Mono", sans-serif;
+ font-size: 120px;
+ transition: height .4s;
+}
+
+progress.hidden {
+  height: 0;
+  transition-delay: .4s;
+}
+
+#instruction {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-family: "Ubuntu Mono", sans-serif;
+  text-align: center;
+  font-size: 1.5em;
+  line-height: .62em;
+}
+
+progress::before {
+  content: attr(value);
+  position: absolute;
+  top:0; left: 0; right: 0; bottom: 0;
+  text-align: center;
+  font-size: 1.5em;
+  line-height: .62em;
+  color: hsla(0,0%,100%,.2);
+  background: linear-gradient( 
+      hsla(0,0%,100%,.6),
+      hsla(0,0%,100%,.0) 70% ) 
+      no-repeat center;
+  background-position: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+
+progress::-webkit-progress-bar,
+progress::-webkit-progress-value {
+ background: transparent;
+}
+
+/* ------------------------------ */
+
+body {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ box-sizing: border-box;
+ padding: 50px;
+ background: radial-gradient( 
+    hsl(30,80%,80%), 
+    hsl(210,50%,70%) ) 
+    no-repeat center;
+}
+
+html,
+body {
+ height: 100%; 
+}

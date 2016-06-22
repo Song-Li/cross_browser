@@ -2,61 +2,50 @@
 <head>
 <title>Cross Browser Test</title>
 </head>
+<link rel="stylesheet" href="css/style.css">
 <style>
-* {
-  box-sizing: border-box;
+#test_canvas canvas{
+    display: None;
 }
-#ui {
-    width: 200px;
-}
-
-.container {
-    position: relative;
-    overflow: none;
-}
-
-#text {
-    background-color: transparent;  /* needed because webgl-tutoraisl.css sets canvas bg color to white */
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    z-index: 10;
-}
-canvas {
-}
-
 </style>
+
 <body onload="drawCube();drawLine();drawTexture();drawSimpleLight();drawMoreLight();drawTransparent();">
-<canvas id="line" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
-<canvas id="cube" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
-<canvas id="texture_simple" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
-<canvas id="texture_susan" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
-<canvas id="simple_light_simple" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
-<canvas id="simple_light_susan" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
-<canvas id="more_light_simple" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
-<canvas id="more_light_susan" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
-<canvas id="transparent_simple" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
-<canvas id="transparent_susan" width="256" height="256">
-    Your browser does not support HTML5
-</canvas>
+<progress max="100"></progress>
+
+<div id = "instruction"> Now Next </div>
+
+<div id = "test_canvas">
+    <canvas id="line" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+    <canvas id="cube" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+    <canvas id="texture_simple" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+    <canvas id="texture_susan" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+    <canvas id="simple_light_simple" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+    <canvas id="simple_light_susan" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+    <canvas id="more_light_simple" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+    <canvas id="more_light_susan" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+    <canvas id="transparent_simple" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+    <canvas id="transparent_susan" width="256" height="256">
+        Your browser does not support HTML5
+    </canvas>
+</div>
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.10/seedrandom.min.js"></script>
 <script src="./three/three.min.js"></script>
@@ -74,5 +63,6 @@ canvas {
 <script src="./video/video.js" type="text/javascript"></script>
 <script type="text/javascript" src="./three/lighting.js"></script>
 <script type="text/javascript" src="./three/shadow.js"></script>
+<script src="./js/index.js"></script>
 </body>
 </html>
