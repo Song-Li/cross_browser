@@ -3,7 +3,7 @@ var canvas_number = 12;
 var urls = [];
 var finished = 0;
 var ip_address = "184.73.16.65";
-//var ip_address = "128.180.123.19";
+var error_page = "http://www.songli.us/error.html"
 // var ip_address = "52.90.197.136";
 
 sumRGB = function(img) {
@@ -102,16 +102,19 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         if (i != 0) pixels += ' ';
         pixels += stringify(urls[i]);
     }
-    var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, pixels: pixels};
     var url = document.URL;
     var hasCommand = url.indexOf('?') >= 0;
-    var id, stop, base;
+
+    var uid, stop, base;
     if (hasCommand) {
         base = url.split('?')[0];
         var command = url.split('?')[1];
-        id = parseInt(command.split('-')[0]);
-        stop = parseInt(command.split('-')[1]);
+        uid = parseInt(command.split('-')[0]);
+    }else{
+        window.location.href = error_page;
     }
+
+    var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, user_id:uid, pixels: pixels};
 
 
     /*
@@ -134,11 +137,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
-            if (!hasCommand || id + 1 >= stop) {
-                alert(data);
-            } else {
-                window.location.href = base + "?" + parseInt(id + 1) + "-" + stop;
-            }
+            alert(data);
         }
     });
 }

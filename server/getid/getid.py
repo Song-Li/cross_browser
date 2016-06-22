@@ -18,10 +18,10 @@ def gen_UID(cursor, table_name, ip):
 
 def insert_into_db(db, table_name, ip):
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM {} WHERE ip='{}'".format(table_name, ip))
-    row = cursor.fetchone()
-    if row is not None:
-        return row[0]
+    cursor.execute("SELECT COUNT(*) FROM {} WHERE ip='{}'".format(table_name, ip))
+    row = cursor.fetchone()[0]
+    if row > 100:
+        return "error"
 
     uid = gen_UID(cursor, table_name, ip)
 

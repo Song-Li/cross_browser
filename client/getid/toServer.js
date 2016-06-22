@@ -1,7 +1,7 @@
 var ip_address = "184.73.16.65"
 
 function addUID(uid){
-    $("#uid").append('<strong style="color:green">' + uid + '</strong>');
+    $("#uid").append('<a href="http://www.songli.us/mf/show/?' + uid + '">http://www.songli.us/mf/show/?' + uid + '</a>');
 }
 
 function generateUID(){
