@@ -1,4 +1,4 @@
-python wipe_table.py cross_browser data;
+python wipe_table.py cross_browser new_data uid;
 cp -r /home/site/data /home/site/databk;
 sudo rm -r /home/site/data/images/origins/* ;
 sudo rm -r /home/site/data/images/generated/* ;

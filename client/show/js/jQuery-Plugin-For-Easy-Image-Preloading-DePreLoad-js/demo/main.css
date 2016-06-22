@@ -1,0 +1,84 @@
+
+html, body, #depreload {
+    height: 100%;
+    width: 100%;
+}
+
+.table {
+	display: table;
+}
+
+.table-cell {
+	display: table-cell;
+}
+
+.wrapper {
+	vertical-align: middle;
+	opacity: 0;
+}
+
+#depreload {
+    background-size: cover;
+    background-color: #ccc;
+    position: fixed;
+    text-align: center;
+    z-index: 99;
+}
+
+#depreload .circle {
+	width: 520px;
+	height: 520px;
+	border: 1px solid rgba(255,255,255,.5);
+	border-radius: 50%;
+	box-shadow: 0 0 1px 0px rgb(255,255,255);
+	margin: 0 auto;
+	position: relative;
+}
+
+#depreload .line {
+	margin: -20px;
+	opacity: 0;
+}
+
+#depreload .perc {
+	color: #fff;
+	font-size: 4.3em;
+	text-transform: uppercase;
+	margin-top: 30px;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-weight: 300;
+	letter-spacing: 1px;
+}
+
+#depreload .loading {
+	color: #fff;
+	font-size: 0.8em;
+	text-transform: uppercase;
+	margin-top: 110px;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 600;
+	letter-spacing: 1px;
+}
+
+#depreload .perc, #depreload .loading {
+	position: absolute;
+	width: 100%;
+}
+
+#depreload .logo {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 139px;
+	height: 145px;
+	margin-left: -69px;
+	margin-top: -72px;
+	opacity: 0;
+}
+
+.gallery {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}

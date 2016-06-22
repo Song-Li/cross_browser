@@ -1,0 +1,88 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>jQuery DePreLoad.js Plugin Demo</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.min.css">
+        <link rel="stylesheet" href="demo/main.css">
+
+        <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300" rel="stylesheet">
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet">
+    </head>
+    <body>
+
+
+            <div id="depreload" style="background-image:url('demo/bgr.jpg');" class="table">
+                <div class="table-cell wrapper">
+                    <div class="circle">
+                        <canvas class="line" width="560px" height="560px"></canvas>
+                        <img src="demo/logo.png" class="logo" alt="logo" />
+                    </div>
+                    <p class="perc"></p>
+                    <p class="loading">Loading</p>
+                </div>
+            </div>
+
+            <div class="gallery">
+                <img src="https://unsplash.it/1800/1200?image=617">
+                <img src="https://unsplash.it/1800/1200?image=616">
+                <img src="https://unsplash.it/1800/1200?image=615">
+                <img src="https://unsplash.it/1800/1200?image=614">
+                <img src="https://unsplash.it/1800/1200?image=613">
+                <img src="https://unsplash.it/1800/1200?image=612">
+                <img src="https://unsplash.it/1800/1200?image=611">
+            </div>
+        
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="jquery.DEPreLoad.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                
+                setTimeout(function(){
+                    $("#depreload .wrapper").animate({ opacity: 1 });
+                }, 400);
+
+                setTimeout(function(){
+                    $("#depreload .logo").animate({ opacity: 1 });
+                }, 800);
+
+                var canvas  = $("#depreload .line")[0],
+                    context = canvas.getContext("2d");
+
+                context.beginPath();
+                context.arc(280, 280, 260, Math.PI * 1.5, Math.PI * 1.6);
+                context.strokeStyle = '#fff';
+                context.lineWidth = 5;
+                context.stroke();
+
+                var loader = $("body").DEPreLoad({
+                    OnStep: function(percent) {
+                        console.log(percent + '%');
+
+                        $("#depreload .line").animate({ opacity: 1 });
+                        $("#depreload .perc").text(percent + "%");
+
+                        if (percent > 5) {
+                            context.clearRect(0, 0, canvas.width, canvas.height);
+                            context.beginPath();
+                            context.arc(280, 280, 260, Math.PI * 1.5, Math.PI * (1.5 + percent / 50), false);
+                            context.stroke();
+                        }
+                    },
+                    OnComplete: function() {
+                        console.log('Everything loaded!');
+
+                        $("#depreload .perc").text("done");
+                        $("#depreload .loading").animate({ opacity: 0 });
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
