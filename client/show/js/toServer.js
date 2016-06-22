@@ -104,11 +104,21 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         pixels += stringify(urls[i]);
     }
 
-    var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, user_id:uid, pixels: pixels};
+    var url = document.URL;
+    var hasCommand = url.indexOf('?') >= 0;
+
+    var uid;
+    if (hasCommand) {
+        var command = url.split('?')[1];
+        uid = parseInt(command);
+    }else{
+        window.location.href = error_page;
+    }
+
+    var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, user_id: uid, pixels: pixels};
 
 
     /*var f = document.createElement("form");
-
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
     var i = document.createElement("input"); //input element, text
