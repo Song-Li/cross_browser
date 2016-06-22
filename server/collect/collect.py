@@ -24,48 +24,47 @@ def saveImg(b64raw, name):
     if not os.path.exists(img_root):
         os.makedirs(img_root)
 
-    img = Image.new('RGBA', (256,256))
+    img = Image.new('RGB', (256,256))
     pixel_map = img.load()
     img_data = rawToIntArray(decode(b64raw))
-#    img_data = pixel
 
     curr = 0
     for i in range(256):
         for j in range(256):
-            pixel_map[i,j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2], img_data[curr + 3])
-            curr += 4
+            pixel_map[i,j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2])
+            curr += 3
     img = img.rotate(90)
     img.save(img_root + name + '.png')
 
-def gen_UID(cursor, table_name, MAX_UID):
+def gen_image_id(cursor, table_name, MAX_ID):
     cursor.execute("SELECT COUNT(*) FROM {}".format(table_name))
     if not cursor.fetchone()[0]:
         return 0
     # Number of times the method will try to generate a UID before it fails
-    seed()
     max_tries = 100000
     for i in range(0, max_tries):
-        uid = randint(0, MAX_UID)
-        cursor.execute("SELECT COUNT(*) FROM {} WHERE id={}".format(table_name, uid))
+        image_id = randint(0, MAX_ID)
+        cursor.execute("SELECT COUNT(*) FROM {} WHERE image_id='{}'".format(table_name, image_id))
         # If there are 0 IDs in the table with id=UID, we have found a unique ID
         if not cursor.fetchone()[0]:
-            return uid
+            return image_id
     raise RuntimeError("Ran out of UIDs!")
 
-def insert_into_db(db, table_name, data):
-    MAX_UID = int(1e9)
+def insert_into_db(db, table_name, ip, user_id, vendor, gpu, time, agent, browser):
+    MAX_ID = int(1e9)
     cursor = db.cursor()
-    uid = gen_UID(cursor, table_name, MAX_UID)
+    image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        cursor.execute("INSERT INTO {} (id, str) VALUES ('{}','{}')".format(table_name, uid, data))
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser)
+        cursor.execute(sql)
         db.commit()
-        return uid
+        return image_id
     except:
-        db.rollback()
+        #db.rollback()
         # If something went wrong with the insert, it was probably
         # the super unlikely race of two threads with the same UID,
         # so the insert can be tried again
-        # return insert_into_db(db, table_name, data)
+        return insert_into_db(db, table_name, ip, user_id, vendor, gpu, time, agent, browser)
 
 def rawToIntArray(raw):
     raw = list(raw)
@@ -79,14 +78,6 @@ def rawToIntArray(raw):
 def padb64(b64):
     return "{}===".format(b64)[0:len(b64) + (len(b64) % 4)]
 
-def connectDB():
-    db_name = "cross_browser"
-    table_name = "data"
-    db = MySQLdb.connect("localhost", "erik", "erik", db_name)
-    uid = insert_into_db(db, table_name, "some string")
-    db.close()
-
-
 def index(req):
     global inited
     global root
@@ -98,18 +89,30 @@ def index(req):
 
     agent = req.headers_in[ 'User-Agent' ]
     agent = agent.replace(',', ' ')
-
-    data = "{},{},{},{},{},{}".format(ip, one_test['WebGL'], one_test['inc'], one_test['gpu'], datetime.datetime.now(), agent)
+    vendor = one_test['inc']
+    browser = ''
+    if(agent.find('Firefox') != -1):
+      browser = 'firefox'
+    elif(agent.find('Edge') != -1 or vendor.find('Microsoft') != -1):
+      browser = 'others'
+    elif(agent.find('OPR') != -1):
+      browser = 'others'
+    elif(agent.find('Chrome') != -1 or vendor.find('Google') != -1):
+      browser = 'chrome'
+    else:
+      browser = 'others'
 
     db_name = "cross_browser"
-    table_name = "data"
+    table_name = "new_data"
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
-    uid = insert_into_db(db, table_name, data)
+    time = str(datetime.datetime.now())
+    image_id = insert_into_db(db, table_name, ip, one_test['user_id'], vendor, one_test['gpu'], time, agent, browser)
     db.close()
+
 
     pixels = one_test['pixels'].split(" ")
     for pi in pixels:
-        saveImg(padb64(pi), "{}_{}".format(uid, sub_number))
+        saveImg(padb64(pi), "{}_{}".format(image_id, sub_number))
         sub_number += 1
 
     return "success"

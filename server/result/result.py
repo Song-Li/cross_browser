@@ -10,12 +10,9 @@ import numpy as np
 from scipy.ndimage import (label,find_objects)
 import MySQLdb
 
-db_name = "cross_browser"
-table_name = "data"
-
 case_number = 14
 standard_pics = []
-ip2line = {}
+user_to_images = {}
 open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
 
@@ -67,53 +64,35 @@ def generateData(root, browser, line):
         sub.save(root + str(browser) + '_' + str(i) + '_3.png')  #img - standard
 
 
-def generatePictures(ip):#get the string to send
+def generatePictures(user_id):#get the string to send
     #3 type of browsers: chrome, firefox, and others
-    if not os.path.exists(output_root + ip):
-        os.makedirs(output_root + ip)
-    if 'chrome' in ip2line[ip].keys():
-        line = ip2line[ip]['chrome']
-        generateData(output_root + ip + '/', 0, line)
+    if not os.path.exists(output_root + str(user_id)):
+        os.makedirs(output_root + str(user_id))
+    if 'chrome' in user_to_images[user_id].keys():
+        line = user_to_images[user_id]['chrome']
+        generateData(output_root + str(user_id) + '/', 0, line)
 
-    if 'firefox' in ip2line[ip].keys():
-        line = ip2line[ip]['firefox']
-        generateData(output_root + ip + '/', 1, line)
+    if 'firefox' in user_to_images[user_id].keys():
+        line = user_to_images[user_id]['firefox']
+        generateData(output_root + str(user_id) + '/', 1, line)
 
-    if 'others' in ip2line[ip].keys() :
-        line = ip2line[ip]['others']
-        generateData(output_root + ip + '/', 2, line)
+    if 'others' in user_to_images[user_id].keys() :
+        line = user_to_images[user_id]['others']
+        generateData(output_root + str(user_id) + '/', 2, line)
 
-def generateLineNumber():
-    global db_name
-    global table_name
+def generate_user_to_images():
+    db_name = "cross_browser"
+    table_name = "new_data"
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     cursor = db.cursor()
-    cursor.execute("SELECT id, str FROM {}".format(table_name))
+    cursor.execute("SELECT image_id, user_id, browser FROM {}".format(table_name))
     data = cursor.fetchall()
     db.close()
-    for line in data:
-        numLine = line[0]
-        item = line[1].split(',')
-        #the order can't change!
-
-        if(item[5].find('Firefox') != -1):
-            browser_name = 'firefox'
-        elif(item[5].find('Edge') != -1 or item[2].find('Microsoft') != -1):
-            browser_name = 'others'
-        elif(item[5].find('OPR') != -1):
-            browser_name = 'others'
-        elif(item[5].find('Chrome') != -1 or item[2].find('Google') != -1):
-            browser_name = 'chrome'
+    for image_id, user_id, browser in data:
+        if(user_id in user_to_images):
+            user_to_images[user_id].update({browser: image_id})
         else:
-            browser_name = 'others'
-
-
-
-        if(item[0] in ip2line):
-            ip2line[item[0]].update({browser_name: numLine})
-        else:
-            ip2line[item[0]] = {browser_name: numLine}
-        # numLine += 1
+            user_to_images[user_id] = {browser: image_id}
 
 def generateStandard():
     open_img_dir = open_root + "images/origins/"
@@ -134,21 +113,21 @@ def getGroupNumber(path): # get how many groups in one image
     labeled_array, num_features = label(a, structure=s)
     return num_features
 
-def getGroupNumberList(ip): #get how many groups in picture 1 and pic 2
+def getGroupNumberList(user_id): #get how many groups in picture 1 and pic 2
     #return 12 numbers
     ret = []
     for i in range(3):
-        ret.append(getGroupNumber(output_root + ip + '/' + str(i) + '_1_2' + '.png'))
-        ret.append(getGroupNumber(output_root + ip + '/' + str(i) + '_1_3' + '.png'))
-        ret.append(getGroupNumber(output_root + ip + '/' + str(i) + '_2_2' + '.png'))
-        ret.append(getGroupNumber(output_root + ip + '/' + str(i) + '_2_3' + '.png'))
+        ret.append(getGroupNumber(output_root + str(user_id) + '/' + str(i) + '_1_2' + '.png'))
+        ret.append(getGroupNumber(output_root + str(user_id) + '/' + str(i) + '_1_3' + '.png'))
+        ret.append(getGroupNumber(output_root + str(user_id) + '/' + str(i) + '_2_2' + '.png'))
+        ret.append(getGroupNumber(output_root + str(user_id) + '/' + str(i) + '_2_3' + '.png'))
 
     return ret
 
 def equal(im1, im2):
     return ImageChops.difference(im1, im2).getbbox() is None
 
-def getSubtract(ip, caseNumber):
+def getSubtract(user_id, caseNumber):
     #6 pictures
     #0 1 for chrome and firefox
     #2 3 for chrome and others
@@ -156,16 +135,16 @@ def getSubtract(ip, caseNumber):
     if not os.path.exists(output_root + 'tmp/'):
         os.makedirs(output_root + 'tmp/')
 
-    img1 = Image.open(output_root + ip + '/' + '0_' + caseNumber + '_2.png')
-    img2 = Image.open(output_root + ip + '/' + '0_' + caseNumber + '_3.png')
-    img3 = Image.open(output_root + ip + '/' + '1_' + caseNumber + '_2.png')
-    img4 = Image.open(output_root + ip + '/' + '1_' + caseNumber + '_3.png')
-    img5 = Image.open(output_root + ip + '/' + '2_' + caseNumber + '_2.png')
-    img6 = Image.open(output_root + ip + '/' + '2_' + caseNumber + '_3.png')
+    img1 = Image.open(output_root + str(user_id) + '/' + '0_' + caseNumber + '_2.png')
+    img2 = Image.open(output_root + str(user_id) + '/' + '0_' + caseNumber + '_3.png')
+    img3 = Image.open(output_root + str(user_id) + '/' + '1_' + caseNumber + '_2.png')
+    img4 = Image.open(output_root + str(user_id) + '/' + '1_' + caseNumber + '_3.png')
+    img5 = Image.open(output_root + str(user_id) + '/' + '2_' + caseNumber + '_2.png')
+    img6 = Image.open(output_root + str(user_id) + '/' + '2_' + caseNumber + '_3.png')
 
-    img7 = Image.open(output_root + ip + '/' + '0_' + caseNumber + '_0.png')
-    img8 = Image.open(output_root + ip + '/' + '1_' + caseNumber + '_0.png')
-    img9 = Image.open(output_root + ip + '/' + '2_' + caseNumber + '_0.png')
+    img7 = Image.open(output_root + str(user_id) + '/' + '0_' + caseNumber + '_0.png')
+    img8 = Image.open(output_root + str(user_id) + '/' + '1_' + caseNumber + '_0.png')
+    img9 = Image.open(output_root + str(user_id) + '/' + '2_' + caseNumber + '_0.png')
 
     getDifference(img1, img3).save(output_root + 'tmp/0.png')
     getDifference(img2, img4).save(output_root + 'tmp/1.png')
@@ -189,17 +168,18 @@ def index(req):
     post_data = str(req.form.list)[8:-7]
 
     if(post_data[0] == 'R'):
-        generateLineNumber()
+        generate_user_to_images()
         generateStandard()
-        for ip in ip2line.keys():
-            send.append(ip)
+        for user_id in user_to_images.keys():
+            send.append(user_id)
     elif post_data[0] == 'S':
         tmp = post_data.split(',')
         getSubtract(tmp[1], tmp[2])
 
     else:
-        generatePictures(post_data)
-        send = getGroupNumberList(post_data)
+        user_id = int(post_data)
+        generatePictures(user_id)
+        send = getGroupNumberList(user_id)
 
     send_string = json.dumps(send)
     return send_string
