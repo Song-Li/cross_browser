@@ -44,7 +44,7 @@ def gen_image_id(cursor, table_name, MAX_ID):
     max_tries = 100000
     for i in range(0, max_tries):
         image_id = randint(0, MAX_ID)
-        cursor.execute("SELECT COUNT(*) FROM {} WHERE image_id={}".format(table_name, image_id))
+        cursor.execute("SELECT COUNT(*) FROM {} WHERE image_id='{}'".format(table_name, image_id))
         # If there are 0 IDs in the table with id=UID, we have found a unique ID
         if not cursor.fetchone()[0]:
             return image_id
