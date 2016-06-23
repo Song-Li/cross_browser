@@ -24,7 +24,7 @@ function generateImg(src, parent){
 }
 
 function subtractButton(name, parent){
-    $('<button type="button">'
+    $('<button type="button" style="float: right;">'
         + "subtract"
         + "</button>")
         .click({name: name}, function(event) {
@@ -89,7 +89,6 @@ function draw(ip, hashCodes){
         var div1 = $('<div class="imgDiv"/>').appendTo($('#right'));
         $('<br/><div> This - Standard and Standard - This </div> <br/>').appendTo($('#right'));
         var div2 = $('<div class="imgDiv"/>').appendTo($('#right'));
-        $('<br/>').appendTo($('#right'));
         for (browser in hashCodes) {
             var innerDiv = $('<div class="innerDiv"/>').appendTo(div1);
             generateImg(root + ip + '/' + browser + '_' + i + '_0' + ".png", innerDiv);
@@ -100,8 +99,9 @@ function draw(ip, hashCodes){
             generateImg(root + ip + '/' + browser + '_' + i + '_3' + ".png", innerDiv);
         }
         if (canSubtract) {
-            subtractButton('S,' + ip + ',' + i, div2);
+            subtractButton('S,' + ip + ',' + i, $('#right'));
         }
+        $('<br/><br/>').appendTo($('#right'));
     }
 }
 
