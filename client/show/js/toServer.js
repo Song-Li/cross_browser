@@ -119,7 +119,8 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, user_id: uid, pixels: pixels};
 
 
-    /*var f = document.createElement("form");
+    /*
+    var f = document.createElement("form");
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
     var i = document.createElement("input"); //input element, text
@@ -128,8 +129,8 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     f.appendChild(i);
     f.submit();
 
-    return ;*/
-
+    return ;
+*/
 
     $.ajax({
         url:"http://" + ip_address + "/collect.py",

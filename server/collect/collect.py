@@ -36,10 +36,11 @@ def saveImg(b64raw, name):
     img = img.rotate(90)
     img.save(img_root + name + '.png')
 
-def gen_image_id(cursor, table_name, MAX_ID):
+def gen_image_id(cursor, table_name, MAX_ID, agent):
     cursor.execute("SELECT COUNT(*) FROM {}".format(table_name))
     if not cursor.fetchone()[0]:
         return 0
+
     # Number of times the method will try to generate a UID before it fails
     max_tries = 100000
     for i in range(0, max_tries):
@@ -51,9 +52,14 @@ def gen_image_id(cursor, table_name, MAX_ID):
     raise RuntimeError("Ran out of UIDs!")
 
 def insert_into_db(db, table_name, ip, user_id, vendor, gpu, time, agent, browser):
-    MAX_ID = int(1e9)
     cursor = db.cursor()
-    image_id = gen_image_id(cursor, table_name, MAX_ID)
+    cursor.execute("SELECT image_id FROM {} WHERE user_id='{}'AND agent='{}'".format(table_name, user_id, agent))
+    row = cursor.fetchone()
+    if row is not None:
+        return row[0]
+
+    MAX_ID = int(1e9)
+    image_id = gen_image_id(cursor, table_name, MAX_ID, agent)
     try:
         sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser)
         cursor.execute(sql)
