@@ -9,6 +9,8 @@ from PIL import Image, ImageChops, ImageFilter
 import numpy as np
 from scipy.ndimage import (label,find_objects)
 import MySQLdb
+from hashlib import sha512 as hasher1, sha256 as hasher2
+from base64 import urlsafe_b64encode as encode
 
 case_number = 14
 standard_pics = []
@@ -80,6 +82,26 @@ def generatePictures(user_id):#get the string to send
         line = user_to_images[user_id]['others']
         generateData(output_root + str(user_id) + '/', 2, line)
 
+browsers = ['chrome', 'firefox', 'others']
+def gen_hash_codes(user_id):
+    hash_codes = {}
+    for browser in range(3):
+        if user_to_images[user_id].has_key(browsers[browser]):
+            line = user_to_images[user_id][browsers[browser]]
+            hashes = []
+            for i in range(case_number):
+                img = Image.open(open_root + "images/origins/" + str(line) + '_' + str(i) + '.png')
+                m = hasher1()
+                n = hasher2()
+                for r, g, b in img.getdata():
+                    data = "{}{}{}".format(r, g, b)
+                    m.update(data)
+                    n.update(data)
+                b64m = encode(m.digest()).replace('=', '')
+                b64n = encode(m.digest()).replace('=', '')
+                hashes.append(b64m + b64n)
+            hash_codes.update({browser: hashes})
+    return hash_codes
 def generate_user_to_images():
     db_name = "cross_browser"
     table_name = "new_data"
@@ -164,7 +186,6 @@ def getSubtract(user_id, caseNumber):
 
 def index(req):
     send = []
-
     post_data = str(req.form.list)[8:-7]
 
     if(post_data[0] == 'R'):
@@ -179,7 +200,8 @@ def index(req):
     else:
         user_id = int(post_data)
         generatePictures(user_id)
-        send = getGroupNumberList(user_id)
+        hash_codes = gen_hash_codes(user_id)
+        send = hash_codes
 
     send_string = json.dumps(send)
     return send_string

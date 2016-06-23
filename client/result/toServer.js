@@ -1,17 +1,8 @@
-var case_number = 14;
-var browser_number = 3;
-var canvas_number = case_number * browser_number * 4;
 // var ip_address = "128.180.123.19"
 var ip_address = "184.73.16.65"
 var root = "http://" + ip_address + "/images/generated/"
-var img_number = 0;
 
 $(function() {
-    for (var i = 0; i < case_number; i++) {
-        $('<div id="div' + parseFloat(2*i) + '" class="imgDiv"/><br />').appendTo($('#right'));
-        $('<div> This - Standard and Standard - This </div> <br />').appendTo($('#right'));
-        $('<div id="div' + parseFloat(2*i + 1) + '" class="imgDiv"></div><br />').appendTo($('#right'));
-    }
     generatePage();
 });
 
@@ -27,25 +18,23 @@ function generateButton(name){
     $('<br/>').appendTo($("#left"));
 }
 
-function generateImg(src, fatherName){
-    $('<img id="img' + img_number + '"'
-        + 'src="' + src + '"'
-        + 'class="img"/>').appendTo($('#' + fatherName));
-    img_number ++;
+function generateImg(src, parent){
+    $('<img src="' + src + '"'
+        + 'class="img"/>').appendTo(parent);
 }
 
-function subtractButton(name, fatherName){
-    $('<button type="button">'
+function subtractButton(name, parent){
+    $('<button type="button" style="float: right;">'
         + "subtract"
         + "</button>")
         .click({name: name}, function(event) {
             toServer(event.data.name);
         })
-        .appendTo($("#" + fatherName));
+        .appendTo(parent);
 }
 
 function clearPage(){
-    $(".imgDiv").children().remove();
+    $("#right").children().remove();
 }
 
 function generatePage(){
@@ -53,8 +42,6 @@ function generatePage(){
     clearPage();
     $("#left").children().remove(); //clear left div
     postData = 'Refresh';
-
-
 
     /*var f = document.createElement("form");
     f.setAttribute('method',"post");
@@ -87,16 +74,34 @@ function generatePage(){
 
 }
 
-function draw(ip){
-    img_number = 0;
-    for(var i = 0;i < case_number;++ i){
-        for(var j = 0;j < browser_number;++ j){
-            generateImg(root + ip + '/' + j + '_' + i + '_0' + ".png", 'div' + (i * 2));
-            generateImg(root + ip + '/' + j + '_' + i + '_1' + ".png", 'div' + (i * 2));
-            generateImg(root + ip + '/' + j + '_' + i + '_2' + ".png", 'div' + (i * 2 + 1));
-            generateImg(root + ip + '/' + j + '_' + i + '_3' + ".png", 'div' + (i * 2 + 1));
+function Base64DecodeUrl(str){
+    return str.replace(/-/g, '+').replace(/_/g, '/');
+}
+
+function draw(ip, hashCodes){
+    var numImages;
+    for (browser in hashCodes) {
+        numImages = hashCodes[browser].length;
+        break;
+    }
+    var canSubtract = Object.keys(hashCodes).length == 3;
+    for (var i = 0; i < numImages; i++) {
+        var div1 = $('<div class="imgDiv"/>').appendTo($('#right'));
+        $('<br/><div> This - Standard and Standard - This </div> <br/>').appendTo($('#right'));
+        var div2 = $('<div class="imgDiv"/>').appendTo($('#right'));
+        for (browser in hashCodes) {
+            var innerDiv = $('<div class="innerDiv"/>').appendTo(div1);
+            generateImg(root + ip + '/' + browser + '_' + i + '_0' + ".png", innerDiv);
+            generateImg(root + ip + '/' + browser + '_' + i + '_1' + ".png", innerDiv);
+            $('<p>Hashcode: ' + Base64DecodeUrl(hashCodes[browser][i]) + '</p>').appendTo(innerDiv);
+            innerDiv = $('<div class="innerDiv"/>').appendTo(div2);
+            generateImg(root + ip + '/' + browser + '_' + i + '_2' + ".png", innerDiv);
+            generateImg(root + ip + '/' + browser + '_' + i + '_3' + ".png", innerDiv);
         }
-        subtractButton('S,' + ip + ',' + i, 'div' + (i * 2 + 1));
+        if (canSubtract) {
+            subtractButton('S,' + ip + ',' + i, $('#right'));
+        }
+        $('<br/><br/>').appendTo($('#right'));
     }
 }
 
@@ -106,7 +111,6 @@ function toServer(id){ //send messages to server and receive messages from serve
         generatePage();
         return ;
     }
-
 
     /*var f = document.createElement("form");
     f.setAttribute('method',"post");
@@ -132,9 +136,9 @@ function toServer(id){ //send messages to server and receive messages from serve
                 window.location.replace("http://www.songli.us/mf/difference/");
             }
             clearPage();
-            var res = JSON.parse(data.toString());
-            console.log(res);
-            draw(postData);
+            var hashCodes = JSON.parse(data.toString());
+            console.log(hashCodes);
+            draw(postData, hashCodes);
         }
     });
 }

@@ -74,11 +74,10 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
   this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER,
                         this.gl.LINEAR);
 
-  var video = $('<video width="256" height="256"/>').appendTo($('body'));
+  var video = $('<video width="256" height="256" class="hidden-vid"/>').appendTo($('body'));
   $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(video);
   $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(video);
   video.prop('loop', true);
-  video.prop('style', 'display: none;');
   video.on('play', {self : this}, function(event) {
     canvas_number += 2;
     var self = event.data.self;
