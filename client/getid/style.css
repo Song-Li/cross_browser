@@ -28,7 +28,7 @@
     position: absolute;
     top:0; left: 0; right: 0; bottom: 0;
     height: 300px;
-    width: 300px;
+    width: 500px;
     text-align: center;
     margin: auto;
     font-family: "Ubuntu Mono", sans-serif;
@@ -38,13 +38,14 @@
 
 #instruction a {
     font-size: .7em;
+    line-height: 25px;
     color: #9B9B4F
 }
 
 #instruction #browsers {
+    padding-top: 10px;
     font-size: .7em;
     color: #555555
-
 }
 
 #instruction h2 {
