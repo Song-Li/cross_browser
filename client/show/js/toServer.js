@@ -119,7 +119,8 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, user_id: uid, pixels: pixels};
 
 
-    /*var f = document.createElement("form");
+    /*
+    var f = document.createElement("form");
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
     var i = document.createElement("input"); //input element, text
@@ -128,8 +129,8 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     f.appendChild(i);
     f.submit();
 
-    return ;*/
-
+    return ;
+*/
 
     $.ajax({
         url:"http://" + ip_address + "/collect.py",
@@ -137,7 +138,16 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
-            $('#user_link').append('<a href="' + url + '">' + url + '</a>');
+            console.log(data);
+            num = data.split(',')[0];
+            code = data.split(',')[1];
+            if(num != '3'){
+                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Now open the link:<br><a href="' + url + '">' + url + '</a><br>with another browser');
+                $('#instruction').append('<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
+            }else{
+                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Your code is ' + code + '<br> <strong>Thank you!</strong>');
+                
+            }
             progress(100);
         }
     });

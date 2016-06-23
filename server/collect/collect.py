@@ -36,10 +36,11 @@ def saveImg(b64raw, name):
     img = img.rotate(90)
     img.save(img_root + name + '.png')
 
-def gen_image_id(cursor, table_name, MAX_ID):
+def gen_image_id(cursor, table_name, MAX_ID, agent):
     cursor.execute("SELECT COUNT(*) FROM {}".format(table_name))
     if not cursor.fetchone()[0]:
         return 0
+
     # Number of times the method will try to generate a UID before it fails
     max_tries = 100000
     for i in range(0, max_tries):
@@ -51,13 +52,19 @@ def gen_image_id(cursor, table_name, MAX_ID):
     raise RuntimeError("Ran out of UIDs!")
 
 def insert_into_db(db, table_name, ip, user_id, vendor, gpu, time, agent, browser):
-    MAX_ID = int(1e9)
     cursor = db.cursor()
-    image_id = gen_image_id(cursor, table_name, MAX_ID)
+    cursor.execute("SELECT image_id FROM {} WHERE user_id='{}' AND agent='{}'".format(table_name, user_id, agent))
+    row = cursor.fetchone()
+    if row is not None:
+        return row[0]
+
+    MAX_ID = int(1e9)
+    image_id = gen_image_id(cursor, table_name, MAX_ID, agent)
     try:
         sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser)
         cursor.execute(sql)
         db.commit()
+        cursor.close()
         return image_id
     except:
         #db.rollback()
@@ -107,7 +114,6 @@ def index(req):
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     time = str(datetime.datetime.now())
     image_id = insert_into_db(db, table_name, ip, one_test['user_id'], vendor, one_test['gpu'], time, agent, browser)
-    db.close()
 
 
     pixels = one_test['pixels'].split(" ")
@@ -115,4 +121,13 @@ def index(req):
         saveImg(padb64(pi), "{}_{}".format(image_id, sub_number))
         sub_number += 1
 
-    return "success"
+     
+    cursor = db.cursor()
+    cursor.execute("SELECT COUNT(*) FROM {} WHERE user_id='{}'".format(table_name, one_test['user_id']))
+    row = cursor.fetchone()[0]
+    db.close()
+    if row == 3:
+        return str(row) + ',8293847'
+    else:
+        return str(row) + ',not finished'
+
