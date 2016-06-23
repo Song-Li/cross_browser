@@ -138,7 +138,16 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
-            $('#user_link').append('<a href="' + url + '">' + url + '</a>');
+            console.log(data);
+            num = data.split(',')[0];
+            code = data.split(',')[1];
+            if(num != '3'){
+                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Now open the link:<br><a href="' + url + '">' + url + '</a><br>with another browser');
+                $('#instruction').append('<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
+            }else{
+                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Your code is ' + code + '<br> <strong>Thank you!</strong>');
+                
+            }
             progress(100);
         }
     });
