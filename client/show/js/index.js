@@ -5,7 +5,7 @@ function progress(value) {
 
     if(value == 100){
         $('progress').addClass("hidden");
-        $('#instruction').css("display","block");
+        $('#instruction').addClass("appear");
         return ;
     }
     // run counter

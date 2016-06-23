@@ -137,6 +137,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
+            $('#user_link').append('<a href="' + url + '">' + url + '</a>');
             progress(100);
         }
     });

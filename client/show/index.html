@@ -12,7 +12,15 @@
 <body onload="drawCube();drawLine();drawTexture();drawSimpleLight();drawMoreLight();drawTransparent();">
 <progress max="100"></progress>
 
-<div id = "instruction"> Now Next </div>
+<div id = "instruction" class="bar"> 
+    <img src="./img/fingerprint.jpg">
+    <h2>Now Next</h2>
+    Open the link: <p id="user_link"></p>
+    with another browser.
+    <div id= "browsers">
+        (Firefox, chrome, safair etc.)
+    </div>
+</div>
 
 <div id = "test_canvas">
     <canvas id="line" width="256" height="256">
