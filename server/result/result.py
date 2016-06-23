@@ -9,6 +9,7 @@ from PIL import Image, ImageChops, ImageFilter
 import numpy as np
 from scipy.ndimage import (label,find_objects)
 import MySQLdb
+from hashlib import md5 as hasher
 
 case_number = 14
 standard_pics = []
@@ -79,6 +80,21 @@ def generatePictures(user_id):#get the string to send
     if 'others' in user_to_images[user_id].keys() :
         line = user_to_images[user_id]['others']
         generateData(output_root + str(user_id) + '/', 2, line)
+
+browsers = ['chrome', 'firefox', 'others']
+def gen_hash_codes(user_id):
+    hash_codes = {}
+    for browser in range(3):
+        if user_to_images[user_id].has_key(browsers[browser]):
+            line = user_to_images[user_id][browsers[browser]]
+            hashes = []
+            for img in range(case_number):
+                img = Image.open(open_root + "images/origins/" + str(line) + '_' + str(i) + '.png')
+                m = hasher()
+                for pixel in img:
+                    m.update(pixel)
+                hashes.append(m.hexdigest())
+            hash_codes.update({browser: hashes})
 
 def generate_user_to_images():
     db_name = "cross_browser"
@@ -179,7 +195,7 @@ def index(req):
     else:
         user_id = int(post_data)
         generatePictures(user_id)
-        send = getGroupNumberList(user_id)
+        hash_codes = gen_hash_codes(user_id)
 
     send_string = json.dumps(send)
     return send_string
