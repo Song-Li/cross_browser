@@ -1,5 +1,5 @@
-// var ip_address = "128.180.123.19"
-var ip_address = "184.73.16.65"
+var ip_address = "128.180.123.19"
+// var ip_address = "184.73.16.65"
 var root = "http://" + ip_address + "/images/generated/"
 
 $(function() {

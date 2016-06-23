@@ -2,9 +2,9 @@ var ven, ren;
 var canvas_number = 12;
 var urls = [];
 var finished = 0;
-var ip_address = "184.73.16.65";
+// var ip_address = "184.73.16.65";
 var error_page = "http://www.songli.us/error.html"
-// var ip_address = "128.180.123.19";
+var ip_address = "128.180.123.19";
 // var ip_address = "52.90.197.136";
 
 sumRGB = function(img) {
