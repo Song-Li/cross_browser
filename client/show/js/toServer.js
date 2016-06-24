@@ -108,7 +108,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     var url = document.URL;
     var hasCommand = url.indexOf('?') >= 0;
 
-    requests = {};
+    var requests = {};
     if (hasCommand) {
         var commands = url.split('?')[1].split('&');
         for (var i = 0; i < commands.length; i++) {
