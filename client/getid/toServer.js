@@ -5,6 +5,13 @@ function addUID(uid){
 }
 
 function generateUID(){
+    var uid = Cookies.get('machine_fingerprinting_uid');
+    if (uid) {
+        addUID(uid);
+        return;
+    }
+
+
     postData = 'GetUID';
 
     /*
@@ -28,6 +35,7 @@ function generateUID(){
         type: 'POST',
         data: postData,
         success:function(uid) {
+            Cookies.set('machine_fingerprinting_uid', uid);
             addUID(uid);
             console.log(uid);
         }
