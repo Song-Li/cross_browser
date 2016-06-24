@@ -7,37 +7,18 @@ import json
 import linecache
 from PIL import Image, ImageChops, ImageFilter
 import numpy as np
-from scipy.ndimage import (label,find_objects)
+# from scipy.ndimage import (label,find_objects)
 import MySQLdb
 from hashlib import sha512 as hasher1, sha256 as hasher2
 from base64 import urlsafe_b64encode as encode
 
+browser_to_id = {'chrome': 0, 'firefox': 1, 'others': 2}
 case_number = 14
 standard_pics = []
-user_to_images = {}
 open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
-
-def thicker(img):
-    pixels = img.load()
-    origin = img.copy()
-    ori = origin.load()
-    for i in range(1, 255):
-        for j in range(1,255):
-            pixels[i,j] = ori[i - 1, j - 1] | ori[i,j - 1] | ori[i + 1, j - 1] | ori[i - 1,j] | ori[i + 1,j] | ori[i - 1, j + 1] | ori[i, j + 1] | ori[i + 1, j + 1]
-
-    return img
-
-#input a picture
-#return a img of edge data
-def getEdge(img):
-    # edge = img.filter(ImageFilter.FIND_EDGES)
-    edge = img
-    edge = edge.convert('L')
-    edge = edge.point(lambda x: 0 if x < 180 else 255, '1')
-    #edge = thicker(edge)
-    edge = edge.convert('RGBA')
-    return edge
+db_name = "cross_browser"
+table_name = "new_data"
 
 def getDifference(img1, img2):
     sub = ImageChops.subtract(img1,img2, 0.005)
@@ -66,55 +47,34 @@ def generateData(root, browser, line):
         sub.save(root + str(browser) + '_' + str(i) + '_3.png')  #img - standard
 
 
-def generatePictures(user_id):#get the string to send
+def generatePictures(data, user_id):#get the string to send
     #3 type of browsers: chrome, firefox, and others
     if not os.path.exists(output_root + str(user_id)):
         os.makedirs(output_root + str(user_id))
-    if 'chrome' in user_to_images[user_id].keys():
-        line = user_to_images[user_id]['chrome']
-        generateData(output_root + str(user_id) + '/', 0, line)
 
-    if 'firefox' in user_to_images[user_id].keys():
-        line = user_to_images[user_id]['firefox']
-        generateData(output_root + str(user_id) + '/', 1, line)
+    for image_id, browser in data:
+        generateData(output_root + str(user_id) + '/', browser_to_id[browser], image_id)
 
-    if 'others' in user_to_images[user_id].keys() :
-        line = user_to_images[user_id]['others']
-        generateData(output_root + str(user_id) + '/', 2, line)
 
-browsers = ['chrome', 'firefox', 'others']
-def gen_hash_codes(user_id):
+def gen_hash_codes(data):
     hash_codes = {}
-    for browser in range(3):
-        if user_to_images[user_id].has_key(browsers[browser]):
-            line = user_to_images[user_id][browsers[browser]]
-            hashes = []
-            for i in range(case_number):
-                img = Image.open(open_root + "images/origins/" + str(line) + '_' + str(i) + '.png')
-                m = hasher1()
-                n = hasher2()
-                for r, g, b in img.getdata():
-                    data = "{}{}{}".format(r, g, b)
-                    m.update(data)
-                    n.update(data)
-                b64m = encode(m.digest()).replace('=', '')
-                b64n = encode(m.digest()).replace('=', '')
-                hashes.append(b64m + b64n)
-            hash_codes.update({browser: hashes})
+    for image_id, browser in data:
+        hashes = []
+        for i in range(case_number):
+            img = Image.open(open_root + "images/origins/" + str(image_id) + '_' + str(i) + '.png')
+            m = hasher1()
+            n = hasher2()
+            pixels = ''
+            for r, g, b in img.getdata():
+                pixels += '{}{}{}'.format(r, g, b)
+            m.update(pixels)
+            n.update(pixels)
+            b64m = encode(m.digest()).replace('=', '')
+            b64n = encode(m.digest()).replace('=', '')
+            hashes.append(b64m + b64n)
+
+        hash_codes.update({browser_to_id[browser]: hashes})
     return hash_codes
-def generate_user_to_images():
-    db_name = "cross_browser"
-    table_name = "new_data"
-    db = MySQLdb.connect("localhost", "erik", "erik", db_name)
-    cursor = db.cursor()
-    cursor.execute("SELECT image_id, user_id, browser FROM {}".format(table_name))
-    data = cursor.fetchall()
-    db.close()
-    for image_id, user_id, browser in data:
-        if(user_id in user_to_images):
-            user_to_images[user_id].update({browser: image_id})
-        else:
-            user_to_images[user_id] = {browser: image_id}
 
 def generateStandard():
     open_img_dir = open_root + "images/origins/"
@@ -122,29 +82,6 @@ def generateStandard():
     for i in range(case_number):
         standard_pics.append(Image.open(open_img_dir + '0_' + str(i) + ".png"))
 
-def getGroupNumber(path): # get how many groups in one image
-    s = [[1,1,1],
-        [1,1,1],
-        [1,1,1]]
-    try:
-        img = Image.open(path)
-    except IOError:
-        return 'Do not exist'
-    img = img.convert('L')
-    a = np.array(img, dtype=np.uint8)
-    labeled_array, num_features = label(a, structure=s)
-    return num_features
-
-def getGroupNumberList(user_id): #get how many groups in picture 1 and pic 2
-    #return 12 numbers
-    ret = []
-    for i in range(3):
-        ret.append(getGroupNumber(output_root + str(user_id) + '/' + str(i) + '_1_2' + '.png'))
-        ret.append(getGroupNumber(output_root + str(user_id) + '/' + str(i) + '_1_3' + '.png'))
-        ret.append(getGroupNumber(output_root + str(user_id) + '/' + str(i) + '_2_2' + '.png'))
-        ret.append(getGroupNumber(output_root + str(user_id) + '/' + str(i) + '_2_3' + '.png'))
-
-    return ret
 
 def equal(im1, im2):
     return ImageChops.difference(im1, im2).getbbox() is None
@@ -189,20 +126,26 @@ def index(req):
     post_data = str(req.form.list)[8:-7]
 
     if(post_data[0] == 'R'):
-        generate_user_to_images()
         generateStandard()
-        for user_id in user_to_images.keys():
-            send.append(user_id)
+        db = MySQLdb.connect("localhost", "erik", "erik", db_name)
+        cursor = db.cursor()
+        cursor.execute("SELECT DISTINCT(user_id) FROM {}".format(table_name))
+        send = cursor.fetchall()
+        db.close()
+
     elif post_data[0] == 'S':
         tmp = post_data.split(',')
         getSubtract(tmp[1], tmp[2])
 
     else:
         user_id = int(post_data)
-        generatePictures(user_id)
-        hash_codes = gen_hash_codes(user_id)
-        send = hash_codes
+        db = MySQLdb.connect("localhost", "erik", "erik", db_name)
+        cursor = db.cursor()
+        cursor.execute("SELECT image_id, browser FROM {} WHERE user_id='{}'".format(table_name, user_id))
+        data = cursor.fetchall()
+        db.close()
+        generatePictures(data, user_id)
+        send = gen_hash_codes(data)
 
     send_string = json.dumps(send)
     return send_string
-

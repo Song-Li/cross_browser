@@ -121,7 +121,7 @@ def index(req):
         saveImg(padb64(pi), "{}_{}".format(image_id, sub_number))
         sub_number += 1
 
-     
+
     cursor = db.cursor()
     cursor.execute("SELECT COUNT(*) FROM {} WHERE user_id='{}'".format(table_name, one_test['user_id']))
     row = cursor.fetchone()[0]
@@ -130,4 +130,3 @@ def index(req):
         return str(row) + ',8293847'
     else:
         return str(row) + ',not finished'
-

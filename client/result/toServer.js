@@ -137,7 +137,6 @@ function toServer(id){ //send messages to server and receive messages from serve
             }
             clearPage();
             var hashCodes = JSON.parse(data.toString());
-            console.log(hashCodes);
             draw(postData, hashCodes);
         }
     });
