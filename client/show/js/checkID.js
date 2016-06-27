@@ -38,6 +38,6 @@ $(function() {
   drawMoreLight();
   drawTransparent();
   startVideo();
-  startShadow();
+  startClipping();
   startLighting();
 });
