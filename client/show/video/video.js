@@ -5,12 +5,11 @@
 
 
 var VideoCollector = function(webmVid, mp4Vid, id) {
-  var videoStartId = canvas_number;
   var numImages = 5;
+  this.IDs = sender.getIDs(numImages*2);
 
-  this.startID = parseInt(videoStartId + 2 * numImages * id);
-  this.ctxID = this.startID;
-  this.glID = this.startID + 1;
+  this.ctxID = 0;
+  this.glID = 1;
   this.ctxCanName = "vid_can_ctx_" + id;
   this.glCanName = "vid_can_gl_" + id;
   var canvas =
@@ -79,7 +78,6 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
   $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(video);
   video.prop('loop', true);
   video.on('play', {self : this}, function(event) {
-    canvas_number += 2;
     var self = event.data.self;
     drawVid(canvas.width, canvas.height, this, self);
   });
@@ -89,35 +87,19 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
     var self = event.data.self;
     if (++self.level > 2) {
       if (self.level % 2 == 0) {
-        if (self.collected[0] + 1 < numImages) {
-          ++canvas_number;
-          var status = getDataFromCanvas(self.ctx, self.ctxID);
+        if (self.collected[0] < numImages) {
+          var status = sender.getDataFromCanvas(self.ctx, self.IDs[self.ctxID]);
           if (status) {
             ++self.collected[0]
             self.ctxID += 2;
-          } else {
-            --canvas_number;
-          }
-        } else if (self.collected[0] + 1 == numImages) {
-          var status = getDataFromCanvas(self.ctx, self.ctxID);
-          if (status) {
-            ++self.collected[0];
           }
         }
       } else {
-        if (self.collected[1] + 1 < numImages) {
-          ++canvas_number;
-          var status = getData(self.gl, self.glCanName, self.glID);
+        if (self.collected[1] < numImages) {
+          var status = sender.getData(self.gl, self.IDs[self.glID]);
           if (status) {
             ++self.collected[1]
             self.glID += 2;
-          } else {
-            --canvas_number;
-          }
-        } else if (self.collected[1] + 1 == numImages) {
-          var status = getData(self.gl, self.glCanName, self.glID);
-          if (status) {
-            ++self.collected[1];
           }
         }
       }
@@ -125,7 +107,6 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
     // $("#" + self.counterName).text(self.level);
   });
   video.load();
-  video[0].play();
 
   // Render loop
   function drawVid(w, h, vid, self) {
@@ -146,10 +127,18 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
     self.gl.drawElements(self.gl.TRIANGLES, 6, self.gl.UNSIGNED_SHORT, 0);
     requestAnimationFrame(function() { drawVid(w, h, vid, self); });
   }
+
+  this.begin = function () {
+    video[0].play();
+  }
 }
 
 // Document on ready jquery shortcut
-startVideo = function() {
+var VideoTest = function() {
   var vidCollector =
       new VideoCollector("./video/rainbow.webm", "./video/rainbow.mp4", 0);
+
+  this.begin = function() {
+    vidCollector.begin();
+  }
 };
