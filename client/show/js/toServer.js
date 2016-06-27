@@ -94,7 +94,7 @@ function getData(gl, canvasName, id){
 function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server and receive messages from server
     urls[id] = dataurl;
     finished++;
-    progress(finished / canvas_number * 98);
+    progress(finished / canvas_number * 98.0);
     if(finished < canvas_number) return;
 
     console.log("Sent " + canvas_number + " images");
@@ -127,6 +127,9 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
+            if (data === 'user_id error') {
+                window.location.href = error_page;
+            }
             num = data.split(',')[0];
             code = data.split(',')[1];
             if(num != '3'){
@@ -142,7 +145,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
 
 
 /* Converts the charachters that aren't UrlSafe to ones that are and
-  removes the padding so the base64 string can be sent as is
+  removes the padding so the base64 string can be sent
 */
 Base64EncodeUrlSafe = function(str){
     return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
