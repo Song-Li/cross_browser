@@ -88,11 +88,17 @@ def padb64(b64):
 def index(req):
     global inited
     global root
+    db_name = "cross_browser"
     sub_number = 0
     post_data = str(req.form.list)
     json_data = post_data[8:-7]
     one_test = json.loads(json_data)
     ip = req.connection.remote_ip
+    db = MySQLdb.connect("localhost", "erik", "erik", db_name)
+    cursor = db.cursor()
+    cursor.execute("SELECT COUNT(*) FROM {} WHERE id='{}'".format('uid', one_test['user_id']))
+    if not cursor.fetchone()[0]:
+        return "user_id error"
 
     agent = req.headers_in[ 'User-Agent' ]
     agent = agent.replace(',', ' ')
@@ -109,9 +115,7 @@ def index(req):
     else:
       browser = 'others'
 
-    db_name = "cross_browser"
     table_name = "new_data"
-    db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     time = str(datetime.datetime.now())
     image_id = insert_into_db(db, table_name, ip, one_test['user_id'], vendor, one_test['gpu'], time, agent, browser)
 
@@ -122,7 +126,6 @@ def index(req):
         sub_number += 1
 
 
-    cursor = db.cursor()
     cursor.execute("SELECT COUNT(*) FROM {} WHERE user_id='{}'".format(table_name, one_test['user_id']))
     row = cursor.fetchone()[0]
     db.close()

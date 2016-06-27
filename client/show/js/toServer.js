@@ -3,7 +3,7 @@ var canvas_number = 12;
 var urls = [];
 var finished = 0;
 var ip_address = "184.73.16.65";
-var error_page = "http://www.songli.us/error.html"
+var error_page = "http://mf.songli.us/error"
 // var ip_address = "128.180.123.19";
 // var ip_address = "52.90.197.136";
 
@@ -94,7 +94,7 @@ function getData(gl, canvasName, id){
 function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server and receive messages from server
     urls[id] = dataurl;
     finished++;
-    progress(finished / canvas_number * 98);
+    progress(finished / canvas_number * 98.0);
     if(finished < canvas_number) return;
 
     console.log("Sent " + canvas_number + " images");
@@ -105,28 +105,11 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         pixels += stringify(urls[i]);
     }
 
-    var url = document.URL;
-    var hasCommand = url.indexOf('?') >= 0;
-
-    var requests = {};
-    if (hasCommand) {
-        var commands = url.split('?')[1].split('&');
-        for (var i = 0; i < commands.length; i++) {
-            var seq = commands[i].split('=');
-            requests[seq[0]] = seq[1];
-        }
-    }
-
-    if (!requests.hasOwnProperty('user_id')) {
-        window.location.href = error_page;
-    }
-    var user_id = parseInt(requests['user_id']);
-
     var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, user_id: user_id, pixels: pixels};
 
 
-    /*
-    var f = document.createElement("form");
+
+    /*var f = document.createElement("form");
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
     var i = document.createElement("input"); //input element, text
@@ -135,8 +118,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
     f.appendChild(i);
     f.submit();
 
-    return ;
-*/
+    return ;*/
 
     $.ajax({
         url:"http://" + ip_address + "/collect.py",
@@ -144,22 +126,26 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         type: 'POST',
         data: JSON.stringify(postData),
         success:function(data) {
-            num = data.split(',')[0];
-            code = data.split(',')[1];
-            if(num != '3'){
-                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Now open the link:<br><a href="' + url + '">' + url + '</a><br>with another browser');
-                $('#instruction').append('<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
-            }else{
-                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Your code is ' + code + '<br> <strong>Thank you!</strong>');
+            if (data === 'user_id error') {
+                window.location.href = error_page;
+            } else {
+                num = data.split(',')[0];
+                code = data.split(',')[1];
+                if(num != '3'){
+                    $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Now open the link:<br><a href="' + url + '">' + url + '</a><br>with another browser on <em>this</em> computer');
+                    $('#instruction').append('<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
+                }else{
+                    $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Your code is ' + code + '<br> <strong>Thank you!</strong>');
+                }
+                progress(100);
             }
-            progress(100);
         }
     });
 }
 
 
 /* Converts the charachters that aren't UrlSafe to ones that are and
-  removes the padding so the base64 string can be sent as is
+  removes the padding so the base64 string can be sent
 */
 Base64EncodeUrlSafe = function(str){
     return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');

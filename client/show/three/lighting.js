@@ -1,4 +1,4 @@
-$(function() {
+startLighting = function() {
 
   if (!Detector.webgl)
     Detector.addGetWebGLMessage();
@@ -172,4 +172,4 @@ $(function() {
       getData(renderer.getContext(), 'three_lighting', -1);
     }
   }
-});
+}

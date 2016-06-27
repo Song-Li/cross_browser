@@ -25,5 +25,4 @@ function progress(value) {
        progressEl.removeClass("hidden");
        progressHidden = false;
        }*/
-
 }
