@@ -133,7 +133,7 @@ function toServer(id){ //send messages to server and receive messages from serve
         data:postData,
         success:function(data) {
             if (postData[0] == 'S'){
-                window.location.replace("http://www.songli.us/mf/difference/");
+                window.location.replace("http://mf.songli.us/difference/");
             }
             clearPage();
             var hashCodes = JSON.parse(data.toString());
