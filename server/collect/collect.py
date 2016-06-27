@@ -97,7 +97,7 @@ def index(req):
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     cursor = db.cursor()
     cursor.execute("SELECT COUNT(*) FROM {} WHERE id='{}'".format('uid', one_test['user_id']))
-    if not cursor.fetchone()[0]
+    if not cursor.fetchone()[0]:
         return "user_id error"
 
     agent = req.headers_in[ 'User-Agent' ]
