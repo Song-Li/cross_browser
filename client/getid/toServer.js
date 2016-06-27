@@ -5,7 +5,7 @@ function addUID(uid){
 }
 
 function generateUID(){
-    var uid = Cookies.get('machine_fingerprinting_uid');
+    var uid = Cookies.get('machine_fingerprinting_userid');
     if (uid) {
         addUID(uid);
         return;
@@ -35,7 +35,7 @@ function generateUID(){
         type: 'POST',
         data: postData,
         success:function(uid) {
-            Cookies.set('machine_fingerprinting_uid', uid);
+            Cookies.set('machine_fingerprinting_userid', uid);
             addUID(uid);
             console.log(uid);
         }

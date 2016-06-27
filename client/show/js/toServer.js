@@ -105,23 +105,6 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         pixels += stringify(urls[i]);
     }
 
-    var url = document.URL;
-    var hasCommand = url.indexOf('?') >= 0;
-
-    var requests = {};
-    if (hasCommand) {
-        var commands = url.split('?')[1].split('&');
-        for (var i = 0; i < commands.length; i++) {
-            var seq = commands[i].split('=');
-            requests[seq[0]] = seq[1];
-        }
-    }
-
-    if (!requests.hasOwnProperty('user_id')) {
-        window.location.href = error_page;
-    }
-    var user_id = parseInt(requests['user_id']);
-
     var postData = {WebGL: WebGL, inc: inc, gpu: gpu, hash: hash, user_id: user_id, pixels: pixels};
 
 
@@ -147,7 +130,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
             num = data.split(',')[0];
             code = data.split(',')[1];
             if(num != '3'){
-                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Now open the link:<br><a href="' + url + '">' + url + '</a><br>with another browser');
+                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Now open the link:<br><a href="' + url + '">' + url + '</a><br>with another browser on <em>this</em> computer');
                 $('#instruction').append('<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
             }else{
                 $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Your code is ' + code + '<br> <strong>Thank you!</strong>');

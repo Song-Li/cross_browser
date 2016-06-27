@@ -1,4 +1,4 @@
-$(function() {
+startShadow = function() {
 
   var container;
 
@@ -260,4 +260,4 @@ $(function() {
       getData(renderer.getContext(), 'three_shadow', -1);
     }
   }
-});
+}
