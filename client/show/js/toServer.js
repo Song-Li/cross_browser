@@ -80,7 +80,7 @@ function getData(gl, canvasName, id){
         toServer(WebGL, ven, ren, hash, 9, pixels);
     else if (canvasName == 'three_lighting')
         toServer(WebGL, ven, ren, hash, 10, pixels);
-    else if (canvasName == 'three_shadow')
+    else if (canvasName == 'three_clipping')
         toServer(WebGL, ven, ren, hash, 11, pixels);
     else if (canvasName.indexOf("vid_can_gl_") >= 0) {
         if (sumRGB(pixels) < 1) {
@@ -138,6 +138,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
                     $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Your code is ' + code + '<br> <strong>Thank you!</strong>');
                 }
                 progress(100);
+                Cookies.set('machine_fingerprinting_userid', user_id);
             }
         }
     });

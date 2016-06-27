@@ -6,7 +6,7 @@ $(function() {
   var command = parser.search;
   var requests = {};
   if (command) {
-    var commands = command.replace(/\?/g, '').split('&');
+    var commands = command.slice(1).split('&');
     for (var i = 0; i < commands.length; i++) {
       var seq = commands[i].split('=');
       requests[seq[0]] = seq[1];
@@ -28,7 +28,6 @@ $(function() {
     url = parser.href;
   } else {
     user_id = parseInt(requests['user_id']);
-    Cookies.set('machine_fingerprinting_userid', user_id);
   }
 
   drawCube();
@@ -38,6 +37,6 @@ $(function() {
   drawMoreLight();
   drawTransparent();
   startVideo();
-  startShadow();
+  startClipping();
   startLighting();
 });
