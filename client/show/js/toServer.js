@@ -128,16 +128,17 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
         success:function(data) {
             if (data === 'user_id error') {
                 window.location.href = error_page;
+            } else {
+                num = data.split(',')[0];
+                code = data.split(',')[1];
+                if(num != '3'){
+                    $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Now open the link:<br><a href="' + url + '">' + url + '</a><br>with another browser on <em>this</em> computer');
+                    $('#instruction').append('<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
+                }else{
+                    $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Your code is ' + code + '<br> <strong>Thank you!</strong>');
+                }
+                progress(100);
             }
-            num = data.split(',')[0];
-            code = data.split(',')[1];
-            if(num != '3'){
-                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Now open the link:<br><a href="' + url + '">' + url + '</a><br>with another browser on <em>this</em> computer');
-                $('#instruction').append('<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
-            }else{
-                $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Your code is ' + code + '<br> <strong>Thank you!</strong>');
-            }
-            progress(100);
         }
     });
 }
