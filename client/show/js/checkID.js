@@ -28,7 +28,6 @@ $(function() {
     url = parser.href;
   } else {
     user_id = parseInt(requests['user_id']);
-    Cookies.set('machine_fingerprinting_userid', user_id);
   }
 
   drawCube();

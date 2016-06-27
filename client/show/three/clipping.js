@@ -215,7 +215,7 @@ startClipping = function() {
 
     // Renderer
 
-    var container = document.body;
+    var container = $('#test_canvas')[0];
 
     renderer = new THREE.WebGLRenderer();
     renderer.shadowMap.enabled = true;
@@ -241,9 +241,7 @@ startClipping = function() {
   var transform = new THREE.Matrix4(), tmpMatrix = new THREE.Matrix4();
 
   var level = 0;
-  var counter = $('<div/>').appendTo($('body'));
   function animate() {
-    counter.text(level);
     var time = level++ * 0.05;
 
     requestAnimationFrame(animate);

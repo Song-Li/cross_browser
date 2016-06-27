@@ -138,6 +138,7 @@ function toServer(WebGL, inc, gpu, hash, id, dataurl){ //send messages to server
                     $('#instruction').append('You have finished <strong>' + num + '</strong> browsers<br>Your code is ' + code + '<br> <strong>Thank you!</strong>');
                 }
                 progress(100);
+                Cookies.set('machine_fingerprinting_userid', user_id);
             }
         }
     });
