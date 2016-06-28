@@ -8,10 +8,14 @@
 <body onload=generateUID();>
 <div id = "instruction" class="bar">
     <img src="./img/fingerprint.jpg">
-    <h2>Browser Test</h2>
-    Your task is opening: <div id="uid"></div>
-    with 3 browsers on <em>this</em> computer. <br>
-    <div style="font-size: 1.0em">Then waiting until you see "success"</div>
+    <h2>Machine Test</h2>
+    Your Link is: <div id="uid"></div>
+    Your task is:
+    <div id="steps" class="center">
+    <li>1. Download 3 browsers (follow the description blow)</li>
+    <li id="link"></li>
+    <li>3. Wait until you see "success" in all of the browsers</li>
+    </div>
     <div id= "browsers">
         If you use Windows, the browsers should be Firefox, Chrome and Edge <br>
         If you use OS X, the browsers should be Firefox, Chrome and Safari
