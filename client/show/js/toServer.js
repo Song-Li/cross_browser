@@ -4,7 +4,7 @@ var error_page = "http://mf.songli.us/error"
 // var ip_address = "52.90.197.136";
 var sender = null;
 var Sender = function() {
-
+  this.finalized = false;
   sumRGB = function(img) {
     var sum = 0.0;
     for (var i = 0; i < img.length; i += 4) {
@@ -15,7 +15,13 @@ var Sender = function() {
     return sum;
   };
   this.nextID = 0;
-  this.getID = function() { return this.nextID++; };
+  this.getID = function() {
+    if (this.finalized) {
+      throw "Can no longer generate ID's";
+      return -1;
+    }
+    return this.nextID++;
+  };
   this.getIDs = function(numIDs) {
     var idList = [];
     for (var i = 0; i < numIDs; i++) {
@@ -25,6 +31,10 @@ var Sender = function() {
   };
 
   this.getDataFromCanvas = function(ctx, id) {
+    if (!this.finalized) {
+      throw "Still generating ID's";
+      return -1;
+    }
     function hash(array) {
       var hash = 0, i, chr, len;
       if (array.length === 0)
@@ -49,6 +59,10 @@ var Sender = function() {
   };
 
   this.getData = function(gl, id) {
+    if (!this.finalized) {
+      throw "Still generating ID's";
+      return -1;
+    }
     var WebGL = true;
     var pixels = new Uint8Array(256 * 256 * 4);
     gl.readPixels(0, 0, 256, 256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);

@@ -52,6 +52,7 @@ $(function() {
   clippingTest = new ClippingTest();
   lightingTest = new LightingTest();
 
+  sender.finalized = true;
 
   // Tests begin in HERE
   cubeTest.begin();
