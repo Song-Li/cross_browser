@@ -51,12 +51,9 @@ $(function() {
   testList.push(new VideoTest());
   testList.push(new LightingTest());
   testList.push(new ClippingTest());
-  /*
-  videoTest = new VideoTest();
-  clippingTest = new ClippingTest();
-  lightingTest = new LightingTest();*/
 
   sender.finalized = true;
+
   var canvas = $('#main_can')[0];
   function testFunc(level) {
     if (level == testList.length) return;
