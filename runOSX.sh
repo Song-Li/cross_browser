@@ -14,25 +14,27 @@ function installBrew() {
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
 }
+function runTests () {
+  chrome="$(find ${defaultPath} -maxdepth 1 -type d -name "${chromeName}")"
+  firefox="$(find ${defaultPath} -maxdepth 1 -type d -name ${ffName})"
 
+  if [[ -z ${chrome} ]]; then
+    installBrew
+    brew cask install google-chrome
+    chrome="$(find ${caskPath} -type d -name "${chromeName}")"
+  fi
 
-chrome="$(find ${defaultPath} -maxdepth 1 -type d -name "${chromeName}")"
-firefox="$(find ${defaultPath} -maxdepth 1 -type d -name ${ffName})"
+  if [[ -z ${firefox} ]]; then
+    installBrew
+    brew cask install firefox
+    firefox="$(find ${caskPath} -type d -name ${ffName})"
+  fi
 
-if [[ -z ${chrome} ]]; then
-  installBrew
-  brew cask install google-chrome
-  chrome="$(find ${caskPath} -type d -name "${chromeName}")"
-fi
+  user_id="$(curl 184.73.16.65/getid.py)"
 
-if [[ -z ${firefox} ]]; then
-  installBrew
-  brew cask install firefox
-  firefox="$(find ${caskPath} -type d -name ${ffName})"
-fi
+  open -a "${chrome}" "${url}${user_id}"
+  open -a "${safari}" "${url}${user_id}"
+  open -a "${firefox}" "${url}${user_id}"
+}
 
-user_id="$(curl 184.73.16.65/getid.py)"
-
-open -a "${chrome}" "${url}${user_id}"
-open -a "${safari}" "${url}${user_id}"
-open -a "${firefox}" "${url}${user_id}"
+runTests
