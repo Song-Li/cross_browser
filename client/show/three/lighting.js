@@ -6,16 +6,69 @@ var LightingTest = function() {
   var camera, scene, renderer, light1, light2, light3, light4, light5, light6;
 
   var FAR = 300;
-  var lightingID = 10;
 
   Math.seedrandom("Three.js lighting renderer seed");
   init();
-  this.begin = function() {animate();};
+  this.begin = function(canvas, cb, value) {
+    // RENDERER
+    renderer = new THREE.WebGLRenderer({
+      antialias : false,
+      preserveDrawingBuffer : true,
+      willReadFrequently : false,
+      depth : true,
+      canvas: canvas
+    });
+    renderer.setClearColor(scene.fog.color);
+    renderer.setPixelRatio(1);
+    renderer.setSize(256, 256);
+
+    renderer.gammaInput = true;
+    renderer.gammaOutput = true;
+
+    var freq = 0.035;
+    var level = 0;
+    var distance = 75;
+    var frame;
+    function animate() {
+
+      frame = requestAnimationFrame(animate);
+
+      render();
+    }
+    function render() {
+      var time = freq * level;
+      light1.position.x = Math.sin(time * 0.7) * distance;
+      light1.position.z = Math.cos(time * 0.3) * distance;
+
+      light2.position.x = Math.cos(time * 0.3) * distance;
+      light2.position.z = Math.sin(time * 0.7) * distance;
+
+      light3.position.x = Math.sin(time * 0.7) * distance;
+      light3.position.z = Math.sin(time * 0.5) * distance;
+
+      light4.position.x = Math.sin(time * 0.3) * distance;
+      light4.position.z = Math.sin(time * 0.5) * distance;
+
+      light5.position.x = Math.cos(time * 0.3) * distance;
+      light5.position.z = Math.sin(time * 0.5) * distance;
+
+      light6.position.x = Math.cos(time * 0.7) * distance;
+      light6.position.z = Math.cos(time * 0.5) * distance;
+      ++level;
+
+      renderer.render(scene, camera);
+
+      if (level == 50) {
+        cancelAnimationFrame(frame);
+        sender.getData(renderer.getContext(), ID);
+        cb(value);
+      }
+    }
+    requestAnimationFrame(animate);
+  };
 
 
   function init() {
-
-    var container = $('#test_canvas')[0];
 
     // CAMERA
 
@@ -118,59 +171,6 @@ var LightingTest = function() {
     var dlight = new THREE.DirectionalLight(0xffffff, 0.05);
     dlight.position.set(0.5, 1, 0).normalize();
     scene.add(dlight);
-
-    // RENDERER
-
-    renderer = new THREE.WebGLRenderer({
-      antialias : false,
-      preserveDrawingBuffer : true,
-      willReadFrequently : false,
-      depth : true
-    });
-    renderer.setClearColor(scene.fog.color);
-    renderer.setPixelRatio(1);
-    renderer.setSize(256, 256);
-    container.appendChild(renderer.domElement);
-
-    renderer.gammaInput = true;
-    renderer.gammaOutput = true;
-  }
+  };
   //
-
-  function animate() {
-
-    requestAnimationFrame(animate);
-
-    render();
-  }
-  var freq = 0.035;
-  var level = 0;
-  var distance = 75;
-  function render() {
-    var time = freq * level;
-    light1.position.x = Math.sin(time * 0.7) * distance;
-    light1.position.z = Math.cos(time * 0.3) * distance;
-
-    light2.position.x = Math.cos(time * 0.3) * distance;
-    light2.position.z = Math.sin(time * 0.7) * distance;
-
-    light3.position.x = Math.sin(time * 0.7) * distance;
-    light3.position.z = Math.sin(time * 0.5) * distance;
-
-    light4.position.x = Math.sin(time * 0.3) * distance;
-    light4.position.z = Math.sin(time * 0.5) * distance;
-
-    light5.position.x = Math.cos(time * 0.3) * distance;
-    light5.position.z = Math.sin(time * 0.5) * distance;
-
-    light6.position.x = Math.cos(time * 0.7) * distance;
-    light6.position.z = Math.cos(time * 0.5) * distance;
-    ++level;
-
-    renderer.render(scene, camera);
-
-    if (level == 50) {
-      sender.getData(renderer.getContext(), ID);
-    }
-  }
 }

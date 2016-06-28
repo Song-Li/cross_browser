@@ -1,7 +1,6 @@
 // Load a text resource from a file over the network
 
-getGL = function(canvasSelector) {
-  var canvas = $(canvasSelector)[0];
+getGL = function(canvas) {
   var gl = null;
   for (var i = 0; i < 4; ++i) {
     gl = canvas.getContext(
