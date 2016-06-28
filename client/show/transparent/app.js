@@ -1,8 +1,8 @@
 var TransparentTest = function () {
-    var RunTransparent = function (vertexShaderText, fragmentShaderText, SusanImage, SusanModel, canvasName, ID) {
+    var RunTransparent = function (vertexShaderText, fragmentShaderText, SusanImage, SusanModel, canvasName, alp, ID) {
         var WebGL;
         var gl;
-        var canvas = document.getElementById(canvasName);
+        var canvas = getCanvas(canvasName);
         gl = getGL("#" + canvasName);
         WebGL = true;
 
@@ -174,7 +174,7 @@ var TransparentTest = function () {
     	gl.uniform3f(sunlightDirUniformLocation, 0.8, -0.8, -0.8);
     	gl.uniform3f(sunlightDiffuse, 0.75, 0.75, 1.0);
     	gl.uniform3f(sunlightSpecular, 0.8, 0.8, 0.8);
-    	gl.uniform1f(uAlpha, 1.0);
+    	gl.uniform1f(uAlpha, alp / 100);
 
     	//
     	// Main render loop
@@ -214,7 +214,7 @@ var TransparentTest = function () {
         requestAnimationFrame(loop);
 
     };
-    this.IDs = sender.getIDs(2);
+    this.IDs = sender.getIDs(4);
 
     this.begin = function () {
         var root = './transparent/'
@@ -238,7 +238,7 @@ var TransparentTest = function () {
                                         alert('Fatal error getting Susan texture (see console)');
                                         console.error(imgErr);
                                     } else {
-                                        var test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_susan', self.IDs[0]);
+                                        var test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_susan', 100, self.IDs[0]);
                                     }
                                 }, self);
                             }
@@ -253,7 +253,15 @@ var TransparentTest = function () {
                                         alert('Fatal error getting Susan texture (see console)');
                                         console.error(imgErr);
                                     } else {
-                                        var test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple', self.IDs[1]);
+                                        var test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_9', 9, self.IDs[1]);
+                                        test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_10', 10, self.IDs[2]);
+                                        test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_11', 11, self.IDs[3]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_39', 39, self.IDs[4]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_40', 40, self.IDs[5]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_41', 41, self.IDs[6]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_69', 69, self.IDs[7]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_70', 70, self.IDs[8]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_71', 71, self.IDs[9]);
                                     }
                                 }, self);
                             }
