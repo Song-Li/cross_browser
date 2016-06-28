@@ -2,7 +2,7 @@ var TransparentTest = function () {
     this.canvas = null;
     this.cb = null;
     this.level = null;
-    this.numChildren = 4;
+    this.numChildren = 10;
     this.children = [];
     this.IDs = sender.getIDs(this.numChildren);
 
@@ -272,12 +272,12 @@ var TransparentTest = function () {
                                         self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 9, 1, self));
                                         self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 10, 2, self));
                                         self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 11, 3, self));
-                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_39', 39, self.IDs[4]);
-                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_40', 40, self.IDs[5]);
-                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_41', 41, self.IDs[6]);
-                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_69', 69, self.IDs[7]);
-                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_70', 70, self.IDs[8]);
-                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_71', 71, self.IDs[9]);
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 39, 4, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 40, 5, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 41, 6, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 79, 7, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 80, 8, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 81, 9, self));
                                     }
                                 }, self);
                             }
