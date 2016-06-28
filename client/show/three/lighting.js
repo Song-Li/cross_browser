@@ -26,7 +26,7 @@ var LightingTest = function() {
     renderer.gammaOutput = true;
 
     var freq = 0.035;
-    var level = 0;
+    var level = 45;
     var distance = 75;
     var frame;
     function animate() {

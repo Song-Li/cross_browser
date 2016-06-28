@@ -157,7 +157,7 @@ var SimpleLightTest = function() {
       var projMatrix = new Float32Array(16);
       mat4.identity(worldMatrix);
       // mat4.lookAt(viewMatrix, [0, 0, -8], [0, 0, 0], [0, 1, 0]);
-      if (ID == 0)
+      if (childNumber == 0)
         mat4.lookAt(viewMatrix, [ 0, 0, -5 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
       else
         mat4.lookAt(viewMatrix, [ 0, 0, -120 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
@@ -191,7 +191,7 @@ var SimpleLightTest = function() {
       // Main render loop
       //
       var angle = 0;
-      var count = 10;
+      var count = 49;
       var identityMatrix = new Float32Array(16);
       mat4.identity(identityMatrix);
       gl.enable(gl.DEPTH_TEST);
