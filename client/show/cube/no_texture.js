@@ -305,7 +305,7 @@ var CubeTest = function() {
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
 
-    var count = 0;
+    var count = 19;
     var angle = 0;
     var loop = function() {
       var frame = requestAnimationFrame(loop);

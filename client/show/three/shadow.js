@@ -238,7 +238,7 @@ startShadow = function() {
     requestAnimationFrame(animate);
     render();
   }
-  var level = 0;
+  var level = 45;
   function render() {
 
     // update

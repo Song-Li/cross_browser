@@ -196,7 +196,7 @@ var MoreLightTest = function() {
       var identityMatrix = new Float32Array(16);
       mat4.identity(identityMatrix);
       var angle = 0;
-      var count = 10;
+      var count = 49;
       var ven, ren;
       var identityMatrix = new Float32Array(16);
       mat4.identity(identityMatrix);
