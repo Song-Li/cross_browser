@@ -1,4 +1,6 @@
-startClipping = function() {
+var ClippingTest = function() {
+  var ID = sender.getID();
+
   function planesFromMesh(vertices, indices) {
     // creates a clipping volume from a convex triangular mesh
     // specified by the arrays 'vertices' and 'indices'
@@ -109,8 +111,7 @@ startClipping = function() {
 
   function init() {
 
-    camera = new THREE.PerspectiveCamera(
-        36, 256 / 256, 0.25, 16);
+    camera = new THREE.PerspectiveCamera(36, 256 / 256, 0.25, 16);
 
     camera.position.set(0, 1.5, 5);
 
@@ -273,10 +274,10 @@ startClipping = function() {
 
     renderer.render(scene, camera);
     if (level == 50) {
-      getData(renderer.getContext(), 'three_clipping', -1);
+      sender.getData(renderer.getContext(), ID);
     }
   }
 
   init();
-  animate();
+  this.begin = function() { animate(); }
 }

@@ -1,4 +1,15 @@
 var user_id, url;
+
+var cubeTest,
+  lineTest,
+  textureTest,
+  simpleLightTest,
+  moreLightTest,
+  transparentTest,
+  videoTest,
+  clippingTest,
+  lightingTest;
+
 $(function() {
   url = document.URL;
   var parser = document.createElement('a');
@@ -30,13 +41,28 @@ $(function() {
     user_id = parseInt(requests['user_id']);
   }
 
-  drawCube();
-  drawLine();
-  drawTexture();
-  drawSimpleLight();
-  drawMoreLight();
-  drawTransparent();
-  startVideo();
-  startClipping();
-  startLighting();
+  sender = new Sender();
+  cubeTest = new CubeTest();
+  lineTest = new LineTest();
+  textureTest = new TextureTest();
+  simpleLightTest = new SimpleLightTest();
+  moreLightTest = new MoreLightTest();
+  transparentTest = new TransparentTest();
+  videoTest = new VideoTest();
+  clippingTest = new ClippingTest();
+  lightingTest = new LightingTest();
+
+  sender.finalized = true;
+
+  // Tests begin in HERE
+  cubeTest.begin();
+  lineTest.begin();
+  textureTest.begin();
+  simpleLightTest.begin();
+  moreLightTest.begin();
+  transparentTest.begin();
+  videoTest.begin();
+  clippingTest.begin();
+  lightingTest.begin();
+
 });

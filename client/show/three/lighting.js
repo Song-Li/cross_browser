@@ -1,5 +1,5 @@
-startLighting = function() {
-
+var LightingTest = function() {
+  var ID = sender.getID();
   if (!Detector.webgl)
     Detector.addGetWebGLMessage();
 
@@ -10,7 +10,8 @@ startLighting = function() {
 
   Math.seedrandom("Three.js lighting renderer seed");
   init();
-  animate();
+  this.begin = function() {animate();};
+
 
   function init() {
 
@@ -169,7 +170,7 @@ startLighting = function() {
     renderer.render(scene, camera);
 
     if (level == 50) {
-      getData(renderer.getContext(), 'three_lighting', -1);
+      sender.getData(renderer.getContext(), ID);
     }
   }
 }
