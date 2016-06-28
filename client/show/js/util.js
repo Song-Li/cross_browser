@@ -1,5 +1,14 @@
 // Load a text resource from a file over the network
 
+
+getCanvas = function(canvasName) {
+    var canvas = $('#' + canvasName);
+    if(!canvas[0]){
+        $('#test_canvas').append("<canvas id='" + canvasName + "' width='256' height='256'></canvas>");
+    }
+    return canvas = $('#' + canvasName)[0];
+}
+
 getGL = function(canvas) {
   var gl = null;
   for (var i = 0; i < 4; ++i) {

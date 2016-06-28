@@ -27,17 +27,23 @@
 #instruction {
     position: absolute;
     top:0; left: 0; right: 0; bottom: 0;
-    height: 300px;
+    height: 450px;
     width: 500px;
     text-align: center;
     margin: auto;
-    font-family: "Ubuntu Mono", sans-serif;
+    font-family: sans-serif;
     font-size: 1.2em;
     line-height: 20px;
 }
 
 #instruction a {
     font-size: .7em;
+    line-height: 25px;
+    color: #9B9B4F
+}
+
+#steps a {
+    font-size: 0.9em;
     line-height: 25px;
     color: #9B9B4F
 }
@@ -57,6 +63,18 @@
     width: 70;
     padding-top: 10px;
     border-radius: 50%;
+}
+
+#instruction li {
+    text-align: left;
+    font-size: 0.8em;
+    color: #333333
+}
+
+.center {
+    margin: auto;
+    width: 80%;
+    padding: 10px;
 }
 
 

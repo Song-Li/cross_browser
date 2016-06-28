@@ -2,9 +2,9 @@ var TransparentTest = function () {
     this.canvas = null;
     this.cb = null;
     this.level = null;
-    this.numChildren = 2;
+    this.numChildren = 4;
     this.children = [];
-    this.IDs = sender.getIDs(2);
+    this.IDs = sender.getIDs(this.numChildren);
 
     this.numChildrenRun = 0;
     this.childComplete = function() {
@@ -23,7 +23,7 @@ var TransparentTest = function () {
         this.children[index].begin(this.canvas);
       }
     };
-    var RunTransparent = function (vertexShaderText, fragmentShaderText, SusanImage, SusanModel, ID, parent) {
+    var RunTransparent = function (vertexShaderText, fragmentShaderText, SusanImage, SusanModel, alp, childNumber, parent) {
         this.begin = function(canvas) {
                 var gl = getGL(canvas);
                 var WebGL = true;
@@ -185,7 +185,7 @@ var TransparentTest = function () {
                 gl.uniform3f(sunlightDirUniformLocation, 0.8, -0.8, -0.8);
                 gl.uniform3f(sunlightDiffuse, 0.75, 0.75, 1.0);
                 gl.uniform3f(sunlightSpecular, 0.8, 0.8, 0.8);
-                gl.uniform1f(uAlpha, 1.0);
+                gl.uniform1f(uAlpha, alp / 100);
 
                 //
                 // Main render loop
@@ -219,7 +219,7 @@ var TransparentTest = function () {
 
                     if(count == 50){
                         cancelAnimationFrame(frame);
-                        sender.getData(gl, parent.IDs[ID]);
+                        sender.getData(gl, parent.IDs[childNumber]);
                         parent.childComplete();
                     }
                 };
@@ -228,7 +228,6 @@ var TransparentTest = function () {
 
         parent.childLoaded();
     };
-
 
     this.begin = function (canvas, cb, level) {
         this.canvas = canvas;
@@ -255,7 +254,7 @@ var TransparentTest = function () {
                                         alert('Fatal error getting Susan texture (see console)');
                                         console.error(imgErr);
                                     } else {
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 0, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 100, 0, self));
                                     }
                                 }, self);
                             }
@@ -270,7 +269,15 @@ var TransparentTest = function () {
                                         alert('Fatal error getting Susan texture (see console)');
                                         console.error(imgErr);
                                     } else {
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 1, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 9, 1, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 10, 2, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 11, 3, self));
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_39', 39, self.IDs[4]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_40', 40, self.IDs[5]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_41', 41, self.IDs[6]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_69', 69, self.IDs[7]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_70', 70, self.IDs[8]);
+                                        //test = new RunTransparent(vsText, fsText, img, modelObj, 'transparent_simple_71', 71, self.IDs[9]);
                                     }
                                 }, self);
                             }

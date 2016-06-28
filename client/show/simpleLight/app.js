@@ -25,7 +25,7 @@ var SimpleLightTest = function() {
   };
 
   var RunSimpleLight = function(vertexShaderText, fragmentShaderText,
-                                SusanImage, SusanModel, ID, parent) {
+                                SusanImage, SusanModel, childNumber, parent) {
     this.begin = function(canvas) {
       var gl = getGL(canvas);
       var WebGL = true;
@@ -213,7 +213,7 @@ var SimpleLightTest = function() {
 
         if (count == 50) {
           cancelAnimationFrame(frame);
-          sender.getData(gl, parent.IDs[ID]);
+          sender.getData(gl, parent.IDs[childNumber]);
           parent.childComplete();
         }
       };
