@@ -13,7 +13,7 @@ from hashlib import sha512 as hasher1, sha256 as hasher2
 from base64 import urlsafe_b64encode as encode
 
 browser_to_id = {'chrome': 0, 'firefox': 1, 'others': 2}
-case_number = 14
+case_number = 30
 standard_pics = []
 open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
