@@ -1,5 +1,6 @@
 // Load a text resource from a file over the network
 
+
 getCanvas = function(canvasName) {
     var canvas = $('#' + canvasName);
     if(!canvas[0]){
@@ -8,8 +9,7 @@ getCanvas = function(canvasName) {
     return canvas = $('#' + canvasName)[0];
 }
 
-getGL = function(canvasSelector) {
-  var canvas = $(canvasSelector)[0];
+getGL = function(canvas) {
   var gl = null;
   for (var i = 0; i < 4; ++i) {
     gl = canvas.getContext(

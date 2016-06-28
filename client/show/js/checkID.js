@@ -40,29 +40,26 @@ $(function() {
   } else {
     user_id = parseInt(requests['user_id']);
   }
-
+  var testList = [];
   sender = new Sender();
-  cubeTest = new CubeTest();
-  lineTest = new LineTest();
-  textureTest = new TextureTest();
-  simpleLightTest = new SimpleLightTest();
-  moreLightTest = new MoreLightTest();
-  transparentTest = new TransparentTest();
-  videoTest = new VideoTest();
-  clippingTest = new ClippingTest();
-  lightingTest = new LightingTest();
+  testList.push(new CubeTest());
+  testList.push(new LineTest());
+  testList.push(new TextureTest());
+  testList.push(new MoreLightTest());
+  testList.push(new SimpleLightTest());
+  testList.push(new TransparentTest());
+  testList.push(new VideoTest());
+  testList.push(new LightingTest());
+  testList.push(new ClippingTest());
 
   sender.finalized = true;
 
-  // Tests begin in HERE
-  cubeTest.begin();
-  lineTest.begin();
-  textureTest.begin();
-  simpleLightTest.begin();
-  moreLightTest.begin();
-  transparentTest.begin();
-  videoTest.begin();
-  clippingTest.begin();
-  lightingTest.begin();
+  var canvas = $('#main_can')[0];
+  function testFunc(level) {
+    if (level == testList.length) return;
+    testList[level].begin(canvas, testFunc, level + 1);
+  }
 
+  // Tests begin in HERE
+  testFunc(0);
 });

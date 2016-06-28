@@ -91,6 +91,7 @@ var Sender = function() {
   this.toServer = function (
       WebGL, inc, gpu, hash, id,
       dataurl) { // send messages to server and receive messages from server
+    console.log(id);
     this.urls[id] = dataurl;
     this.finished++;
     progress(this.finished / this.nextID * 98.0);

@@ -1,5 +1,4 @@
 var ClippingTest = function() {
-  var ID = sender.getID();
 
   function planesFromMesh(vertices, indices) {
     // creates a clipping volume from a convex triangular mesh
@@ -213,21 +212,6 @@ var ClippingTest = function() {
     ground.scale.multiplyScalar(3);
     ground.receiveShadow = true;
     scene.add(ground);
-
-    // Renderer
-
-    var container = $('#test_canvas')[0];
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.renderSingleSided = false;
-    renderer.setPixelRatio(1);
-    renderer.setSize(256, 256);
-    container.appendChild(renderer.domElement);
-    // Clipping setup:
-    globalClippingPlanes = createPlanes(GlobalClippingPlanes.length);
-    renderer.clippingPlanes = globalClippingPlanes;
-    renderer.localClippingEnabled = true;
   }
 
   function setObjectWorldMatrix(object, matrix) {
@@ -239,45 +223,67 @@ var ClippingTest = function() {
     object.applyMatrix(matrix);
   }
 
-  var transform = new THREE.Matrix4(), tmpMatrix = new THREE.Matrix4();
-
-  var level = 0;
-  function animate() {
-    var time = level++ * 0.05;
-
-    requestAnimationFrame(animate);
-
-    object.position.y = 1;
-    object.rotation.x = time * 0.5;
-    object.rotation.y = time * 0.2;
-
-    object.updateMatrix();
-    transform.copy(object.matrix);
-
-    var bouncy = Math.cos(time * .5) * 0.5 + 0.7;
-    transform.multiply(tmpMatrix.makeScale(bouncy, bouncy, bouncy));
-
-    assignTransformedPlanes(clipMaterial.clippingPlanes, Planes, transform);
-
-    var planeMeshes = volumeVisualization.children;
-
-    for (var i = 0, n = planeMeshes.length; i !== n; ++i) {
-
-      tmpMatrix.multiplyMatrices(transform, PlaneMatrices[i]);
-      setObjectWorldMatrix(planeMeshes[i], tmpMatrix);
-    }
-
-    transform.makeRotationY(time * 0.1);
-
-    assignTransformedPlanes(globalClippingPlanes, GlobalClippingPlanes,
-                            transform);
-
-    renderer.render(scene, camera);
-    if (level == 50) {
-      sender.getData(renderer.getContext(), ID);
-    }
-  }
-
   init();
-  this.begin = function() { animate(); }
+
+  var ID = sender.getID();
+  this.begin = function(canvas, cb, value) {
+    // Renderer
+
+    renderer = new THREE.WebGLRenderer({
+      antialias : false,
+      preserveDrawingBuffer : true,
+      willReadFrequently : false,
+      depth : true,
+      canvas: canvas
+    });
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.renderSingleSided = false;
+    renderer.setPixelRatio(1);
+    renderer.setSize(256, 256);
+    // Clipping setup:
+    globalClippingPlanes = createPlanes(GlobalClippingPlanes.length);
+    renderer.clippingPlanes = globalClippingPlanes;
+    renderer.localClippingEnabled = true;
+
+    var level = 0;
+    var transform = new THREE.Matrix4(), tmpMatrix = new THREE.Matrix4();
+    function animate() {
+      var time = level++ * 0.05;
+
+      var frame = requestAnimationFrame(animate);
+
+      object.position.y = 1;
+      object.rotation.x = time * 0.5;
+      object.rotation.y = time * 0.2;
+
+      object.updateMatrix();
+      transform.copy(object.matrix);
+
+      var bouncy = Math.cos(time * .5) * 0.5 + 0.7;
+      transform.multiply(tmpMatrix.makeScale(bouncy, bouncy, bouncy));
+
+      assignTransformedPlanes(clipMaterial.clippingPlanes, Planes, transform);
+
+      var planeMeshes = volumeVisualization.children;
+
+      for (var i = 0, n = planeMeshes.length; i !== n; ++i) {
+
+        tmpMatrix.multiplyMatrices(transform, PlaneMatrices[i]);
+        setObjectWorldMatrix(planeMeshes[i], tmpMatrix);
+      }
+
+      transform.makeRotationY(time * 0.1);
+
+      assignTransformedPlanes(globalClippingPlanes, GlobalClippingPlanes,
+                              transform);
+
+      renderer.render(scene, camera);
+      if (level == 50) {
+        cancelAnimationFrame(frame);
+        sender.getData(renderer.getContext(), ID);
+        cb(value);
+      }
+    }
+    requestAnimationFrame(animate);
+  };
 }
