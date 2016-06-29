@@ -1,5 +1,5 @@
 var LightingTest = function() {
-  var ID = sender.getID();
+  this.IDs = sender.getIDs(2);
   if (!Detector.webgl)
     Detector.addGetWebGLMessage();
 
@@ -10,14 +10,24 @@ var LightingTest = function() {
   Math.seedrandom("Three.js lighting renderer seed");
   init();
   this.begin = function(canvas, cb, value) {
+      run(canvas, cb, value, true, this.IDs[0]);
+  }
+  function run(canvas, cb, value, anti, ID) {
     // RENDERER
+    //
+    var gl;
+    if(anti) {
+        canvas = getCanvas("can_aa");
+        gl = getGLAA(canvas);
+    }else {
+        gl = getGL(canvas);
+    }
+
     renderer = new THREE.WebGLRenderer({
-      antialias : false,
-      preserveDrawingBuffer : true,
-      willReadFrequently : false,
-      depth : true,
-      canvas: canvas
+      context: gl
+      //canvas: canvas
     });
+
     renderer.setClearColor(scene.fog.color);
     renderer.setPixelRatio(1);
     renderer.setSize(256, 256);
@@ -61,7 +71,10 @@ var LightingTest = function() {
       if (level == 50) {
         cancelAnimationFrame(frame);
         sender.getData(renderer.getContext(), ID);
-        cb(value);
+        if(anti == true)
+            run(canvas, cb, value, false, ID + 1);
+        else
+            cb(value);
       }
     }
     requestAnimationFrame(animate);

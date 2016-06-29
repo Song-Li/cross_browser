@@ -99,6 +99,11 @@
     justify-content: space-around;
 }
 
+.ordiv {
+    display: flex;
+    align-items: center;
+}
+
 #instruction {
     display: flex;
     flex-flow: column nowrap;

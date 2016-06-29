@@ -9,6 +9,26 @@ getCanvas = function(canvasName) {
     return canvas = $('#' + canvasName)[0];
 }
 
+getGLAA = function(canvas) { 
+  var gl = null;
+  for (var i = 0; i < 4; ++i) {
+    gl = canvas.getContext(
+        [ "webgl", "experimental-webgl", "moz-webgl", "webkit-3d" ][i], {
+          antialias : true,
+          preserveDrawingBuffer : true,
+          willReadFrequently : false,
+          depth: true
+        });
+    if (gl)
+      break;
+  }
+
+  if (!gl) {
+    alert('Your browser does not support WebGL');
+  }
+  return gl;
+}
+
 getGL = function(canvas) {
   var gl = null;
   for (var i = 0; i < 4; ++i) {
