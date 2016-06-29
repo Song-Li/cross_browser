@@ -51,27 +51,43 @@ def gen_image_id(cursor, table_name, MAX_ID, agent):
             return image_id
     raise RuntimeError("Ran out of UIDs!")
 
-def insert_into_db(db, table_name, ip, user_id, vendor, gpu, time, agent, browser):
+def insert_into_db(db, table_name, ip, one_test, time, agent):
+    user_id = one_test['user_id']
     cursor = db.cursor()
     cursor.execute("SELECT image_id FROM {} WHERE user_id='{}' AND agent='{}'".format(table_name, user_id, agent))
     row = cursor.fetchone()
     if row is not None:
         return row[0]
 
+    vendor = one_test['inc']
+    browser = ''
+    if(agent.find('Firefox') != -1):
+      browser = 'firefox'
+    elif(agent.find('Edge') != -1 or vendor.find('Microsoft') != -1):
+      browser = 'others'
+    elif(agent.find('OPR') != -1):
+      browser = 'others'
+    elif(agent.find('Chrome') != -1 or vendor.find('Google') != -1):
+      browser = 'chrome'
+    else:
+      browser = 'others'
+
+    gpu = one_test['gpu']
+    fps = float(one_test['fps'])
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID, agent)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser, fps) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser, fps)
         cursor.execute(sql)
         db.commit()
         cursor.close()
         return image_id
     except:
-        #db.rollback()
+        db.rollback()
         # If something went wrong with the insert, it was probably
         # the super unlikely race of two threads with the same UID,
         # so the insert can be tried again
-        return insert_into_db(db, table_name, ip, user_id, vendor, gpu, time, agent, browser)
+        return insert_into_db(db, table_name, ip, one_test, time, agent)
 
 def rawToIntArray(raw):
     raw = list(raw)
@@ -102,22 +118,10 @@ def index(req):
 
     agent = req.headers_in[ 'User-Agent' ]
     agent = agent.replace(',', ' ')
-    vendor = one_test['inc']
-    browser = ''
-    if(agent.find('Firefox') != -1):
-      browser = 'firefox'
-    elif(agent.find('Edge') != -1 or vendor.find('Microsoft') != -1):
-      browser = 'others'
-    elif(agent.find('OPR') != -1):
-      browser = 'others'
-    elif(agent.find('Chrome') != -1 or vendor.find('Google') != -1):
-      browser = 'chrome'
-    else:
-      browser = 'others'
 
     table_name = "new_data"
     time = str(datetime.datetime.now())
-    image_id = insert_into_db(db, table_name, ip, one_test['user_id'], vendor, one_test['gpu'], time, agent, browser)
+    image_id = insert_into_db(db, table_name, ip, one_test, time, agent)
 
 
     pixels = one_test['pixels'].split(" ")

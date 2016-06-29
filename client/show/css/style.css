@@ -113,8 +113,9 @@ progress::-webkit-progress-value {
 
 body {
     display: flex;
+    flex-flow: column nowrap;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     box-sizing: border-box;
     padding: 50px;
     background: radial-gradient(
@@ -126,6 +127,10 @@ body {
 html,
 body {
     height: 100%;
+}
+
+#test_canvases canvas{
+    display: None !important;
 }
 
 .hidden-vid {
