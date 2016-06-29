@@ -73,11 +73,12 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
       browser = 'others'
 
     gpu = one_test['gpu']
+    manufacturer = one_test['manufacturer']
     fps = float(one_test['fps'])
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID, agent)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser, fps) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser, fps)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser, fps, manufacturer) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser, fps, manufacturer)
         cursor.execute(sql)
         db.commit()
         cursor.close()
