@@ -14,15 +14,18 @@ var LightingTest = function() {
   }
   function run(canvas, cb, value, anti, ID) {
     // RENDERER
-
-    if(anti) canvas = getCanvas("can_aa");
+    //
+    var gl;
+    if(anti) {
+        canvas = getCanvas("can_aa");
+        gl = getGLAA(canvas);
+    }else {
+        gl = getGL(canvas);
+    }
 
     renderer = new THREE.WebGLRenderer({
-      antialias : anti,
-      preserveDrawingBuffer : true,
-      willReadFrequently : false,
-      depth : true,
-      canvas: canvas
+      context: gl
+      //canvas: canvas
     });
 
     renderer.setClearColor(scene.fog.color);
