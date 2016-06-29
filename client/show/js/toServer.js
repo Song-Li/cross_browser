@@ -5,6 +5,7 @@ var error_page = "http://mf.songli.us/error"
 var sender = null;
 var Sender = function() {
   this.finalized = false;
+  this.postData = {};
   sumRGB = function(img) {
     var sum = 0.0;
     for (var i = 0; i < img.length; i += 4) {
@@ -86,15 +87,35 @@ var Sender = function() {
     return 1;
   };
 
+  this._fps = null;
+  this.setFPS = function(fps) {
+    this._fps = parseFloat(fps);
+    this.postData['fps'] = this._fps;
+  };
+  this.calcFPS = function(times) {
+    var fpses = [];
+    for (var i = 1; i < times.length; i++) {
+      fpses.push(1000.0 / (times[i] - times[i - 1]));
+    }
+    var average = 0;
+    for (var i = 0; i < fpses.length; i++) {
+      average += fpses[i];
+    }
+    this.setFPS(average / fpses.length);
+  };
   this.urls = [];
   this.finished = 0;
-  this.toServer = function (
+
+  $("manufacturer.modal").modal('hide');
+
+  this.toServer = function(
       WebGL, inc, gpu, hash, id,
       dataurl) { // send messages to server and receive messages from server
-    console.log(id);
+
     this.urls[id] = dataurl;
     this.finished++;
     progress(this.finished / this.nextID * 98.0);
+
     if (this.finished < this.nextID)
       return;
 
@@ -106,15 +127,12 @@ var Sender = function() {
         pixels += ' ';
       pixels += stringify(this.urls[i]);
     }
-
-    var postData = {
-      WebGL : WebGL,
-      inc : inc,
-      gpu : gpu,
-      hash : hash,
-      user_id : user_id,
-      pixels : pixels
-    };
+    this.postData['WebGL'] = WebGL;
+    this.postData['inc'] = inc;
+    this.postData['gpu'] = gpu;
+    this.postData['hash'] = hash;
+    this.postData['user_id'] = user_id;
+    this.postData['pixels'] = pixels;
 
     /*var f = document.createElement("form");
     f.setAttribute('method',"post");
@@ -126,39 +144,53 @@ var Sender = function() {
     f.submit();
 
     return ;*/
+    $('#manufacturer.modal').modal('show');
+    $('#submitBtn').prop('disabled', true);
+    $('#manufacturer.selectpicker').on('changed.bs.select',
+      function() {
+        $('#submitBtn').prop('disabled', false);
+      });
+    $('#submitBtn').click({self: this}, function(event) {
+      var self = event.data.self;
+      self.postData['manufacturer'] = $("#manufacturer.selectpicker").val();
+      $('#manufacturer.modal').modal('hide');
 
-    $.ajax({
-      url : "http://" + ip_address + "/collect.py",
-      dataType : "html",
-      type : 'POST',
-      data : JSON.stringify(postData),
-      success : function(data) {
-        if (data === 'user_id error') {
-          window.location.href = error_page;
-        } else {
-          num = data.split(',')[0];
-          code = data.split(',')[1];
-          if (num != '3') {
-            $('#instruction')
-                .append(
-                    'You have finished <strong>' + num +
-                    '</strong> browsers<br>Now open the link:<br><a href="' +
-                    url + '">' + url +
-                    '</a><br>with another browser on <em>this</em> computer');
-            $('#instruction')
-                .append(
-                    '<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
+      $.ajax({
+        url : "http://" + ip_address + "/collect.py",
+        dataType : "html",
+        type : 'POST',
+        data : JSON.stringify(self.postData),
+        success : function(data) {
+          if (data === 'user_id error') {
+            window.location.href = error_page;
           } else {
-            $('#instruction')
-                .append('You have finished <strong>' + num +
-                        '</strong> browsers<br>Your code is ' + code +
-                        '<br> <strong>Thank you!</strong>');
+            num = data.split(',')[0];
+            code = data.split(',')[1];
+            if (num != '3') {
+              $('#instruction')
+                  .append(
+                      'You have finished <strong>' + num +
+                      '</strong> browsers<br>Now open the link:<br><a href="' +
+                      url + '">' + url +
+                      '</a><br>with another browser on <em>this</em> computer');
+              $('#instruction')
+                  .append(
+                      '<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
+            } else {
+              $('#instruction')
+                  .append('You have finished <strong>' + num +
+                          '</strong> browsers<br>Your code is ' + code +
+                          '<br> <strong>Thank you!</strong>');
+            }
+            $('.selectpicker').selectpicker('hide');
+            progress(100);
+            Cookies.set('machine_fingerprinting_userid', user_id);
           }
-          progress(100);
-          Cookies.set('machine_fingerprinting_userid', user_id);
         }
-      }
+      });
     });
+
+
   };
 
   /* Converts the charachters that aren't UrlSafe to ones that are and

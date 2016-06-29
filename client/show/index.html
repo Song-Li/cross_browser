@@ -2,13 +2,15 @@
 <head>
 <title>Cross Browser Test</title>
 </head>
-<link rel="stylesheet" href="css/style.css">
-<style>
-#test_canvases canvas{
-    display: None !important;
-}
-</style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
 
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
 <body>
 <progress max="100"></progress>
 
@@ -17,12 +19,40 @@
     <h2>Success</h2>
 </div>
 
+
+<div id="manufacturer" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false" >
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header" id='manufacturer'>
+            <h4 class="modal-title" id='manufacturer'>Select the manufacturer of your computer</h4>
+          </div>
+          <div class="modal-body" id='manufacturer'>
+              <select class="selectpicker" data-live-search="true" title="Nothing selected..." data-width="auto" id="manufacturer">
+              <option>Acer</option>
+              <option>Apple</option>
+              <option>Asus</option>
+              <option>Dell</option>
+              <option>Hewlett Packard (HP)</option>
+              <option>Lenovo</option>
+              <option>Toshiba</option>
+              <option>Other</option>
+              </select>
+          </div>
+          <div class="modal-footer" id='manufacturer'>
+            <button type="button" class="btn btn-primary" id="submitBtn">
+              Submit
+            </button>
+          </div>
+          </div>
+        </div>
+      </div>
+
 <div id = "test_canvases">
      <canvas id="main_can" width="256" height="256">
         Your browser does not support HTML5
     </canvas>
 </div>
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.10/seedrandom.min.js"></script>
 <script src="./three/three.min.js"></script>
 <script src="./three/js/Detector.js"></script>

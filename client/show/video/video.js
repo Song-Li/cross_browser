@@ -87,6 +87,7 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
     this.video.addClass("hidden-vid");
     $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(this.video);
     $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(this.video);
+    $('<source src="./video/backup.mp4" type="video/mp4"/>').appendTo(this.video);
     this.video.prop('loop', true);
     this.video.prop('autoplay', true);
     this.video.on('play', {self : this}, function(event) {

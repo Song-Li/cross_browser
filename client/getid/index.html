@@ -6,30 +6,42 @@
 </head>
 <link rel="stylesheet" href="style.css">
 <body onload=generateUID();>
-<div id="title"><h1>Machine Fingerprinting</h1><br>
-    <img src="./img/fingerprint.jpg"></div>
-<div class="guide">
-    <div id = "instruction" class="bar">
-        <h3>Way 1: Do It Automatically</h3>
-        You just need to download a file and run it:
-        <div id="steps" class="indent">
-            <li>If you use Windows, download <a href="https://drive.google.com/file/d/0B4s900Byvv1iT1NTQkZiVGNVM0E">This file</a> and run "run.bat"</li>
-            <li>If you use Ubuntu, download <a href="https://drive.google.com/open?id=0B4s900Byvv1iZGZ5TElmSV9OaDA">This file</a> and run "run.sh"</li>
-        </div>
+<div id=content>
+    <div id="title">
+        <h1>Machine Fingerprinting</h1><br>
+        <img src="./img/fingerprint.jpg">
     </div>
-        <h1>or</h1>
-    <div id = "instruction" class="bar">
-        <h3>Way 2: Do It By Yourself</h3>
-        Your link is: <div id="uid"></div>
-        Your task is:
-        <div id="steps" class="indent">
-            <li>1. Download 3 browsers (follow the description blow)</li>
-            <li id="link"></li>
-            <li>3. Wait until you see "success" in all of the browsers</li>
-        </div>
-        <div id= "browsers">
-            If you use Windows, the browsers should be Firefox, Chrome and Edge <br>
-            If you use OS X, the browsers should be Firefox, Chrome and Safari
+    <div id="whoami" class="bar">
+        <p> Hello there!  We are network security researchers at Lehigh University developing a new way to identify computers. In order to test our ideas, we need your help to collect data.  The test will have your computer render a series of images and send the results to our server.  We have provided programs to automate the process for your use or you can follow the instructions in the do it yourself section.</p>
+        <p> We understand that letting strange code run on your computer isn't a great idea, thus all of our code is <a href="https://github.com/Song-Li/cross_browser">open source</a>.  All the automated programs do is download the browsers (if needed) and open the tests.  They do not download anything permanent to your computer and can be simply deleted after the test is complete.</p>
+    </div>
+    <div class="bar guide">
+        <h2>Pick one: </h2>
+        <div id=instructions>
+            <div id="instruction">
+                <h3>Easy Way</h3>
+                You just need to download a file, run it, and enter the manufacturer of your computer in each browser when prompted:
+                <div id="steps" class="indent">
+                    <li>If you are using Windows, download <a href="https://drive.google.com/file/d/0B4s900Byvv1iT1NTQkZiVGNVM0E">this file</a> and run "run.bat"</li>
+                    <li>If you are using Ubuntu, download <a href="https://drive.google.com/open?id=0B4s900Byvv1iZGZ5TElmSV9OaDA">this file</a> and run "run.sh"</li>
+                </div>
+            </div>
+            <div id="instruction">
+                <h3>Do It Yourself</h3>
+                Your link is: <div id="uid"></div>
+                <div id="steps" class="indent">
+                    <li>1. Install 3 web browsers if needed.</li>
+                    <li id="link"></li>
+                    <li>3. Enter the manufacturer of your computer when prompted.</li>
+                    <li>4. Wait until you see "success" in each browser. </li>
+                </div>
+                Suggested Browsers:
+                <div id="browsers">
+                    Windows: Firefox, Chrome, and Edge
+                    <br>
+                    OS X: Firefox, Chrome, and Safari
+                </div>
+            </div>
         </div>
     </div>
 </div>
