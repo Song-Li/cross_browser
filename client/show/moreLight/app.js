@@ -2,9 +2,9 @@ var MoreLightTest = function() {
   this.canvas = null;
   this.cb = null;
   this.level = null;
-  this.numChildren = 2;
+  this.numChildren = 3;
   this.children = [];
-  this.IDs = sender.getIDs(2);
+  this.IDs = sender.getIDs(3);
 
   this.numChildrenRun = 0;
   this.childComplete = function() {
@@ -276,6 +276,8 @@ var MoreLightTest = function() {
                       } else {
                         self.children.push(new RunMoreLight(vsText, fsText, img,
                                                             modelObj, 1, self));
+                        self.children.push(new RunMoreLight(vsText, fsText, img,
+                                                            modelObj, 2, self));
                       }
                     }, self);
                   }

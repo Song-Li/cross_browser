@@ -2,7 +2,7 @@ var TransparentTest = function () {
     this.canvas = null;
     this.cb = null;
     this.level = null;
-    this.numChildren = 10;
+    this.numChildren = 11;
     this.children = [];
     this.IDs = sender.getIDs(this.numChildren);
 
@@ -25,7 +25,11 @@ var TransparentTest = function () {
     };
     var RunTransparent = function (vertexShaderText, fragmentShaderText, SusanImage, SusanModel, alp, childNumber, parent) {
         this.begin = function(canvas) {
-                var gl = getGL(canvas);
+                var gl;
+                if(childNumber == 10){
+                    canvas = getCanvas("can_aa");
+                    gl = getGLAA(canvas); 
+                }else gl = getGL(canvas);
                 var WebGL = true;
 
                 gl.clearColor(0.0, 0.0, 0.0, 0.0);
@@ -278,6 +282,7 @@ var TransparentTest = function () {
                                         self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 79, 7, self));
                                         self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 80, 8, self));
                                         self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 81, 9, self));
+                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 81, 10, self));
                                     }
                                 }, self);
                             }
