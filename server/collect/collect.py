@@ -75,6 +75,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
     gpu = one_test['gpu']
     manufacturer = one_test['manufacturer']
     fps = float(one_test['fps'])
+    manufacturer = one_test['manufacturer']
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID, agent)
     try:

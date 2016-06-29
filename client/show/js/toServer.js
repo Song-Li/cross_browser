@@ -115,7 +115,7 @@ var Sender = function() {
     this.urls[id] = dataurl;
     this.finished++;
     progress(this.finished / this.nextID * 98.0);
-
+    return;
     if (this.finished < this.nextID)
       return;
 

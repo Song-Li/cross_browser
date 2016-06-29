@@ -12,7 +12,7 @@ function progress(value) {
     $('progress').val(value);
     pos = 1 - value / 100;
     // update background
-    $('progress').css('background-position', '0 '+ pos +'em');
+    $('progress').prop('style', 'background-position: 0 '+ pos + 'em;');
 
     // show/hide progress
     /*

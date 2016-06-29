@@ -17,7 +17,6 @@ function generateUID(){
         return;
     }
 
-
     postData = 'GetUID';
 
     /*
