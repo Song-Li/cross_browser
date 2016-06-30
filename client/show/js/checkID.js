@@ -48,16 +48,21 @@ $(function() {
   testList.push(new MoreLightTest());
   testList.push(new SimpleLightTest());
   testList.push(new TransparentTest());
-  testList.push(new VideoTest());
   testList.push(new LightingTest());
   testList.push(new ClippingTest());
+  testList.push(new BubbleTest());
+  testList.push(new VideoTest());
 
   sender.finalized = true;
 
   var canvas = $('#main_can')[0];
   function testFunc(level) {
-    if (level == testList.length) return;
-    testList[level].begin(canvas, testFunc, level + 1);
+    progress(level / testList.length * 98.0);
+    if (level == testList.length) {
+      sender.sendData();
+    } else {
+      testList[level].begin(canvas, testFunc, level + 1);
+    }
   }
 
   // Tests begin in HERE

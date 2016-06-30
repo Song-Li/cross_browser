@@ -43,6 +43,23 @@
     color: #555555
 }
 
+* a {
+    font-size: 1.1em;
+    font-family: sans-serif;
+}
+
+#uid a {
+    font-size: 1.0em;
+}
+
+#steps a {
+    font-size: 1.05em;
+}
+
+#browsers a {
+    font-size: 1.0em;
+}
+
 .bar h2 {
     color: #151515
 }
@@ -132,6 +149,10 @@
     line-height: 25px;
     margin-top: 20px;
     margin-bottom: 20px;
+}
+
+#whoami a {
+    font-size: 1.1em;
 }
 
 body {

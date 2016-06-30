@@ -53,10 +53,9 @@ var Sender = function() {
     var hashV = hash(pixels);
     console.log("CTX: " + hashV);
 
-    if (sumRGB(pixels) < 1.0)
-      return 0;
+
     this.toServer(false, "None", "None", hashV, id, pixels);
-    return 1;
+    return sumRGB(pixels) > 1.0;
   };
 
   this.getData = function(gl, id) {
@@ -80,11 +79,9 @@ var Sender = function() {
     var hash = pixels.hashCode();
     console.log("gl: " + hash);
 
-    if (sumRGB(pixels) < 1) {
-      return 0;
-    }
+
     this.toServer(WebGL, ven, ren, hash, id, pixels);
-    return 1;
+    return sumRGB(pixels) > 1.0;
   };
 
   this._fps = null;
@@ -113,27 +110,18 @@ var Sender = function() {
       dataurl) { // send messages to server and receive messages from server
 
     this.urls[id] = dataurl;
-    this.finished++;
-    progress(this.finished / this.nextID * 98.0);
-    return;
-    if (this.finished < this.nextID)
-      return;
 
-    console.log("Sent " + this.nextID + " images");
-
-    var pixels = "";
-    for (var i = 0; i < this.nextID; ++i) {
-      if (i != 0)
-        pixels += ' ';
-      pixels += stringify(this.urls[i]);
+    if (WebGL) {
+      this.postData['WebGL'] = WebGL;
+      this.postData['inc'] = inc;
+      this.postData['gpu'] = gpu;
+      this.postData['hash'] = hash;
+      this.postData['user_id'] = user_id;
     }
-    this.postData['WebGL'] = WebGL;
-    this.postData['inc'] = inc;
-    this.postData['gpu'] = gpu;
-    this.postData['hash'] = hash;
-    this.postData['user_id'] = user_id;
-    this.postData['pixels'] = pixels;
 
+  };
+
+  this.sendData = function() {
     /*var f = document.createElement("form");
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
@@ -144,6 +132,16 @@ var Sender = function() {
     f.submit();
 
     return ;*/
+
+    var pixels = "";
+    for (var i = 0; i < this.nextID; ++i) {
+      if (i != 0)
+        pixels += ' ';
+      pixels += stringify(this.urls[i]);
+    }
+    this.postData['pixels'] = pixels;
+
+    console.log("Sent " + this.urls.length + " images");
     $('#manufacturer.modal').modal('show');
     $('#submitBtn').prop('disabled', true);
     $('#manufacturer.selectpicker').on('changed.bs.select',
@@ -189,9 +187,7 @@ var Sender = function() {
         }
       });
     });
-
-
-  };
+  }
 
   /* Converts the charachters that aren't UrlSafe to ones that are and
     removes the padding so the base64 string can be sent

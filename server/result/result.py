@@ -70,7 +70,7 @@ def gen_hash_codes(data):
             m.update(pixels)
             n.update(pixels)
             b64m = encode(m.digest()).replace('=', '')
-            b64n = encode(m.digest()).replace('=', '')
+            b64n = encode(n.digest()).replace('=', '')
             hashes.append(b64m + b64n)
 
         hash_codes.update({browser_to_id[browser]: hashes})
