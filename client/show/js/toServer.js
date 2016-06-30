@@ -164,7 +164,8 @@ var Sender = function() {
           } else {
             num = data.split(',')[0];
             code = data.split(',')[1];
-            if (num != '3') {
+            num = parseInt(num);
+            if (num < 3) {
               $('#instruction')
                   .append(
                       'You have finished <strong>' + num +

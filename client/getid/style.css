@@ -24,28 +24,29 @@
     -ms-filter: blur(5px);
 }
 
+a {
+    font-family: sans-serif;
+    color: #0000b3;
+}
+
 .bar a {
     font-size: .7em;
     line-height: 25px;
-    color: #9B9B4F
 }
 
 #steps a {
     font-size: 0.9em;
     line-height: 25px;
-    color: #9B9B4F
 }
 
 .bar #browsers {
     padding-left: 20px;
     padding-top: 5px;
     font-size: .7em;
-    color: #555555
 }
 
-* a {
-    font-size: 1.1em;
-    font-family: sans-serif;
+p.indent {
+    text-indent: 50px;
 }
 
 #uid a {
@@ -76,7 +77,7 @@
     color: #333333
 }
 
-.indent {
+div.indent {
     padding: 10px;
     margin-left: 20px;
 }
