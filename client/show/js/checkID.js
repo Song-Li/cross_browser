@@ -43,6 +43,7 @@ $(function() {
   var testList = [];
   sender = new Sender();
   testList.push(new CubeTest());
+  testList.push(new CameraTest());
   testList.push(new LineTest());
   testList.push(new TextureTest());
   testList.push(new MoreLightTest());
