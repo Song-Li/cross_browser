@@ -102,7 +102,7 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
         if (self.ctxMode) {
           if (self.collected[0] < numImages) {
             var status = sender.getDataFromCanvas(self.ctx, self.IDs[self.ctxID]);
-            if (status) {
+            if (status || self.count > 50) {
               ++self.collected[0]
               self.ctxID += 2;
             }
@@ -113,7 +113,7 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
         } else {
           if (self.collected[1] < numImages) {
             var status = sender.getData(self.gl, self.IDs[self.glID]);
-            if (status) {
+            if (status || self.count > 100) {
               ++self.collected[1]
               self.glID += 2;
             }
