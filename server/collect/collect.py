@@ -135,7 +135,7 @@ def index(req):
     cursor.execute("SELECT COUNT(*) FROM {} WHERE user_id='{}'".format(table_name, one_test['user_id']))
     row = cursor.fetchone()[0]
     db.close()
-    if row == 3:
+    if row >= 3:
         return str(row) + ',8293847'
     else:
         return str(row) + ',not finished'
