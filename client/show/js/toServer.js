@@ -181,7 +181,7 @@ var Sender = function() {
                   requests['automated'] === 'true') {
                 $('#instruction')
                     .append(
-                        'Please check a different browser for your completion code');
+                        'Please close this browser and check a different browser for your completion code');
 
               } else {
                 $('#instruction')
