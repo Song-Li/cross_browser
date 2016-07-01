@@ -36,7 +36,7 @@ def saveImg(b64raw, name):
     img = img.rotate(90)
     img.save(img_root + name + '.png')
 
-def gen_image_id(cursor, table_name, MAX_ID, agent):
+def gen_image_id(cursor, table_name, MAX_ID):
     cursor.execute("SELECT COUNT(*) FROM {}".format(table_name))
     if not cursor.fetchone()[0]:
         return 0
@@ -78,7 +78,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
     manufacturer = one_test['manufacturer']
 
     MAX_ID = int(1e9)
-    image_id = gen_image_id(cursor, table_name, MAX_ID, agent)
+    image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
         sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser, fps, manufacturer, fonts) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser, fps, manufacturer, fonts)
         cursor.execute(sql)
@@ -137,6 +137,6 @@ def index(req):
     row = cursor.fetchone()[0]
     db.close()
     if row >= 3:
-        return str(row) + ',U2FsdGVkX1+TbN7kmIHHDD'
+        return str(row) + ',' + str(one_test['user_id'])
     else:
         return str(row) + ',not finished'
