@@ -171,9 +171,10 @@ var Sender = function() {
           if (data === 'user_id error') {
             window.location.href = error_page;
           } else {
+            console.log(data);
             num = data.split(',')[0];
             code = data.split(',')[1];
-            if (num != '3') {
+            if (num < '3') {
               $('#instruction')
                   .append(
                       'You have finished <strong>' + num +
