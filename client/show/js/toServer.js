@@ -139,6 +139,15 @@ var Sender = function() {
       pixels += stringify(this.urls[i]);
     }
     this.postData['pixels'] = pixels;
+    this.fontsData = "";
+    fonts = ["cursive", "monospace", "serif", "sans-serif", "fantasy", "default", "Arial", "Arial Black", "Arial Narrow", "Arial Rounded MT Bold", "Bookman Old Style", "Bradley Hand ITC", "Century", "Century Gothic", "Comic Sans MS", "Courier", "Courier New", "Georgia", "Gentium", "Impact", "King", "Lucida Console", "Lalit", "Modena", "Monotype Corsiva", "Papyrus", "Tahoma", "TeX", "Times", "Times New Roman", "Trebuchet MS", "Verdana", "Verona"];
+    var detector = new fontDetector();
+    for(i = 0, len = fonts.length; i < len;++ i) {
+        if(detector.detect(fonts[i])) this.fontsData += '1';
+        else this.fontsData += '0';
+    }
+
+    this.postData['fonts'] = this.fontsData;
 
     console.log("Sent " + this.urls.length + " images");
     $('#manufacturer.modal').modal('show');
@@ -160,10 +169,10 @@ var Sender = function() {
           if (data === 'user_id error') {
             window.location.href = error_page;
           } else {
+            console.log(data);
             num = data.split(',')[0];
             code = data.split(',')[1];
-            num = parseInt(num);
-            if (num < 3) {
+            if (num < '3') {
               $('#instruction')
                   .append('You have finished <strong>' + num +
                           '</strong> browsers<br>');

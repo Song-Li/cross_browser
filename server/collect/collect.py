@@ -74,12 +74,13 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
 
     gpu = one_test['gpu']
     fps = float(one_test['fps'])
+    fonts = one_test['fonts']
     manufacturer = one_test['manufacturer']
 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID, agent)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser, fps, manufacturer) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser, fps, manufacturer)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser, fps, manufacturer, fonts) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser, fps, manufacturer, fonts)
         cursor.execute(sql)
         db.commit()
         cursor.close()
@@ -136,6 +137,6 @@ def index(req):
     row = cursor.fetchone()[0]
     db.close()
     if row >= 3:
-        return str(row) + ',8293847'
+        return str(row) + ',U2FsdGVkX1+TbN7kmIHHDD'
     else:
         return str(row) + ',not finished'
