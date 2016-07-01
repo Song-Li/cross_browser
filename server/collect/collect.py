@@ -137,6 +137,6 @@ def index(req):
     row = cursor.fetchone()[0]
     db.close()
     if row >= 3:
-        return str(row) + 'U2FsdGVkX1+TbN7kmIHHDDvjTTtC/Og0/Pedq1vA/JV3coEtQIL0Qa19+ls7FMie'
+        return str(row) + ',U2FsdGVkX1+TbN7kmIHHDD'
     else:
         return str(row) + ',not finished'
