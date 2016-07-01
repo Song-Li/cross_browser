@@ -32,9 +32,9 @@ function runTests () {
     echo ${user_id} > ${idFile}
   fi
 
-  open -a "${chrome}" "${url}${user_id}"
-  open -a "${safari}" "${url}${user_id}"
-  open -a "${firefox}" "${url}${user_id}"
+  open -a "${chrome}" "${url}${user_id}&automated=true"
+  open -a "${safari}" "${url}${user_id}&automated=true"
+  open -a "${firefox}" "${url}${user_id}&automated=true"
 }
 
 runTests

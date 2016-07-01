@@ -46,8 +46,8 @@ progress.hidden {
     display: none;
     position: absolute;
     top:0; left: 0; right: 0; bottom: 0;
-    height: 350px;
-    width: 300px;
+    height: 400px;
+    width: 350px;
     text-align: center;
     margin: auto;
     font-family: sans-serif;

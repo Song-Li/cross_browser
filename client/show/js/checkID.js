@@ -10,12 +10,13 @@ var cubeTest,
   clippingTest,
   lightingTest;
 
+var requests = {};
 $(function() {
   url = document.URL;
   var parser = document.createElement('a');
   parser.href = url;
   var command = parser.search;
-  var requests = {};
+
   if (command) {
     var commands = command.slice(1).split('&');
     for (var i = 0; i < commands.length; i++) {
@@ -40,6 +41,7 @@ $(function() {
   } else {
     user_id = parseInt(requests['user_id']);
   }
+
   var testList = [];
   sender = new Sender();
   testList.push(new CubeTest());

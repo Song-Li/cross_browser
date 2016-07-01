@@ -53,7 +53,6 @@ var Sender = function() {
     var hashV = hash(pixels);
     console.log("CTX: " + hashV);
 
-
     this.toServer(false, "None", "None", hashV, id, pixels);
     return sumRGB(pixels) > 1.0;
   };
@@ -78,7 +77,6 @@ var Sender = function() {
     }
     var hash = pixels.hashCode();
     console.log("gl: " + hash);
-
 
     this.toServer(WebGL, ven, ren, hash, id, pixels);
     return sumRGB(pixels) > 1.0;
@@ -121,7 +119,8 @@ var Sender = function() {
 
   };
 
-  this.sendData = function() {
+  this.sendData =
+      function() {
     /*var f = document.createElement("form");
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
@@ -144,11 +143,10 @@ var Sender = function() {
     console.log("Sent " + this.urls.length + " images");
     $('#manufacturer.modal').modal('show');
     $('#submitBtn').prop('disabled', true);
-    $('#manufacturer.selectpicker').on('changed.bs.select',
-      function() {
-        $('#submitBtn').prop('disabled', false);
-      });
-    $('#submitBtn').click({self: this}, function(event) {
+    $('#manufacturer.selectpicker').on('changed.bs.select', function() {
+      $('#submitBtn').prop('disabled', false);
+    });
+    $('#submitBtn').click({self : this}, function(event) {
       var self = event.data.self;
       self.postData['manufacturer'] = $("#manufacturer.selectpicker").val();
       $('#manufacturer.modal').modal('hide');
@@ -167,14 +165,47 @@ var Sender = function() {
             num = parseInt(num);
             if (num < 3) {
               $('#instruction')
-                  .append(
-                      'You have finished <strong>' + num +
-                      '</strong> browsers<br>Now open the link:<br><a href="' +
-                      url + '">' + url +
-                      '</a><br>with another browser on <em>this</em> computer');
-              $('#instruction')
-                  .append(
-                      '<div id= "browsers">(Firefox, chrome, safair or edge)</div>');
+                  .append('You have finished <strong>' + num +
+                          '</strong> browsers<br>');
+
+              if (!requests.hasOwnProperty('automated') ||
+                  requests['automated'] === 'true') {
+                $('#instruction')
+                    .append(
+                        'Please check a different browser for your completion code');
+
+              } else {
+                $('#instruction')
+                    .append('Now open the link:<br><a href="' + url + '">' +
+                            url + '</a> <br>');
+                $('<button type="button" class="btn btn-default">Copy</button>')
+                    .appendTo($('#instruction'))
+                    .click({text : url}, function(event) {
+                      var text = event.data.text;
+                      var textarea =
+                          $('<textarea>' + text + '</textarea>')
+                              .prop(
+                                  'style',
+                                  'position: absolute; left: -9999px; top: 0px;')
+                              .appendTo($('body'))
+                              .select();
+                      var copySupported =
+                          document.queryCommandSupported('copy');
+                      if (copySupported) {
+                        document.execCommand('copy');
+                      } else {
+                        window.alert("Copy to clipboard: Ctrl+C, Enter", text);
+                      }
+                      textarea.remove();
+                    })
+                    .prop('style', 'float: right; margin: 5px;');
+
+                $('#instruction')
+                    .append(
+                        '<br><br>with another browser on <em>this</em> computer')
+                    .append(
+                        '<div id= "browsers" style="text-align: center;">(Firefox, chrome, safair or edge)</div>');
+              }
             } else {
               $('#instruction')
                   .append('You have finished <strong>' + num +

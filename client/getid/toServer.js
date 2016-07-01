@@ -6,8 +6,25 @@ function killCookie() {
 }
 
 function addUID(uid){
-    $("#uid").append('<a href="http://mf.songli.us/show/?user_id=' + uid + '">http://mf.songli.us/show/?user_id=' + uid + '</a>');
-    $("#link").append('2. Open <a href="http://mf.songli.us/show/?user_id=' + uid + '">your link</a> with 3 browsers on THIS computer');
+    var link = 'http://mf.songli.us/show/?user_id=' + uid + '&automated=false'
+    $('<a href=' + link + '>' + link + '</a>').appendTo($('#uid'));
+    $('<button type="button" class="btn btn-default">Copy</button>')
+        .appendTo($('#uid'))
+        .click({text: link}, function(event) {
+            var text = event.data.text;
+            var textarea = $('<textarea>' + text + '</textarea>')
+                .prop('style', 'position: absolute; left: -9999px; top: 0px;')
+                .appendTo($('body'))
+                .select();
+            var copySupported = document.queryCommandSupported('copy');
+            if (copySupported) {
+                document.execCommand('copy');
+            } else {
+                window.alert("Copy to clipboard: Ctrl+C, Enter", text);
+            }
+            textarea.remove();
+        });
+    $("#link").append('2. Open <a href="' + link + '">your link</a> with 3 browsers on THIS computer');
 }
 
 function generateUID(){

@@ -142,7 +142,7 @@ div.indent {
     width: 80%;
     height: auto;
     margin: 10px;
-    padding: 5px;
+    padding: 10px;
     padding-left: 20px;
     padding-right: 20px;
     font-family: sans-serif;
@@ -153,6 +153,24 @@ div.indent {
 }
 
 #whoami a {
+    font-size: 1.1em;
+}
+
+#contanct {
+    width: 80%;
+    height: auto;
+    margin: 10px;
+    padding: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: sans-serif;
+    font-size: 1.1em;
+    line-height: 25px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#contact a {
     font-size: 1.1em;
 }
 

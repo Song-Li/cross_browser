@@ -3,8 +3,15 @@
 <style>
 </style>
 <title>Cross Browser Test</title>
-</head>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
 <link rel="stylesheet" href="style.css">
+</head>
 <body onload=generateUID();>
 <div id=content>
     <div id="title">
@@ -12,17 +19,18 @@
         <img src="./img/fingerprint.jpg">
     </div>
     <div id="whoami" class="bar">
+    <h2>Introduction</h2>
         <p class="indent"> Hello there!  We are network security researchers at Lehigh University developing a new way to identify computers.  In order to test our ideas, we need your help to collect data.  The test will have your computer render a series of images and send the results to our server.  The information sent to the server contains absolutely no person information.  We have provided programs to automate the process for your use or you can follow the instructions in the do it yourself section.</p>
         <p class="indent"> We understand that letting strange code run on your computer isn't a great idea, thus all of our code is <a href="https://github.com/Song-Li/cross_browser">open source</a>.  All the automated programs do is download the browsers (if needed) and open the tests.  They do not download anything permanent to your computer and can be simply deleted after the test is complete.</p>
 
 
-        <p>Legal Stuff:
-        <br>
+        <p><strong>Legal Stuff:</strong></p>
+        <p class="indent">
         This research project has reviewed by the Lehigh University <a href="https://en.wikipedia.org/wiki/Institutional_review_board">Institutional Review Board(IRB)</a> (Reference #: 16/191 S) and does not utilize human research subjects.</p>
     </div>
     <div class="bar guide">
-        <h2>Pick one: </h2>
-        <div id=instructions>
+        <h2>Instructions, pick one: </h2>
+        <div id="instructions">
             <div id="instruction">
                 <h3>Automated</h3>
                 You just need to download a file, run it, and enter the manufacturer of your computer in each browser when prompted:
@@ -50,9 +58,18 @@
             </div>
         </div>
     </div>
+    <div id="contanct" class="bar">
+    <h2>Contact Information</h2>
+        <div class="indent">
+            Dr. Yinzhi Cao <a href="mailto:yinzhi.cao@lehigh.edu?subject=machine_fingerprinting">yinzhi.cao@lehigh.edu</a>
+            <br>
+            Song Li <a href="mailto:sol315@lehigh.edu?subject=machine_fingerprinting">sol315@lehigh.edu</a>
+            <br>
+            Erik Wijmans <a href="mailto:erikwijmans@wustl.edu?subject=machine_fingerprinting">erikwijmans@wustl.edu</a>
+        </div>
+    </div>
 </div>
 <script type="text/javascript" src="cookie.js"></script>
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="toServer.js"></script>
 </body>
 </html>
