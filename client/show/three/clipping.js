@@ -249,7 +249,7 @@ var ClippingTest = function() {
     var transform = new THREE.Matrix4(), tmpMatrix = new THREE.Matrix4();
     var times = [];
     function animate() {
-      times.push(performance.now());
+      times.push((performance || Date).now());
       var time = level++ * 0.05;
 
       var frame = requestAnimationFrame(animate);
