@@ -136,23 +136,23 @@ window.CompressedTextureTest = class CompressedTextureTest
       @materials = []
       loader = new THREE.PVRLoader()
 
-      disturb_4bpp_rgb = loader.load textureRoot + 'disturb_4bpp_rgb.pvr'
-      disturb_4bpp_rgb_v3 = loader.load textureRoot + 'disturb_4bpp_rgb_v3.pvr'
-      disturb_4bpp_rgb_mips = loader.load textureRoot + 'disturb_4bpp_rgb_mips.pvr'
-      disturb_2bpp_rgb = loader.load textureRoot + 'disturb_2bpp_rgb.pvr'
-      flare_4bpp_rgba = loader.load textureRoot + 'flare_4bpp_rgba.pvr'
-      flare_2bpp_rgba = loader.load textureRoot + 'flare_2bpp_rgba.pvr'
-      park3_cube_nomip_4bpp_rgb = loader.load textureRoot + 'park3_cube_nomip_4bpp_rgb.pvr', (texture) =>
+      disturb_4bpp_rgb = loader.load(textureRoot + 'disturb_4bpp_rgb.pvr')
+      disturb_4bpp_rgb_v3 = loader.load(textureRoot + 'disturb_4bpp_rgb_v3.pvr')
+      disturb_4bpp_rgb_mips = loader.load(textureRoot + 'disturb_4bpp_rgb_mips.pvr')
+      disturb_2bpp_rgb = loader.load(textureRoot + 'disturb_2bpp_rgb.pvr')
+      flare_4bpp_rgba = loader.load(textureRoot + 'flare_4bpp_rgba.pvr')
+      flare_2bpp_rgba = loader.load(textureRoot + 'flare_2bpp_rgba.pvr')
+      park3_cube_nomip_4bpp_rgb = loader.load(textureRoot + 'park3_cube_nomip_4bpp_rgb.pvr', (texture) =>
         texture.magFilter = THREE.LinearFilter
         texture.minFilter = THREE.LinearFilter
         texture.mapping = THREE.CubeReflectionMapping
-        @meshes[0].needsUpdate = true
+        @meshes[0].needsUpdate = true)
 
-      park3_cube_mip_2bpp_rgb_v3 = loader.load textureRoot + 'park3_cube_mip_2bpp_rgb_v3.pvr', (texture) =>
+      park3_cube_mip_2bpp_rgb_v3 = loader.load(textureRoot + 'park3_cube_mip_2bpp_rgb_v3.pvr', (texture) =>
         texture.magFilter = THREE.LinearFilter
         texture.minFilter = THREE.LinearFilter
         texture.mapping = THREE.CubeReflectionMapping
-        @meshes[1].needsUpdate = true
+        @meshes[1].needsUpdate = true)
 
       disturb_2bpp_rgb.minFilter = disturb_2bpp_rgb.magFilter =
           flare_4bpp_rgba.minFilter = flare_4bpp_rgba.magFilter =
