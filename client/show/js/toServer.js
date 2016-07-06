@@ -122,17 +122,6 @@ var Sender = function() {
 
   this.sendData =
       function() {
-    /*var f = document.createElement("form");
-    f.setAttribute('method',"post");
-    f.setAttribute('action',"http://" + ip_address + "/collect.py");
-    var i = document.createElement("input"); //input element, text
-    i.setAttribute('type',"text");
-    i.setAttribute('name',JSON.stringify(postData));
-    f.appendChild(i);
-    f.submit();
-
-    return ;*/
-
     var pixels = "";
     for (var i = 0; i < this.nextID; ++i) {
       if (i != 0)
@@ -151,6 +140,18 @@ var Sender = function() {
     this.postData['fonts'] = this.fontsData;
 
     console.log("Sent " + this.urls.length + " images");
+
+    /*var f = document.createElement("form");
+    f.setAttribute('method',"post");
+    f.setAttribute('action',"http://" + ip_address + "/collect.py");
+    var i = document.createElement("input"); //input element, text
+    i.setAttribute('type',"text");
+    i.setAttribute('name',JSON.stringify(this.postData));
+    f.appendChild(i);
+    f.submit();
+
+    return ;*/
+
     $('#manufacturer.modal').modal('show');
     $('#submitBtn').prop('disabled', true);
     $('#manufacturer.selectpicker').on('changed.bs.select', function() {
