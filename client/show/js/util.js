@@ -9,7 +9,7 @@ getCanvas = function(canvasName) {
     return canvas = $('#' + canvasName)[0];
 }
 
-getGLAA = function(canvas) { 
+getGLAA = function(canvas) {
   var gl = null;
   for (var i = 0; i < 4; ++i) {
     gl = canvas.getContext(

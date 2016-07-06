@@ -3,14 +3,24 @@
 <title>Cross Browser Test</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+<link rel="stylesheet" href="css/style.css">
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.10/seedrandom.min.js"></script>
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
 
-<link rel="stylesheet" href="css/style.css">
+<script type="text/javascript" src="depth_texture/framework.js"></script>
+<script type="text/javascript" src="depth_texture/meshes.js"></script>
+<script type="text/javascript" src="depth_texture/webgl-nuke-vendor-prefix.js"></script>
+<script type="text/javascript" src="depth_texture/webgl-texture-float-extension-shims.js"></script>
+
+<script src="./three/three.min.js"></script>
+<script src="./three/js/Detector.js"></script>
+<script src="./three/js/shaders/FresnelShader.js"></script>
+<script src="./three/js/loaders/DDSLoader.js"></script>
+<script src="./three/js/loaders/PVRLoader.js"></script>
+<script type="text/javascript" src="./js/cookie.js"></script>
 </head>
 <body>
 <progress max="100"></progress>
@@ -49,18 +59,15 @@
         </div>
       </div>
 
+
 <div id = "test_canvases">
-     <canvas id="main_can" width="256" height="256">
-        Your browser does not support HTML5
+    <canvas id="main_can" width="256" height="256">
+            Your browser does not support HTML5
     </canvas>
      <canvas id="can_aa" width="256" height="256">
         Your browser does not support HTML5
     </canvas>
 </div>
-<script src="./three/three.min.js"></script>
-<script src="./three/js/Detector.js"></script>
-<script src="./three/js/shaders/FresnelShader.js"></script>
-<script type="text/javascript" src="./js/cookie.js"></script>
 <script src="./js/util.js"></script>
 <script src="./js/gl-matrix.js"></script>
 <script src="./texture/app.js"></script>
@@ -75,6 +82,8 @@
 <script type="text/javascript" src="./three/lighting.js"></script>
 <script type="text/javascript" src="./three/clipping.js"></script>
 <script type="text/javascript" src="./three/bubbles.js"></script>
+<script type="text/javascript" src="./three/texture.js"></script>
+<script type="text/javascript" src="./depth_texture/vsm-filtered-shadow.js"></script>
 <script src="./js/index.js"></script>
 <script src="./js/fontdetect.js"></script>
 <script type="text/javascript" src="./js/checkID.js"></script>

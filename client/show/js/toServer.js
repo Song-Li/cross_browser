@@ -86,6 +86,7 @@ var Sender = function() {
   this.setFPS = function(fps) {
     this._fps = parseFloat(fps);
     this.postData['fps'] = this._fps;
+    console.log("FPS: " + this._fps);
   };
   this.calcFPS = function(times) {
     var fpses = [];

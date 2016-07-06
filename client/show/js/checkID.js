@@ -54,6 +54,8 @@ $(function() {
   testList.push(new LightingTest());
   testList.push(new ClippingTest());
   testList.push(new BubbleTest());
+  testList.push(new CompressedTextureTest());
+  testList.push(new ShadowTest());
   testList.push(new VideoTest());
 
   sender.finalized = true;
