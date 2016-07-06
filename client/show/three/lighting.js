@@ -24,9 +24,9 @@ var LightingTest = function() {
     }
 
     renderer = new THREE.WebGLRenderer({
-      context: gl
-      //canvas: canvas
-    });
+      context: gl,
+      canvas: canvas
+    }, false);
 
     renderer.setClearColor(scene.fog.color);
     renderer.setPixelRatio(1);

@@ -70,7 +70,7 @@ var BubbleTest = function() {
 
   this.begin = function(canvas, cb, value) {
     renderer =
-        new THREE.WebGLRenderer({context : getGL(canvas), canvas : canvas});
+        new THREE.WebGLRenderer({context : getGL(canvas), canvas : canvas}, false);
     renderer.setPixelRatio(1);
     renderer.setSize(256, 256);
 

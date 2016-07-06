@@ -12,7 +12,12 @@
       this.cb = cb;
       this.value = value;
       try {
-        gl = new WebGLFramework(canvas).depthTest();
+        gl = new WebGLFramework(canvas, {
+          antialias: false,
+          preserveDrawingBuffer: true,
+          willReadFrequently: false,
+          depth: true
+        }).depthTest();
         floatExt = gl.getFloatExtension({
           require: ['renderable', 'filterable'],
           prefer: ['single', 'half']

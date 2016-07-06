@@ -6,7 +6,11 @@ window.ShadowTest = class ShadowTest
     begin: (canvas, @cb, @value) ->
         ## setup the framework ##
         try
-            gl = new WebGLFramework(canvas)
+            gl = new WebGLFramework(canvas, {
+                antialias : false,
+                preserveDrawingBuffer : true,
+                willReadFrequently : false,
+                depth: true})
                 .depthTest()
 
             floatExt = gl.getFloatExtension(

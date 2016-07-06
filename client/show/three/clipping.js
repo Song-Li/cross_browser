@@ -230,12 +230,10 @@ var ClippingTest = function() {
     // Renderer
 
     renderer = new THREE.WebGLRenderer({
-      antialias : false,
-      preserveDrawingBuffer : true,
-      willReadFrequently : false,
-      depth : true,
+      context: getGL(canvas),
       canvas: canvas
-    });
+    }, false);
+
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.renderSingleSided = false;
     renderer.setPixelRatio(1);
