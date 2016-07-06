@@ -14,7 +14,8 @@
       try {
         gl = new WebGLFramework(canvas).depthTest();
         floatExt = gl.getFloatExtension({
-          require: ['renderable', 'filterable']
+          require: ['renderable', 'filterable'],
+          prefer: ['single', 'half']
         });
         gl.getExt('OES_standard_derivatives');
       } catch (error1) {
@@ -83,7 +84,7 @@
       lightView = gl.mat4().trans(0, 0, -6).rotatex(30).rotatey(110);
       lightRot = gl.mat3().fromMat4Rot(lightView);
       model = gl.mat4();
-      counter = -Math.PI * 0.5;
+      counter = -Math.PI * 0.1;
       offset = 0;
       camDist = 10;
       camRot = 55;
@@ -125,7 +126,7 @@
           counter += 1 / 10;
           draw();
           if (depth++ === 5) {
-            cancelAnimationFrame(frame);
+            caf(frame);
             sender.getData(gl.getContext(), _this.id);
             return _this.cb(_this.value);
           }

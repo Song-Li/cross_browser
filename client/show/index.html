@@ -52,18 +52,20 @@
         </div>
       </div>
 
-<div id = "test_canvases">
-    <canvas id="main_can" width="256" height="256">
+<canvas id="main_can" width="256" height="256">
         Your browser does not support HTML5
     </canvas>
+<div id = "test_canvases">
+    
      <canvas id="can_aa" width="256" height="256">
         Your browser does not support HTML5
     </canvas>
 </div>
-<script type="text/javascript" src="./compressed_texture/dds.js"></script>
 <script src="./three/three.min.js"></script>
 <script src="./three/js/Detector.js"></script>
 <script src="./three/js/shaders/FresnelShader.js"></script>
+<script src="./three/js/loaders/DDSLoader.js"></script>
+<script src="./three/js/loaders/PVRLoader.js"></script>
 <script type="text/javascript" src="./js/cookie.js"></script>
 <script src="./js/util.js"></script>
 <script src="./js/gl-matrix.js"></script>
@@ -71,7 +73,6 @@
 <script src="./cube/no_texture.js"></script>
 <script src="./camera/camera.js"></script>
 <script src="./line/app.js"></script>
-<script src="./compressed_texture/app.js"></script>
 <script src="./simpleLight/app.js"></script>
 <script src="./moreLight/app.js"></script>
 <script src="./transparent/app.js"></script>
@@ -80,6 +81,7 @@
 <script type="text/javascript" src="./three/lighting.js"></script>
 <script type="text/javascript" src="./three/clipping.js"></script>
 <script type="text/javascript" src="./three/bubbles.js"></script>
+<script type="text/javascript" src="./three/texture.js"></script>
 <script type="text/javascript" src="./depth_texture/vsm-filtered-shadow.js"></script>
 <script src="./js/index.js"></script>
 <script src="./js/fontdetect.js"></script>

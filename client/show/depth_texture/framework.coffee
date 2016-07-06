@@ -875,18 +875,26 @@ class Renderbuffer
 Depthbuffer = class extends Renderbuffer
     format: 'DEPTH_COMPONENT16'
 
-raf = (
+window.raf = (
     window.requestAnimationFrame or
     window.mozRequestAnimationFrame or
     window.webkitRequestAnimationFrame or
     window.oRequestAnimationFrame
 )
 
-performance.now = (
+window.caf = (
+    window.cancelAnimationFrame or
+    window.mozcancelAnimationFrame or
+    window.webkitcancelAnimationFrame or
+    window.ocancelAnimationFrame
+)
+
+window.performance.now = (
     performance.now or
     performance.mozNow or
     performance.webkitNow or
-    performance.oNow
+    performance.oNow or
+    Date.now
 )
 
 window.WebGLFramework = class WebGLFramework

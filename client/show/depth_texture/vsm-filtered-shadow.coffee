@@ -9,9 +9,10 @@ window.ShadowTest = class ShadowTest
             gl = new WebGLFramework(canvas)
                 .depthTest()
 
-            floatExt = gl.getFloatExtension
+            floatExt = gl.getFloatExtension(
                 require: ['renderable', 'filterable']
-
+                prefer: ['single', 'half']
+            )
             gl.getExt('OES_standard_derivatives')
         catch error
             console.log(error)
@@ -210,7 +211,7 @@ window.ShadowTest = class ShadowTest
         model = gl.mat4()
 
         ## state variables ##
-        counter = -Math.PI*0.5
+        counter = -Math.PI*0.1
         offset = 0
         camDist = 10
         camRot = 55
@@ -271,12 +272,11 @@ window.ShadowTest = class ShadowTest
 
         ## mainloop ##
         draw()
-
         gl.animationInterval (frame) =>
             offset = 1 + Math.sin(counter)
             counter += 1/10
             draw()
             if depth++ is 5
-                cancelAnimationFrame(frame)
+                caf(frame)
                 sender.getData(gl.getContext(), @id)
                 @cb(@value)
