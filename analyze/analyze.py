@@ -19,6 +19,7 @@ open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
 db_name = "cross_browser"
 table_name = "in_use"
+client = "NT 6"
 
 def getBrowser(vendor, agent):
     browser = ''
@@ -82,27 +83,25 @@ def getRes(b1, b2, cursor):
     tuids = []
     uids = []
     cursor.execute("SELECT COUNT(DISTINCT(ip)) FROM {}".format(table_name))
-    print cursor.fetchone()[0]
+    print 'ip', cursor.fetchone()[0]
     cursor.execute("SELECT COUNT(DISTINCT(user_id)) FROM {}".format(table_name))
-    print cursor.fetchone()[0]
+    print 'user', cursor.fetchone()[0]
     
     #cursor.execute("SELECT user_id FROM {} WHERE browser='{}'".format(table_name, b1))
-    cursor.execute("SELECT user_id FROM {} WHERE browser='{}' AND agent like '%Macintosh%'".format(table_name, b1))
+    cursor.execute("SELECT user_id FROM {} WHERE browser='{}' AND agent like '%{}%'".format(table_name, b1, client))
     for row in cursor:
         tuids.append(row[0])
 
-    print len(tuids)
+    print b1, len(tuids)
 
     for uid in tuids:
         #cursor.execute("SELECT user_id FROM {} WHERE user_id='{}' AND browser='{}'".format(table_name, uid, b2))
-        cursor.execute("SELECT user_id FROM {} WHERE user_id='{}' AND browser='{}' AND agent like '%Macintosh%'".format(table_name, uid, b2))
+        cursor.execute("SELECT user_id FROM {} WHERE user_id='{}' AND browser='{}' AND agent like '%{}%'".format(table_name, uid, b2, client))
         rows = cursor.fetchall()
         for row in rows:
-            if row[0] in uids:
-                print row[0]
             uids.append(row[0])
 
-    print 'uid number', len(uids)
+    print b1, 'and', b2 , len(uids)
 
     #uids is the list of users uses both b1 and b2
     hash_all = []
@@ -110,17 +109,19 @@ def getRes(b1, b2, cursor):
     hash_long_unique = []
     hash_all_unique = []
     index = []
+    diff = []
     for i in range(case_number):
         hash_all.append([])
         hash_all_unique.append([])
+        diff.append(0)
 
 
     for uid in uids:
         #cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b1, uid))
-        cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}' AND agent like '%Macintosh%'".format(table_name, b1, uid))
+        cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}' AND agent like '%{}%'".format(table_name, b1, uid, client))
         image1_id = cursor.fetchone()[0]
         #cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b2, uid))
-        cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}' AND agent like '%Macintosh%'".format(table_name, b1, uid))
+        cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}' AND agent like '%{}%'".format(table_name, b2, uid, client))
         image2_id = cursor.fetchone()[0]
 
         s1 = ""
@@ -129,12 +130,12 @@ def getRes(b1, b2, cursor):
         for i in range(case_number):
             cursor.execute("SELECT hash FROM {} WHERE image_id='{}'".format('hashes', str(image1_id) + '_' + str(i)))
             hash1_val = cursor.fetchone()[0]
-            if i <= 23:
+            if i <= 23:# and i != 20 and i != 22:
                 s1 += hash1_val
 
             cursor.execute("SELECT hash FROM {} WHERE image_id='{}'".format('hashes', str(image2_id) + '_' + str(i)))
             hash2_val = cursor.fetchone()[0]
-            if i <= 23:
+            if i <= 23:# and i != 20 and i != 22:
                 s2 += hash2_val
 
             #if hash1_val == hash2_val and (hash1_val not in hash_all[i]):
@@ -142,25 +143,33 @@ def getRes(b1, b2, cursor):
                 hash_all[i].append(hash1_val)
                 if hash1_val not in hash_all_unique[i]:
                     hash_all_unique[i].append(hash1_val)
+            else:
+                diff[i] += 1
 
 
         if s1 == s2:
             if s1 not in hash_long_unique:
                 hash_long_unique.append(s1)
-            else:
-                print 'found: ' + str(uid) + '%' + str(uids[hash_long.index(s1)])
+            #else:
+            #    print 'found: ' + str(uid) + '%' + str(uids[hash_long.index(s1)])
             hash_long.append(s1)
             index.append(uid)
+        #else:
+        #    print 'not same: ' + str(uid)
     
+    #for i in range(case_number):
+    #    print i, diff[i]
     res = 0
-    print 'hash_long:' + str(float(len(hash_long)) / len(uids))
+    print 'Cross_browser', len(hash_long)
+    print 'Cross_browser rate', float(len(hash_long)) / len(uids)
 
+    print 'Unique user'
     for i in range(len(hash_long)):
     #    print hash_long.count(row)
         if hash_long.count(hash_long[i]) == 1:
-            print index[i]
+            print '\t', index[i]
             res += 1
-    print 'res: ' + str(float(res) / len(hash_long_unique))
+    print 'Cross_browser unique', float(res) / len(hash_long_unique)
     print res,len(hash_long_unique)
 
     return 0
@@ -174,6 +183,7 @@ def getRes(b1, b2, cursor):
 
 
 def index():
+    print 'Client', client
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     cursor = db.cursor()
 
