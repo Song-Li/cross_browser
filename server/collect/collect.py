@@ -51,6 +51,27 @@ def gen_image_id(cursor, table_name, MAX_ID):
             return image_id
     raise RuntimeError("Ran out of UIDs!")
 
+def getBrowser(vendor, agent):
+    browser = ''
+    if agent.find('Vivaldi') != -1:
+        browser = 'Vivaldi'
+    elif agent.find('Maxthon') != -1:
+        browser = 'IE'
+    elif agent.find('ASW') != -1:
+        browser = 'ASW'
+    elif agent.find('Firefox') != -1:
+        browser = 'Firefox'
+    elif agent.find('Edge') != -1 or vendor.find('Microsoft') != -1:
+        browser = 'Edge'
+    elif agent.find('OPR') != -1:
+        browser = 'OPR'
+    elif agent.find('Chrome') != -1 or vendor.find('Google') != -1:
+        browser = 'Chrome'
+    else:
+        browser = 'others'
+    return browser
+
+
 def insert_into_db(db, table_name, ip, one_test, time, agent):
     user_id = one_test['user_id']
     cursor = db.cursor()
@@ -60,17 +81,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
         return row[0]
 
     vendor = one_test['inc']
-    browser = ''
-    if(agent.find('Firefox') != -1):
-      browser = 'firefox'
-    elif(agent.find('Edge') != -1 or vendor.find('Microsoft') != -1):
-      browser = 'others'
-    elif(agent.find('OPR') != -1):
-      browser = 'others'
-    elif(agent.find('Chrome') != -1 or vendor.find('Google') != -1):
-      browser = 'chrome'
-    else:
-      browser = 'others'
+    browser = getBrowser(vendor, agent)
 
     gpu = one_test['gpu']
     fps = float(one_test['fps'])
