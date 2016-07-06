@@ -11,7 +11,8 @@ from PIL import Image, ImageChops, ImageFilter
 import linecache
 import MySQLdb
 from random import randint, seed
-from base64 import urlsafe_b64decode as decode
+from base64 import urlsafe_b64decode as decode, urlsafe_b64encode as encode
+from hashlib import md5 as hasher
 
 global inited
 inited = 0
@@ -91,7 +92,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, time, agent, browser, fps, manufacturer, fonts) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, time.split('.')[0], agent, browser, fps, manufacturer, fonts)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts)
         cursor.execute(sql)
         db.commit()
         cursor.close()
@@ -143,6 +144,14 @@ def index(req):
         saveImg(padb64(pi), "{}_{}".format(image_id, sub_number))
         sub_number += 1
 
+    h = hasher()
+    string = ''
+    for i in range(0, len(pixels) - 10):
+        string += pixels[i]
+    h.update(string)
+    hash_code = encode(h.digest()).replace('=', '')
+    cursor.execute("UPDATE {} SET simple_hash='{}' WHERE image_id='{}'".format(table_name, hash_code, image_id))
+    db.commit()
 
     cursor.execute("SELECT COUNT(*) FROM {} WHERE user_id='{}'".format(table_name, one_test['user_id']))
     row = cursor.fetchone()[0]
