@@ -65,3 +65,4 @@ var fontDetector = function() {
 
     this.detect = detect;
 };
+
