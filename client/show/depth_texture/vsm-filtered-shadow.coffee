@@ -3,7 +3,7 @@ window.ShadowTest = class ShadowTest
     constructor: ->
         @id = sender.getID()
 
-    begin: (canvas, cb, value) ->
+    begin: (canvas, @cb, @value) ->
         ## setup the framework ##
         try
             gl = new WebGLFramework(canvas)
@@ -23,13 +23,13 @@ window.ShadowTest = class ShadowTest
         quad = gl.drawable meshes.quad
 
         displayShader = gl.shader
-            common: '''//essl
+            common: """//essl
                 varying vec3 vWorldNormal; varying vec4 vWorldPosition;
                 uniform mat4 camProj, camView;
                 uniform mat4 lightProj, lightView; uniform mat3 lightRot;
                 uniform mat4 model;
-            '''
-            vertex: '''//essl
+            """
+            vertex: """//essl
                 attribute vec3 position, normal;
 
                 void main(){
@@ -37,8 +37,8 @@ window.ShadowTest = class ShadowTest
                     vWorldPosition = model * vec4(position, 1.0);
                     gl_Position = camProj * camView * vWorldPosition;
                 }
-            '''
-            fragment: '''//essl
+            """
+            fragment: """//essl
                 uniform sampler2D sLightDepth;
 
                 float linstep(float low, float high, float v){
@@ -102,15 +102,15 @@ window.ShadowTest = class ShadowTest
                     );
                     gl_FragColor = vec4(gamma(excident), 1.0);
                 }
-            '''
+            """
 
         lightShader = gl.shader
-            common: '''//essl
+            common: """//essl
                 varying vec3 vWorldNormal; varying vec4 vWorldPosition;
                 uniform mat4 lightProj, lightView; uniform mat3 lightRot;
                 uniform mat4 model;
-            '''
-            vertex: '''//essl
+            """
+            vertex: """//essl
                 attribute vec3 position, normal;
 
                 void main(){
@@ -118,8 +118,8 @@ window.ShadowTest = class ShadowTest
                     vWorldPosition = model * vec4(position, 1.0);
                     gl_Position = lightProj * lightView * vWorldPosition;
                 }
-            '''
-            fragment: '''//essl
+            """
+            fragment: """//essl
                 #extension GL_OES_standard_derivatives : enable
                 void main(){
                     vec3 worldNormal = normalize(vWorldNormal);
@@ -129,7 +129,7 @@ window.ShadowTest = class ShadowTest
                     float dy = dFdy(depth);
                     gl_FragColor = vec4(depth, pow(depth, 2.0) + 0.25*(dx*dx + dy*dy), 0.0, 1.0);
                 }
-            '''
+            """
 
         lightDepthTexture = gl.texture(type:floatExt.type, channels:'rgba').bind().setSize(1024, 1024).linear().clampToEdge()
         lightFramebuffer = gl.framebuffer().bind().color(lightDepthTexture).depth().unbind()
@@ -141,17 +141,17 @@ window.ShadowTest = class ShadowTest
                     .bind().setSize(@size, @size).linear().clampToEdge()
                 @framebuffer = gl.framebuffer().bind().color(@output).unbind()
                 @shader = gl.shader
-                    common: '''//essl
+                    common: """//essl
                         varying vec2 texcoord;
-                    '''
-                    vertex: '''//essl
+                    """
+                    vertex: """//essl
                         attribute vec2 position;
 
                         void main(){
                             texcoord = position*0.5+0.5;
                             gl_Position = vec4(position, 0.0, 1.0);
                         }
-                    '''
+                    """
                     fragment:
                         """//essl
                             uniform vec2 viewport;
@@ -183,15 +183,15 @@ window.ShadowTest = class ShadowTest
                     .draw(quad)
                 @framebuffer.unbind()
 
-        downsample512 = new Filter 512, '''//essl
+        downsample512 = new Filter 512, """//essl
             return get(0.0, 0.0);
-        '''
+        """
 
-        downsample256 = new Filter 256, '''//essl
+        downsample256 = new Filter 256, """//essl
             return get(0.0, 0.0);
-        '''
+        """
 
-        boxFilter = new Filter 256, '''//essl
+        boxFilter = new Filter 256, """//essl
             vec3 result = vec3(0.0);
             for(int x=-1; x<=1; x++){
                 for(int y=-1; y<=1; y++){
@@ -199,7 +199,7 @@ window.ShadowTest = class ShadowTest
                 }
             }
             return result/9.0;
-        '''
+        """
 
         ## matrix setup ##
         camProj = gl.mat4()
@@ -271,13 +271,12 @@ window.ShadowTest = class ShadowTest
 
         ## mainloop ##
         draw()
-        id = @id
-        gl.animationInterval (frame) ->
 
+        gl.animationInterval (frame) =>
             offset = 1 + Math.sin(counter)
             counter += 1/10
             draw()
             if depth++ is 5
                 cancelAnimationFrame(frame)
-                sender.getData(gl.getContext(), id)
-                cb(value)
+                sender.getData(gl.getContext(), @id)
+                @cb(@value)
