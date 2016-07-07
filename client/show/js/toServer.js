@@ -30,7 +30,6 @@ var Sender = function() {
   };
   this.addFonts = function(fonts) {
     this.postData['fontlist'] = fonts;
-    console.log(fonts);
   };
   this.nextID = 0;
   this.getID = function() {
@@ -262,7 +261,6 @@ var Sender = function() {
                           '</strong> browsers<br>Your code is ' + code +
                           '<br> <strong>Thank you!</strong>');
             }
-            $('.selectpicker').selectpicker('hide');
             progress(100);
             Cookies.set('machine_fingerprinting_userid', user_id);
           }

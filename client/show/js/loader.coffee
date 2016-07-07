@@ -62,7 +62,7 @@ class Loader
   checkID: ->
     if not @requests.hasOwnProperty('user_id')
       uid = Cookies.get('machine_fingerprinting_userid')
-      if not uid
+      if not uid and not @requests.hasOwnProperty('debug')
         window.location.href = error_page
 
       user_id = parseInt(uid)
@@ -70,7 +70,6 @@ class Loader
         @parser.search = "?user_id=#{user_id}&automated=false"
       else
         @parser.search += "user_id=#{user_id}"
-
 
       url = @parser.href
     else

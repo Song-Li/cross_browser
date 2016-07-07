@@ -93,7 +93,7 @@
       var uid, url, user_id;
       if (!this.requests.hasOwnProperty('user_id')) {
         uid = Cookies.get('machine_fingerprinting_userid');
-        if (!uid) {
+        if (!uid && !this.requests.hasOwnProperty('debug')) {
           window.location.href = error_page;
         }
         user_id = parseInt(uid);

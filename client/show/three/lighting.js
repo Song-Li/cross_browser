@@ -64,7 +64,6 @@ var LightingTest = function() {
       renderer.render(scene, camera);
 
       if (level == 50) {
-        console.log(ID);
         cancelAnimationFrame(frame);
         sender.getData(renderer.getContext(), ID);
         if (anti == true)
