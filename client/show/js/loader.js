@@ -118,6 +118,9 @@
 
     Loader.prototype.checkID = function() {
       var uid, user_id;
+      if (this.requests.hasOwnProperty('debug') && this.requests['debug']) {
+        return;
+      }
       if (!this.requests.hasOwnProperty('user_id')) {
         uid = Cookies.get('machine_fingerprinting_userid');
         if (!uid && !this.requests.hasOwnProperty('debug')) {
