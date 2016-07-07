@@ -1,4 +1,4 @@
-var ip_address = "184.73.16.65"
+var ip_address = "54.221.117.15"
 
 function killCookie() {
     Cookies.set('machine_fingerprinting_userid', 1,
