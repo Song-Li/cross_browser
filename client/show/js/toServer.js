@@ -145,6 +145,15 @@ var Sender = function() {
     this.postData['']
     // Placeholder for flash based fontlist
     this.postData['fontlist'] = null;
+    var plgs_len = navigator.plugins.length;
+    var plgs = "";
+    for(var i = 0;i < plgs_len;i ++)
+    {
+      plgs += navigator.plugins[i].name + '_'; 
+    }
+    this.postData['plugins'] = plgs;
+
+    console.log(plgs);
 
     console.log("Sent " + this.urls.length + " images");
     $('#manufacturer.modal').modal('show');
@@ -169,7 +178,7 @@ var Sender = function() {
     f.submit();
 
     return ;
-    */
+*/
 
       $.ajax({
         url : "http://" + ip_address + "/collect.py",

@@ -91,11 +91,13 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     timezone = one_test['timezone']
     resolution = one_test['resolution']
     fontlist = one_test['fontlist']
+    plgs = one_test['plugins']
 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, headerkeys) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, keys)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, keys, plgs)
+        return sql
         cursor.execute(sql)
         db.commit()
         cursor.close()
@@ -148,6 +150,7 @@ def index(req):
     table_name = "new_data"
     time = str(datetime.datetime.now())
     image_id = insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys)
+    return image_id
 
 
     pixels = one_test['pixels'].split(" ")
