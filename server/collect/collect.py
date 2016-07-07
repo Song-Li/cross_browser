@@ -86,11 +86,11 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
 
     gpu = one_test['gpu']
     fps = float(one_test['fps'])
-    fonts = one_test['fonts']
+    fonts = one_test['fontlist']
     manufacturer = one_test['manufacturer']
     timezone = one_test['timezone']
     resolution = one_test['resolution']
-    fontlist = one_test['fontlist']
+    fontlist = "_".join(one_test['fontlist'])
     plgs = one_test['plugins']
     cookie = one_test['cookie']
     localStorage = one_test['localstorage']
@@ -98,7 +98,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage)
         cursor.execute(sql)
         db.commit()
         cursor.close()
@@ -142,11 +142,7 @@ def index(req):
     accept = req.headers_in['Accept']
     encoding = req.headers_in['Accept-Encoding']
     language = req.headers_in['Accept-Language']
-    keys = str(req.headers_in.keys())
-    keys = keys.replace(',', ' ')
-    keys = keys.replace('\'', ' ')
-    keys = keys.replace('[', '')
-    keys = keys.replace(']', '')
+    keys = "_".join(req.headers_in.keys())
 
     table_name = "new_data"
     time = str(datetime.datetime.now())
