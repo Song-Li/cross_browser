@@ -22,12 +22,10 @@ var LineTest = function() {
         -0.3,-0.3,0,
         0.2,0.6,0,
         0.3,-0.3,0,
-        0.7,0.6,0 
+        0.7,0.6,0
             ]);
 
             // Create an empty buffer object
-
-        console.log(vertices);
 
 
         // Create an empty buffer object

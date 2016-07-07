@@ -5,16 +5,13 @@
 
 
 var VideoCollector = function(webmVid, mp4Vid, id) {
-  var numImages = 5;
+  var numImages = 3;
   this.IDs = sender.getIDs(numImages*2);
 
   this.ctxID = 0;
   this.glID = 1;
-
   this.ctxMode = true;
   this.cb = null;
-  this.level = null;
-  this.canvas = null;
   this.ctx = null;
   this.gl = null;
   this.vx_ptr = null;
@@ -78,12 +75,10 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
   var ctxCanvas = $('<canvas width="256" height="256"></canvas>').appendTo($('#test_canvases'))[0];
   this.ctx = ctxCanvas.getContext('2d');
   this.startGL();
-  this.begin = function(canvas, cb, level) {
-    this.canvas = canvas;
+  this.begin = function(cb) {
     this.cb = cb;
-    this.level = level;
 
-    this.video = $('<video width="256" height="256"/>').appendTo($('body'));
+    this.video = $('<video/>').appendTo($('body'));
     this.video.addClass("hidden-vid");
     $('<source src="' + webmVid + '" type="video/webm"/>').appendTo(this.video);
     $('<source src="' + mp4Vid + '" type="video/mp4"/>').appendTo(this.video);
@@ -92,7 +87,7 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
     this.video.prop('autoplay', true);
     this.video.on('play', {self : this}, function(event) {
       var self = event.data.self;
-      drawVid(canvas.width, canvas.height, this, self);
+      drawVid(256, 256, this, self);
     });
     this.video.prop('muted', true);
     this.count = 0, this.collected = [ 0, 0 ];
@@ -121,7 +116,7 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
           if (self.collected[1] == numImages) {
             this.pause();
             cancelAnimationFrame(self.frame);
-            self.cb(self.level);
+            self.cb();
             ++self.collected[1];
           }
         }
@@ -130,7 +125,6 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
     });
 
     // Render loop
-    this.frame = null;
     function drawVid(w, h, vid, self) {
       self.frame = requestAnimationFrame(function() { drawVid(w, h, vid, self); });
       var vidH = 9 / 16 * w;
@@ -160,7 +154,7 @@ var VideoTest = function() {
   var vidCollector =
       new VideoCollector("./video/rainbow.webm", "./video/rainbow.mp4", 0);
 
-  this.begin = function(canvas, cb, level) {
-    vidCollector.begin(canvas, cb, level);
+  this.begin = function(cb) {
+    vidCollector.begin(cb);
   }
 };

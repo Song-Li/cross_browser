@@ -286,16 +286,15 @@
       this.tests.push(new PVRTest(sender.getID()));
     }
 
-    CompressedTextureTest.prototype.begin = function(canvas1, cb, value) {
+    CompressedTextureTest.prototype.begin = function(canvas1, cb) {
       var tester;
       this.canvas = canvas1;
       this.cb = cb;
-      this.value = value;
       this.index = 0;
       tester = (function(_this) {
         return function() {
           if (_this.index === _this.tests.length) {
-            return _this.cb(_this.value);
+            return _this.cb();
           } else {
             return _this.tests[_this.index++].begin(_this.canvas, tester);
           }

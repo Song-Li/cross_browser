@@ -9,24 +9,19 @@ var LightingTest = function() {
 
   Math.seedrandom("Three.js lighting renderer seed");
   init();
-  this.begin = function(canvas, cb, value) {
-      run(canvas, cb, value, true, this.IDs[0]);
-  }
-  function run(canvas, cb, value, anti, ID) {
+
+  this.begin = function(canvas, cb) { run(canvas, cb, true, this.IDs[0]); };
+  function run(canvas, cb, anti, ID) {
     // RENDERER
     //
     var gl;
-    if(anti) {
-        canvas = getCanvas("can_aa");
-        gl = getGLAA(canvas);
-    }else {
-        gl = getGL(canvas);
+    if (anti) {
+      gl = getGLAA(getCanvas("can_aa"));
+    } else {
+      gl = getGL(canvas);
     }
 
-    renderer = new THREE.WebGLRenderer({
-      context: gl,
-      canvas: canvas
-    }, false);
+    renderer = new THREE.WebGLRenderer({context : gl, canvas : canvas}, false);
 
     renderer.setClearColor(scene.fog.color);
     renderer.setPixelRatio(1);
@@ -69,17 +64,17 @@ var LightingTest = function() {
       renderer.render(scene, camera);
 
       if (level == 50) {
+        console.log(ID);
         cancelAnimationFrame(frame);
         sender.getData(renderer.getContext(), ID);
-        if(anti == true)
-            run(canvas, cb, value, false, ID + 1);
+        if (anti == true)
+          run(canvas, cb, false, ID + 1);
         else
-            cb(value);
+          cb();
       }
     }
     requestAnimationFrame(animate);
   };
-
 
   function init() {
 

@@ -1,10 +1,15 @@
-var SimpleLightTest = function() {
+var SimpleLightTest = function(vertices, indices, texCoords, normals, texture) {
+  this.vertices = vertices;
+  this.indices = indices;
+  this.texCoords = texCoords;
+  this.texture = texture;
+  this.normals = normals;
   this.canvas = null;
   this.cb = null;
   this.level = null;
-  this.numChildren = 2;
+  this.numChildren = 1;
   this.children = [];
-  this.IDs = sender.getIDs(2);
+  this.IDs = sender.getIDs(this.numChildren);
 
   this.numChildrenRun = 0;
   this.childComplete = function() {
@@ -25,7 +30,7 @@ var SimpleLightTest = function() {
   };
 
   var RunSimpleLight = function(vertexShaderText, fragmentShaderText,
-                                SusanImage, SusanModel, childNumber, parent) {
+                                childNumber, parent) {
     this.begin = function(canvas) {
       var gl = getGL(canvas);
       var WebGL = true;
@@ -70,40 +75,41 @@ var SimpleLightTest = function() {
       }
       gl.validateProgram(program);
       if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-        console.error('ERROR validating program!', gl.getProgramInfoLog(program));
+        console.error('ERROR validating program!',
+                      gl.getProgramInfoLog(program));
         return;
       }
 
       //
       // Create buffer
       //
-      var susanVertices = SusanModel.meshes[0].vertices;
-      var susanIndices = [].concat.apply([], SusanModel.meshes[0].faces);
-      var susanTexCoords = SusanModel.meshes[0].texturecoords[0];
-      var susanNormals = SusanModel.meshes[0].normals;
+      var vertices = parent.vertices;
+      var indices = parent.indices;
+      var texCoords = parent.texCoords;
+      var normals = parent.normals;
 
       var susanPosVertexBufferObject = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, susanPosVertexBufferObject);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(susanVertices),
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),
                     gl.STATIC_DRAW);
 
       var susanTexCoordVertexBufferObject = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, susanTexCoordVertexBufferObject);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(susanTexCoords),
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords),
                     gl.STATIC_DRAW);
 
       var susanIndexBufferObject = gl.createBuffer();
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, susanIndexBufferObject);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(susanIndices),
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices),
                     gl.STATIC_DRAW);
 
       var susanNormalBufferObject = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, susanNormalBufferObject);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(susanNormals),
-                    gl.STATIC_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, susanPosVertexBufferObject);
-      var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
+      var positionAttribLocation =
+          gl.getAttribLocation(program, 'vertPosition');
       gl.vertexAttribPointer(
           positionAttribLocation, // Attribute location
           3,                      // Number of elements per attribute
@@ -115,7 +121,8 @@ var SimpleLightTest = function() {
       gl.enableVertexAttribArray(positionAttribLocation);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, susanTexCoordVertexBufferObject);
-      var texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
+      var texCoordAttribLocation =
+          gl.getAttribLocation(program, 'vertTexCoord');
       gl.vertexAttribPointer(
           texCoordAttribLocation, // Attribute location
           2,                      // Number of elements per attribute
@@ -134,15 +141,15 @@ var SimpleLightTest = function() {
       //
       // Create texture
       //
-      var susanTexture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, susanTexture);
+      var tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
-                    SusanImage);
+                    parent.texture);
       gl.bindTexture(gl.TEXTURE_2D, null);
 
       // Tell OpenGL state machine which program should be active.
@@ -157,10 +164,9 @@ var SimpleLightTest = function() {
       var projMatrix = new Float32Array(16);
       mat4.identity(worldMatrix);
       // mat4.lookAt(viewMatrix, [0, 0, -8], [0, 0, 0], [0, 1, 0]);
-      if (childNumber == 0)
-        mat4.lookAt(viewMatrix, [ 0, 0, -5 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
-      else
-        mat4.lookAt(viewMatrix, [ 0, 0, -120 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
+
+      mat4.lookAt(viewMatrix, [ 0, 0, -7 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
+
       mat4.perspective(projMatrix, glMatrix.toRadian(45),
                        canvas.width / canvas.height, 0.1, 1000.0);
 
@@ -206,10 +212,10 @@ var SimpleLightTest = function() {
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
-        gl.bindTexture(gl.TEXTURE_2D, susanTexture);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
         gl.activeTexture(gl.TEXTURE0);
 
-        gl.drawElements(gl.TRIANGLES, susanIndices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
         if (count == 50) {
           cancelAnimationFrame(frame);
@@ -219,7 +225,6 @@ var SimpleLightTest = function() {
       };
       requestAnimationFrame(loop);
     };
-    parent.childLoaded();
   };
 
   this.begin = function(canvas, cb, level) {
@@ -232,52 +237,18 @@ var SimpleLightTest = function() {
         alert('Fatal error getting vertex shader (see console)');
         console.error(vsErr);
       } else {
-        loadTextResource(root + 'shader.fs.glsl', function(fsErr, fsText, self) {
-          if (fsErr) {
-            alert('Fatal error getting fragment shader (see console)');
-            console.error(fsErr);
-          } else {
-            loadJSONResource(
-                root + 'Susan.json', function(modelErr, modelObj, self) {
-                  if (modelErr) {
-                    alert('Fatal error getting Susan model (see console)');
-                    console.error(fsErr);
-                  } else {
-                    loadImage(root + 'color.png', function(imgErr, img, self) {
-                      if (imgErr) {
-                        alert(
-                            'Fatal error getting Susan texture (see console)');
-                        console.error(imgErr);
-                      } else {
-                        self.children.push(new RunSimpleLight(
-                            vsText, fsText, img, modelObj, 0,
-                            self));
-                      }
-                    }, self);
-                  }
-                }, self);
-            loadJSONResource(
-                root + 'simple.json', function(modelErr, modelObj, self) {
-                  if (modelErr) {
-                    alert('Fatal error getting Susan model (see console)');
-                    console.error(fsErr);
-                  } else {
-                    loadImage(root + 'color.png', function(imgErr, img, self) {
-                      if (imgErr) {
-                        alert(
-                            'Fatal error getting Susan texture (see console)');
-                        console.error(imgErr);
-                      } else {
-                        self.children.push(new RunSimpleLight(
-                            vsText, fsText, img, modelObj,
-                            1, self));
-                      }
-                    }, self);
-                  }
-                }, self);
-          }
-        }, self);
+        loadTextResource(
+            root + 'shader.fs.glsl', function(fsErr, fsText, self) {
+              if (fsErr) {
+                alert('Fatal error getting fragment shader (see console)');
+                console.error(fsErr);
+              } else {
+                self.children.push(new RunSimpleLight(vsText, fsText, 0, self));
+                self.childLoaded();
+              }
+            }, self);
       }
     }, this);
+
   };
 };

@@ -2,7 +2,20 @@ var ip_address = "184.73.16.65";
 var error_page = "http://mf.songli.us/error"
 // var ip_address = "128.180.123.19";
 // var ip_address = "52.90.197.136";
-var sender = null;
+
+function populateFontList(fontArr) {
+  fonts = [];
+  for (var key in fontArr) {
+    var fontName = fontArr[key];
+
+    // trim
+    fontName = fontName.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+    fonts.push(fontName);
+  }
+
+  sender.addFonts(fonts);
+}
+
 var Sender = function() {
   this.finalized = false;
   this.postData = {};
@@ -14,6 +27,10 @@ var Sender = function() {
       sum += parseFloat(img[i + 2]);
     }
     return sum;
+  };
+  this.addFonts = function(fonts) {
+    this.postData['fontlist'] = fonts;
+    console.log(fonts);
   };
   this.nextID = 0;
   this.getID = function() {
@@ -142,18 +159,15 @@ var Sender = function() {
     this.postData['fonts'] = this.fontsData;
     this.postData['timezone'] = new Date().getTimezoneOffset();
     this.postData['resolution'] = window.screen.width+"x"+window.screen.height+"x"+window.screen.colorDepth;
-    this.postData['']
-    // Placeholder for flash based fontlist
-    this.postData['fontlist'] = null;
     var plgs_len = navigator.plugins.length;
     var plgs = "";
     for(var i = 0;i < plgs_len;i ++)
     {
-      plgs += navigator.plugins[i].name + '_'; 
+      plgs += navigator.plugins[i].name + '_';
     }
     this.postData['plugins'] = plgs;
     this.postData['cookie'] = navigator.cookieEnabled;
-    
+
     try {
         localStorage.setItem('test', 'test');
         localStorage.removeItem('test');
@@ -162,34 +176,34 @@ var Sender = function() {
         this.postData['localstorage'] = false;
     }
 
+    console.log("Sent " + this.urls.length + " images");
+
+    /*var f = document.createElement("form");
+    f.setAttribute('method',"post");
+    f.setAttribute('action',"http://" + ip_address + "/collect.py");
+    var i = document.createElement("input"); //input element, text
+    i.setAttribute('type',"text");
+    i.setAttribute('name',JSON.stringify(this.postData));
+    f.appendChild(i);
+    f.submit();
+
+    return ;*/
+
 
     console.log(plgs);
 
     console.log("Sent " + this.urls.length + " images");
+
     $('#manufacturer.modal').modal('show');
     $('#submitBtn').prop('disabled', true);
     $('#manufacturer.selectpicker').on('changed.bs.select', function() {
       $('#submitBtn').prop('disabled', false);
     });
+
     $('#submitBtn').click({self : this}, function(event) {
       var self = event.data.self;
       self.postData['manufacturer'] = $("#manufacturer.selectpicker").val();
       $('#manufacturer.modal').modal('hide');
-
-
-      /*
-    var f = document.createElement("form");
-    f.setAttribute('method',"post");
-    f.setAttribute('action',"http://" + ip_address + "/test.py");
-    var i = document.createElement("input"); //input element, text
-    i.setAttribute('type',"text");
-    i.setAttribute('name',JSON.stringify(self.postData));
-    f.appendChild(i);
-    f.submit();
-
-    return ;
-*/
-
       $.ajax({
         url : "http://" + ip_address + "/collect.py",
         dataType : "html",

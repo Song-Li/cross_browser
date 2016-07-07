@@ -3,7 +3,7 @@ window.ShadowTest = class ShadowTest
     constructor: ->
         @id = sender.getID()
 
-    begin: (canvas, @cb, @value) ->
+    begin: (canvas, @cb) ->
         ## setup the framework ##
         try
             gl = new WebGLFramework(canvas, {
@@ -281,6 +281,6 @@ window.ShadowTest = class ShadowTest
             counter += 1/10
             draw()
             if depth++ is 5
-                caf(frame)
+                caf frame
                 sender.getData(gl.getContext(), @id)
-                @cb(@value)
+                @cb()
