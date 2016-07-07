@@ -100,7 +100,7 @@ window.CompressedTextureTest = class CompressedTextureTest
       @renderer = new THREE.WebGLRenderer(
         context: getGL(canvas),
         canvas: canvas
-      )
+      , false)
       @renderer.setClearColor '#050505'
       @renderer.setPixelRatio 1
       @renderer.setSize 256, 256
@@ -200,7 +200,7 @@ window.CompressedTextureTest = class CompressedTextureTest
       @renderer = new THREE.WebGLRenderer(
         context: getGL(canvas),
         canvas: canvas
-      )
+      , false)
       @renderer.setClearColor '#050505'
       @renderer.setPixelRatio 1
       @renderer.setSize 256, 256

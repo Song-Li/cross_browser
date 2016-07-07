@@ -128,7 +128,7 @@
         this.renderer = new THREE.WebGLRenderer({
           context: getGL(canvas),
           canvas: canvas
-        });
+        }, false);
         this.renderer.setClearColor('#050505');
         this.renderer.setPixelRatio(1);
         this.renderer.setSize(256, 256);
@@ -246,7 +246,7 @@
         this.renderer = new THREE.WebGLRenderer({
           context: getGL(canvas),
           canvas: canvas
-        });
+        }, false);
         this.renderer.setClearColor('#050505');
         this.renderer.setPixelRatio(1);
         this.renderer.setSize(256, 256);

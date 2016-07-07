@@ -88,11 +88,14 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
     fps = float(one_test['fps'])
     fonts = one_test['fonts']
     manufacturer = one_test['manufacturer']
+    timezone = one_test['timezone']
+    resolution = one_test['resolution']
+    fontlist = one_test['fontlist']
 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist)
         cursor.execute(sql)
         db.commit()
         cursor.close()
