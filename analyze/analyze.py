@@ -19,7 +19,7 @@ open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
 db_name = "cross_browser"
 table_name = "in_use"
-client = "NT 6"
+client = "mac"
 
 def getBrowser(vendor, agent):
     browser = ''
