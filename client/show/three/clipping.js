@@ -226,7 +226,7 @@ var ClippingTest = function() {
   init();
 
   var ID = sender.getID();
-  this.begin = function(canvas, cb, value) {
+  this.begin = function(canvas, cb) {
     // Renderer
 
     renderer = new THREE.WebGLRenderer({
@@ -282,7 +282,7 @@ var ClippingTest = function() {
         cancelAnimationFrame(frame);
         sender.calcFPS(times);
         sender.getData(renderer.getContext(), ID);
-        cb(value);
+        cb();
       }
     }
     requestAnimationFrame(animate);

@@ -229,11 +229,11 @@ window.CompressedTextureTest = class CompressedTextureTest
     @tests.push new DDSTest sender.getID()
     @tests.push new PVRTest sender.getID()
 
-  begin: (@canvas, @cb, @value) ->
+  begin: (@canvas, @cb) ->
     @index = 0
     tester = () =>
       if @index is @tests.length
-        @cb(@value)
+        @cb()
       else
         @tests[@index++].begin(@canvas, tester)
 

@@ -7,10 +7,9 @@
       this.id = sender.getID();
     }
 
-    ShadowTest.prototype.begin = function(canvas, cb, value) {
+    ShadowTest.prototype.begin = function(canvas, cb) {
       var Filter, boxFilter, camDist, camPitch, camProj, camRot, camView, counter, cubeGeom, depth, displayShader, downsample256, downsample512, draw, drawCamera, drawLight, drawScene, error, error1, floatExt, gl, lightDepthTexture, lightFramebuffer, lightProj, lightRot, lightShader, lightView, model, offset, planeGeom, quad;
       this.cb = cb;
-      this.value = value;
       try {
         gl = new WebGLFramework(canvas, {
           antialias: false,
@@ -133,7 +132,7 @@
           if (depth++ === 5) {
             caf(frame);
             sender.getData(gl.getContext(), _this.id);
-            return _this.cb(_this.value);
+            return _this.cb();
           }
         };
       })(this));

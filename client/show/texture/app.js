@@ -1,29 +1,32 @@
-var TextureTest = function() {
+var TextureTest = function(vertices, indices, texCoords, texture) {
+  this.vertices = vertices;
+  this.indices = indices;
+  this.texCoords = texCoords;
+  this.texture = texture;
   this.canvas = null;
   this.cb = null;
   this.level = null;
-  this.numChildren = 2;
+  this.numChildren = 1;
   this.children = [];
   this.numChildrenRun = 0;
-  this.IDs = sender.getIDs(2);
-  this.childComplete = function () {
+  this.IDs = sender.getIDs(this.numChildren);
+  this.childComplete = function() {
     if (++this.numChildrenRun == this.numChildren) {
-      this.cb(this.level);
+      this.cb();
     } else {
       var index = this.numChildrenRun;
       this.children[index].begin(this.canvas);
     }
   };
   this.numChildrenLoaded = 0;
-  this.childLoaded = function () {
+  this.childLoaded = function() {
     if (++this.numChildrenLoaded == this.numChildren) {
       var index = this.numChildrenRun;
       this.children[index].begin(this.canvas);
     }
   };
 
-  var RunTexture = function(vertexShaderText, fragmentShaderText, SusanImage,
-                        SusanModel, ID, parent) {
+  var RunTexture = function(vertexShaderText, fragmentShaderText, ID, parent) {
     this.begin = function(canvas) {
       var gl = getGL(canvas);
       var WebGL = true;
@@ -68,34 +71,37 @@ var TextureTest = function() {
       }
       gl.validateProgram(program);
       if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-        console.error('ERROR validating program!', gl.getProgramInfoLog(program));
+        console.error('ERROR validating program!',
+                      gl.getProgramInfoLog(program));
         return;
       }
 
       //
       // Create buffer
       //
-      var susanVertices = SusanModel.meshes[0].vertices;
-      var susanIndices = [].concat.apply([], SusanModel.meshes[0].faces);
-      var susanTexCoords = SusanModel.meshes[0].texturecoords[0];
 
-      var susanPosVertexBufferObject = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, susanPosVertexBufferObject);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(susanVertices),
+      var allVertices = parent.vertices;
+      var allIndices = parent.indices;
+      var allTexCoords = parent.texCoords;
+
+      var allPosVertexBufferObject = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, allPosVertexBufferObject);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(allVertices),
                     gl.STATIC_DRAW);
 
-      var susanTexCoordVertexBufferObject = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, susanTexCoordVertexBufferObject);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(susanTexCoords),
+      var allTexCoordVertexBufferObject = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, allTexCoordVertexBufferObject);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(allTexCoords),
                     gl.STATIC_DRAW);
 
-      var susanIndexBufferObject = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, susanIndexBufferObject);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(susanIndices),
+      var allIndexBufferObject = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, allIndexBufferObject);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(allIndices),
                     gl.STATIC_DRAW);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, susanPosVertexBufferObject);
-      var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
+      gl.bindBuffer(gl.ARRAY_BUFFER, allPosVertexBufferObject);
+      var positionAttribLocation =
+          gl.getAttribLocation(program, 'vertPosition');
       gl.vertexAttribPointer(
           positionAttribLocation, // Attribute location
           3,                      // Number of elements per attribute
@@ -106,8 +112,9 @@ var TextureTest = function() {
           );
       gl.enableVertexAttribArray(positionAttribLocation);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, susanTexCoordVertexBufferObject);
-      var texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
+      gl.bindBuffer(gl.ARRAY_BUFFER, allTexCoordVertexBufferObject);
+      var texCoordAttribLocation =
+          gl.getAttribLocation(program, 'vertTexCoord');
       gl.vertexAttribPointer(
           texCoordAttribLocation, // Attribute location
           2,                      // Number of elements per attribute
@@ -120,15 +127,15 @@ var TextureTest = function() {
       //
       // Create texture
       //
-      var susanTexture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, susanTexture);
+      var tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
-                    SusanImage);
+                    parent.texture);
       gl.bindTexture(gl.TEXTURE_2D, null);
 
       // Tell OpenGL state machine which program should be active.
@@ -142,11 +149,7 @@ var TextureTest = function() {
       var viewMatrix = new Float32Array(16);
       var projMatrix = new Float32Array(16);
       mat4.identity(worldMatrix);
-
-      if (ID == 1)
-        mat4.lookAt(viewMatrix, [ 0, 0, -120 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
-      else
-        mat4.lookAt(viewMatrix, [ 0, 0, -5 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
+      mat4.lookAt(viewMatrix, [ 0, 0, -7 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
 
       mat4.perspective(projMatrix, glMatrix.toRadian(45),
                        canvas.width / canvas.height, 0.1, 1000.0);
@@ -180,68 +183,38 @@ var TextureTest = function() {
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
-        gl.bindTexture(gl.TEXTURE_2D, susanTexture);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
         gl.activeTexture(gl.TEXTURE0);
-        gl.drawElements(gl.TRIANGLES, susanIndices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, allIndices.length, gl.UNSIGNED_SHORT, 0);
         if (count == 50) {
           cancelAnimationFrame(frame);
           sender.getData(gl, parent.IDs[ID]);
           parent.childComplete();
         }
       };
-
       requestAnimationFrame(loop);
     };
-    parent.childLoaded();
   };
 
-  this.begin = function(canvas, cb, level) {
+  this.begin = function(canvas, cb) {
     this.canvas = canvas;
     this.cb = cb;
-    this.level = level;
     var root = './texture/'
     loadTextResource(root + 'shader.vs.glsl', function(vsErr, vsText, self) {
       if (vsErr) {
         alert('Fatal error getting vertex shader (see console)');
         console.error(vsErr);
       } else {
-        loadTextResource(root + 'shader.fs.glsl', function(fsErr, fsText, self) {
-          if (fsErr) {
-            alert('Fatal error getting fragment shader (see console)');
-            console.error(fsErr);
-          } else {
-            loadJSONResource(root + 'Susan.json', function(modelErr, modelObj, self) {
-              if (modelErr) {
-                alert('Fatal error getting Susan model (see console)');
+        loadTextResource(
+            root + 'shader.fs.glsl', function(fsErr, fsText, self) {
+              if (fsErr) {
+                alert('Fatal error getting fragment shader (see console)');
                 console.error(fsErr);
               } else {
-                loadImage(root + 'color.png', function(imgErr, img, self) {
-                  if (imgErr) {
-                    alert('Fatal error getting Susan texture (see console)');
-                    console.error(imgErr);
-                  } else {
-                    self.children.push(new RunTexture(vsText, fsText, img, modelObj, 0, self));
-                  }
-                }, self);
+                self.children.push(new RunTexture(vsText, fsText, 0, self));
+                self.childLoaded();
               }
             }, self);
-            loadJSONResource(root + 'simple.json', function(modelErr, modelObj, self) {
-              if (modelErr) {
-                alert('Fatal error getting Susan model (see console)');
-                console.error(fsErr);
-              } else {
-                loadImage(root + 'color.png', function(imgErr, img, self) {
-                  if (imgErr) {
-                    alert('Fatal error getting Susan texture (see console)');
-                    console.error(imgErr);
-                  } else {
-                   self.children.push( new RunTexture(vsText, fsText, img, modelObj, 1, self));
-                  }
-                }, self);
-              }
-            }, self);
-          }
-        }, self);
       }
     }, this);
   };

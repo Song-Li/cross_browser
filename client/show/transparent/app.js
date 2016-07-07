@@ -1,11 +1,15 @@
-var TransparentTest = function () {
+var TransparentTest = function (vertices, indices, texCoords, normals, texture) {
+    this.vertices = vertices;
+    this.indices = indices;
+    this.texCoords = texCoords;
+    this.texture = texture;
+    this.normals = normals;
     this.canvas = null;
     this.cb = null;
     this.level = null;
     this.numChildren = 11;
     this.children = [];
     this.IDs = sender.getIDs(this.numChildren);
-
     this.numChildrenRun = 0;
     this.childComplete = function() {
       if (++this.numChildrenRun == this.numChildren) {
@@ -23,12 +27,12 @@ var TransparentTest = function () {
         this.children[index].begin(this.canvas);
       }
     };
-    var RunTransparent = function (vertexShaderText, fragmentShaderText, SusanImage, SusanModel, alp, childNumber, parent) {
+    var RunTransparent = function (vertexShaderText, fragmentShaderText, alp, childNumber, parent) {
         this.begin = function(canvas) {
                 var gl;
                 if(childNumber == 10){
                     canvas = getCanvas("can_aa");
-                    gl = getGLAA(canvas); 
+                    gl = getGLAA(canvas);
                 }else gl = getGL(canvas);
                 var WebGL = true;
 
@@ -77,26 +81,26 @@ var TransparentTest = function () {
                 //
                 // Create buffer
                 //
-                var susanVertices = SusanModel.meshes[0].vertices;
-                var susanIndices = [].concat.apply([], SusanModel.meshes[0].faces);
-                var susanTexCoords = SusanModel.meshes[0].texturecoords[0];
-                var susanNormals = SusanModel.meshes[0].normals;
+                var vertices = parent.vertices;
+                var indices = parent.indices;
+                var texCoords = parent.texCoords;
+                var normals = parent.normals;
 
                 var susanPosVertexBufferObject = gl.createBuffer();
                 gl.bindBuffer(gl.ARRAY_BUFFER, susanPosVertexBufferObject);
-                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(susanVertices), gl.STATIC_DRAW);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
                 var susanTexCoordVertexBufferObject = gl.createBuffer();
                 gl.bindBuffer(gl.ARRAY_BUFFER, susanTexCoordVertexBufferObject);
-                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(susanTexCoords), gl.STATIC_DRAW);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
 
                 var susanIndexBufferObject = gl.createBuffer();
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, susanIndexBufferObject);
-                gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(susanIndices), gl.STATIC_DRAW);
+                gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
                 var susanNormalBufferObject = gl.createBuffer();
                 gl.bindBuffer(gl.ARRAY_BUFFER, susanNormalBufferObject);
-                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(susanNormals), gl.STATIC_DRAW);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, susanPosVertexBufferObject);
                 var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
@@ -136,8 +140,8 @@ var TransparentTest = function () {
                 //
                 // Create texture
                 //
-                var susanTexture = gl.createTexture();
-                gl.bindTexture(gl.TEXTURE_2D, susanTexture);
+                var tex = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, tex);
                 gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -146,7 +150,7 @@ var TransparentTest = function () {
                 gl.texImage2D(
                     gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
                     gl.UNSIGNED_BYTE,
-                    SusanImage
+                    parent.texture
                 );
                 gl.bindTexture(gl.TEXTURE_2D, null);
 
@@ -161,9 +165,7 @@ var TransparentTest = function () {
                 var viewMatrix = new Float32Array(16);
                 var projMatrix = new Float32Array(16);
                 mat4.identity(worldMatrix);
-                //mat4.lookAt(viewMatrix, [0, 0, -8], [0, 0, 0], [0, 1, 0]);
-                if(childNumber == 0) mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0]);
-                else mat4.lookAt(viewMatrix, [0, 0, -120], [0, 0, 0], [0, 1, 0]);
+                mat4.lookAt(viewMatrix, [0, 0, -7], [0, 0, 0], [0, 1, 0]);
 
                 mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.width / canvas.height, 0.1, 1000.0);
 
@@ -216,9 +218,9 @@ var TransparentTest = function () {
                     gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 
                     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-                    gl.bindTexture(gl.TEXTURE_2D, susanTexture);
+                    gl.bindTexture(gl.TEXTURE_2D, tex);
                     gl.activeTexture(gl.TEXTURE0);
-                    gl.drawElements(gl.TRIANGLES, susanIndices.length, gl.UNSIGNED_SHORT, 0);
+                    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
                     //ctx.fillText("Hello world", 9, 50);
 
                     if(count == 50){
@@ -229,8 +231,6 @@ var TransparentTest = function () {
                 };
                 requestAnimationFrame(loop);
         };
-
-        parent.childLoaded();
     };
 
     this.begin = function (canvas, cb, level) {
@@ -248,45 +248,28 @@ var TransparentTest = function () {
                         alert('Fatal error getting fragment shader (see console)');
                         console.error(fsErr);
                     } else {
-                        loadJSONResource(root + 'Susan.json', function (modelErr, modelObj, self) {
-                            if (modelErr) {
-                                alert('Fatal error getting Susan model (see console)');
-                                console.error(fsErr);
-                            } else {
-                                loadImage(root + 'color.png', function (imgErr, img, self) {
-                                    if (imgErr) {
-                                        alert('Fatal error getting Susan texture (see console)');
-                                        console.error(imgErr);
-                                    } else {
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 100, 0, self));
-                                    }
-                                }, self);
-                            }
-                        }, self);
-                        loadJSONResource(root + 'simple.json', function (modelErr, modelObj, self) {
-                            if (modelErr) {
-                                alert('Fatal error getting Susan model (see console)');
-                                console.error(fsErr);
-                            } else {
-                                loadImage(root + 'color.png', function (imgErr, img, self) {
-                                    if (imgErr) {
-                                        alert('Fatal error getting Susan texture (see console)');
-                                        console.error(imgErr);
-                                    } else {
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 9, 1, self));
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 10, 2, self));
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 11, 3, self));
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 39, 4, self));
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 40, 5, self));
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 41, 6, self));
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 79, 7, self));
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 80, 8, self));
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 81, 9, self));
-                                        self.children.push(new RunTransparent(vsText, fsText, img, modelObj, 81, 10, self));
-                                    }
-                                }, self);
-                            }
-                        }, self);
+                        self.children.push(new RunTransparent(vsText, fsText, 100, 0, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 9, 1, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 10, 2, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 11, 3, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 39, 4, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 40, 5, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 41, 6, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 79, 7, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 80, 8, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 81, 9, self));
+                        self.childLoaded();
+                        self.children.push(new RunTransparent(vsText, fsText, 81, 10, self));
+                        self.childLoaded();
                     }
                 }, self);
             }

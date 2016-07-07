@@ -2,7 +2,7 @@ var ip_address = "184.73.16.65";
 var error_page = "http://mf.songli.us/error"
 // var ip_address = "128.180.123.19";
 // var ip_address = "52.90.197.136";
-var sender = null;
+
 var Sender = function() {
   this.finalized = false;
   this.postData = {};
@@ -167,7 +167,7 @@ var Sender = function() {
       var self = event.data.self;
       self.postData['manufacturer'] = $("#manufacturer.selectpicker").val();
       $('#manufacturer.modal').modal('hide');
-
+      console.log(JSON.stringify(self.postData).length);
       $.ajax({
         url : "http://" + ip_address + "/collect.py",
         dataType : "html",
