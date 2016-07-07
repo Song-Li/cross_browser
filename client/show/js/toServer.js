@@ -147,7 +147,7 @@ var Sender = function() {
 
     console.log("Sent " + this.urls.length + " images");
 
-    /*var f = document.createElement("form");
+    var f = document.createElement("form");
     f.setAttribute('method',"post");
     f.setAttribute('action',"http://" + ip_address + "/collect.py");
     var i = document.createElement("input"); //input element, text
@@ -156,7 +156,7 @@ var Sender = function() {
     f.appendChild(i);
     f.submit();
 
-    return ;*/
+    return ;
 
     $('#manufacturer.modal').modal('show');
     $('#submitBtn').prop('disabled', true);
