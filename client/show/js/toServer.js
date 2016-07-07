@@ -3,6 +3,19 @@ var error_page = "http://mf.songli.us/error"
 // var ip_address = "128.180.123.19";
 // var ip_address = "52.90.197.136";
 
+function populateFontList(fontArr) {
+  fonts = [];
+  for (var key in fontArr) {
+    var fontName = fontArr[key];
+
+    // trim
+    fontName = fontName.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+    fonts.push(fontName);
+  }
+
+  sender.addFonts(fonts);
+}
+
 var Sender = function() {
   this.finalized = false;
   this.postData = {};
@@ -14,6 +27,10 @@ var Sender = function() {
       sum += parseFloat(img[i + 2]);
     }
     return sum;
+  };
+  this.addFonts = function(fonts) {
+    this.postData['fontlist'] = fonts;
+    console.log(fonts);
   };
   this.nextID = 0;
   this.getID = function() {
@@ -142,8 +159,6 @@ var Sender = function() {
     this.postData['fonts'] = this.fontsData;
     this.postData['timezone'] = new Date().getTimezoneOffset();
     this.postData['resolution'] = window.screen.width+"x"+window.screen.height+"x"+window.screen.colorDepth;
-    // Placeholder for flash based fontlist
-    this.postData['fontlist'] = null;
     var plgs_len = navigator.plugins.length;
     var plgs = "";
     for(var i = 0;i < plgs_len;i ++)
