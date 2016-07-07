@@ -152,6 +152,16 @@ var Sender = function() {
       plgs += navigator.plugins[i].name + '_'; 
     }
     this.postData['plugins'] = plgs;
+    this.postData['cookie'] = navigator.cookieEnabled;
+    
+    try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        this.postData['localstorage'] = true;
+    } catch(e) {
+        this.postData['localstorage'] = false;
+    }
+
 
     console.log(plgs);
 

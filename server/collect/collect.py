@@ -92,11 +92,13 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     resolution = one_test['resolution']
     fontlist = one_test['fontlist']
     plgs = one_test['plugins']
+    cookie = one_test['cookie']
+    localStorage = one_test['localstorage']
 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, keys, plgs)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage)
         cursor.execute(sql)
         db.commit()
         cursor.close()
