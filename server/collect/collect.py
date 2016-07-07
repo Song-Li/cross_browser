@@ -52,7 +52,28 @@ def gen_image_id(cursor, table_name, MAX_ID):
             return image_id
     raise RuntimeError("Ran out of UIDs!")
 
-def insert_into_db(db, table_name, ip, one_test, time, agent):
+def getBrowser(vendor, agent):
+    browser = ''
+    if agent.find('Vivaldi') != -1:
+        browser = 'Vivaldi'
+    elif agent.find('Maxthon') != -1:
+        browser = 'IE'
+    elif agent.find('ASW') != -1:
+        browser = 'ASW'
+    elif agent.find('Firefox') != -1:
+        browser = 'Firefox'
+    elif agent.find('Edge') != -1 or vendor.find('Microsoft') != -1:
+        browser = 'Edge'
+    elif agent.find('OPR') != -1:
+        browser = 'OPR'
+    elif agent.find('Chrome') != -1 or vendor.find('Google') != -1:
+        browser = 'Chrome'
+    else:
+        browser = 'others'
+    return browser
+
+
+def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys):
     user_id = one_test['user_id']
     cursor = db.cursor()
     cursor.execute("SELECT image_id FROM {} WHERE user_id='{}' AND agent='{}'".format(table_name, user_id, agent))
@@ -61,17 +82,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
         return row[0]
 
     vendor = one_test['inc']
-    browser = ''
-    if(agent.find('Firefox') != -1):
-      browser = 'firefox'
-    elif(agent.find('Edge') != -1 or vendor.find('Microsoft') != -1):
-      browser = 'others'
-    elif(agent.find('OPR') != -1):
-      browser = 'others'
-    elif(agent.find('Chrome') != -1 or vendor.find('Google') != -1):
-      browser = 'chrome'
-    else:
-      browser = 'others'
+    browser = getBrowser(vendor, agent)
 
     gpu = one_test['gpu']
     fps = float(one_test['fps'])
@@ -80,11 +91,14 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
     timezone = one_test['timezone']
     resolution = one_test['resolution']
     fontlist = one_test['fontlist']
+    plgs = one_test['plugins']
+    cookie = one_test['cookie']
+    localStorage = one_test['localstorage']
 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage)
         cursor.execute(sql)
         db.commit()
         cursor.close()
@@ -94,7 +108,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent):
         # If something went wrong with the insert, it was probably
         # the super unlikely race of two threads with the same UID,
         # so the insert can be tried again
-        return insert_into_db(db, table_name, ip, one_test, time, agent)
+        return insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys)
 
 def rawToIntArray(raw):
     raw = list(raw)
@@ -125,10 +139,18 @@ def index(req):
 
     agent = req.headers_in[ 'User-Agent' ]
     agent = agent.replace(',', ' ')
+    accept = req.headers_in['Accept']
+    encoding = req.headers_in['Accept-Encoding']
+    language = req.headers_in['Accept-Language']
+    keys = str(req.headers_in.keys())
+    keys = keys.replace(',', ' ')
+    keys = keys.replace('\'', ' ')
+    keys = keys.replace('[', '')
+    keys = keys.replace(']', '')
 
     table_name = "new_data"
     time = str(datetime.datetime.now())
-    image_id = insert_into_db(db, table_name, ip, one_test, time, agent)
+    image_id = insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys)
 
 
     pixels = one_test['pixels'].split(" ")
