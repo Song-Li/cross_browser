@@ -85,9 +85,9 @@ class Loader
     @parser.href = url
     @command = @parser.search
     @requests = {}
-    if command
-      for command in command.slice(1).split('&')
-        seq = command.split('=')
+    if @command
+      for @command in @command.slice(1).split('&')
+        seq = @command.split('=')
         @requests[seq[0]] = seq[1]
 
     window.requests = @requests

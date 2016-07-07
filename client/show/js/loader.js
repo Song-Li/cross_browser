@@ -111,17 +111,17 @@
     };
 
     Loader.prototype.parseURL = function() {
-      var command, j, len, ref, seq, url;
+      var j, len, ref, seq, url;
       url = document.URL;
       this.parser = document.createElement('a');
       this.parser.href = url;
       this.command = this.parser.search;
       this.requests = {};
-      if (command) {
-        ref = command.slice(1).split('&');
+      if (this.command) {
+        ref = this.command.slice(1).split('&');
         for (j = 0, len = ref.length; j < len; j++) {
-          command = ref[j];
-          seq = command.split('=');
+          this.command = ref[j];
+          seq = this.command.split('=');
           this.requests[seq[0]] = seq[1];
         }
       }
