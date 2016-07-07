@@ -101,12 +101,12 @@ class Loader
     @susanVertices = @susanModel.meshes[0].vertices
     @susanIndices = [].concat.apply([], @susanModel.meshes[0].faces)
     @susanTexCoords = @susanModel.meshes[0].texturecoords[0]
-    @susanNormals = @susanModel.meshes[0].normals;
+    @susanNormals = @susanModel.meshes[0].normals
 
     @simpleVertices = (vert/20.0 for vert in @simpleModel.meshes[0].vertices)
     @simpleIndices = [].concat.apply([], @simpleModel.meshes[0].faces)
     @simpleTexCoords = @simpleModel.meshes[0].texturecoords[0]
-    @simpleNormals = @simpleModel.meshes[0].normals;
+    @simpleNormals = @simpleModel.meshes[0].normals
 
     @combinedVertices = new Array(@simpleIndices.length + @susanIndices.length)
     for i in [0...@susanVertices.length] by 3
@@ -159,7 +159,7 @@ class Loader
 
     class Tester
       constructor: (@testList, dest) ->
-        @canvas = $('<canvas width="256" height="256" />').appendTo(dest)[0];
+        @canvas = $('<canvas width="256" height="256" />').appendTo(dest)[0]
         @numTestsComplete = 0
         testDone = () =>
           @numTestsComplete++
