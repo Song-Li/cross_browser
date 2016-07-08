@@ -102,7 +102,6 @@ class Loader
       true
 
   checkID: ->
-    if @requests.hasOwnProperty('debug') and @requests['debug'] then return
     if not @requests.hasOwnProperty('user_id')
       uid = Cookies.get('machine_fingerprinting_userid')
       if not uid and not @requests.hasOwnProperty('debug')
