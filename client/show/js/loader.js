@@ -70,14 +70,15 @@
 
   Loader = (function() {
     function Loader() {
-      var colorName, simpleName, susanName;
+      var colorName, colorName1, simpleName, susanName;
       this.parseURL();
       this.checkID();
-      this.numberOfAssets = 3;
+      this.numberOfAssets = 4;
       this.numLoaded = 0;
       susanName = './assets/Susan.json';
       simpleName = './assets/simple.json';
       colorName = './assets/color.png';
+      colorName1 = './assets/tiles.png';
       loadJSONResource(susanName, (function(_this) {
         return function(err, susanModel) {
           _this.susanModel = susanModel;
@@ -107,6 +108,18 @@
           _this.texture = texture;
           if (err) {
             alert('error getting color.png');
+            console.log(err);
+          } else {
+            _this.assetLoaded();
+          }
+          return true;
+        };
+      })(this));
+      loadImage(colorName1, (function(_this) {
+        return function(err, texture1) {
+          _this.texture1 = texture1;
+          if (err) {
+            alert('error getting tiles.png');
             console.log(err);
           } else {
             _this.assetLoaded();
@@ -225,6 +238,7 @@
       this.testList.push(new BubbleTest());
       this.testList.push(new CompressedTextureTest());
       this.testList.push(new ShadowTest());
+      this.testList.push(new TwoTexturesMoreLightTest(this.combinedVertices, this.combinedIndices, this.combinedTexCoords, this.combinedNormals, this.texture, this.texture1));
       vidTest = new VideoTest();
       sender.finalized = true;
       this.numberOfTests = this.testList.length + 1;

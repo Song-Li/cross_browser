@@ -73,11 +73,12 @@ class Loader
   constructor: ->
     @parseURL()
     @checkID()
-    @numberOfAssets = 3
+    @numberOfAssets = 4
     @numLoaded = 0
     susanName = './assets/Susan.json'
     simpleName = './assets/simple.json'
     colorName = './assets/color.png'
+    colorName1 = './assets/tiles.png'
 
     loadJSONResource susanName, (err, @susanModel) =>
       if err
@@ -93,9 +94,18 @@ class Loader
       else
         @assetLoaded()
       true
+
     loadImage colorName, (err, @texture) =>
       if err
         alert 'error getting color.png'
+        console.log err
+      else
+        @assetLoaded()
+      true
+
+    loadImage colorName1, (err, @texture1) =>
+      if err
+        alert 'error getting tiles.png'
         console.log err
       else
         @assetLoaded()
@@ -188,6 +198,7 @@ class Loader
     @testList.push(new BubbleTest())
     @testList.push(new CompressedTextureTest())
     @testList.push(new ShadowTest())
+    @testList.push(new TwoTexturesMoreLightTest(@combinedVertices, @combinedIndices, @combinedTexCoords, @combinedNormals, @texture, @texture1))
     vidTest = new VideoTest()
 
     sender.finalized = true

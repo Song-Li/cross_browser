@@ -150,7 +150,7 @@ body {
 }
 
 #test_canvases canvas{
-    display: None !important;
+    display: none !important;
 }
 
 .hidden-vid {
