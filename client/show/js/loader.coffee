@@ -29,14 +29,14 @@ window.createCopyButton = (text, home) ->
       , 3000)
 
 
-  $('<button type="button" class="btn btn-default"
-      data-clipboard-action="copy"
-      data-clipboard-text="#{text}"
-      data-toggle="tooltip"
-      data-trigger="manual"
-      data-placement="auto"
-      data-html="true"
-      >Copy</button>')
+  $("<button type='button' class='btn btn-default'
+      data-clipboard-action='copy'
+      data-clipboard-text='#{text}'
+      data-toggle='tooltip'
+      data-trigger='manual'
+      data-placement='auto'
+      data-html='true'
+      >Copy</button>")
       .tooltip()
       .appendTo $(home)
 
@@ -191,6 +191,7 @@ class Loader
     vidTest = new VideoTest()
 
     sender.finalized = true
+
     @numberOfTests = @testList.length + 1
     @numComplete = 0
     postProgress = () =>

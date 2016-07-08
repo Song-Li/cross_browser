@@ -26,7 +26,7 @@
         }, 3000);
       }
     });
-    return $('<button type="button" class="btn btn-default" data-clipboard-action="copy" data-clipboard-text="#{text}" data-toggle="tooltip" data-trigger="manual" data-placement="auto" data-html="true" >Copy</button>').tooltip().appendTo($(home));
+    return $("<button type='button' class='btn btn-default' data-clipboard-action='copy' data-clipboard-text='" + text + "' data-toggle='tooltip' data-trigger='manual' data-placement='auto' data-html='true' >Copy</button>").tooltip().appendTo($(home));
   };
 
   loadTextResource = function(url, callback) {
