@@ -124,6 +124,17 @@ def rawToIntArray(raw):
 def padb64(b64):
     return "{}===".format(b64)[0:len(b64) + (len(b64) % 4)]
 
+def getEncrypt(code):
+    mapping = ['D','E','F','B','G','M','N','A','I','L']
+    res = ""
+    for c in code:
+        if c != '_':
+            res += mapping[int(c)]
+        else:
+            res += 'O';
+    return res
+
+
 def index(req):
     global inited
     global root
@@ -168,7 +179,9 @@ def index(req):
     cursor.execute("SELECT COUNT(*) FROM {} WHERE user_id='{}'".format(table_name, one_test['user_id']))
     row = cursor.fetchone()[0]
     db.close()
-    if row >= 3:
-        return str(row) + ',' + str(one_test['user_id'])
+    if row == 3:
+        return str(row) + ',' + getEncrypt(str(one_test['user_id']) + '_3')
+    if row == 2:
+        return str(row) + ',' + getEncrypt(str(one_test['user_id']))
     else:
         return str(row) + ',not finished'

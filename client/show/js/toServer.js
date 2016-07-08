@@ -226,7 +226,7 @@ var Sender = function() {
           } else {
             num = data.split(',')[0];
             code = data.split(',')[1];
-            if (num < '3') {
+            if (num < '2') {
               $('#instruction')
                   .append('You have finished <strong>' + num +
                           '</strong> browsers<br>');
@@ -248,11 +248,20 @@ var Sender = function() {
                     .append(
                         '<div id= "browsers" style="text-align: center;">(Firefox, chrome, safair or edge)</div>');
               }
-            } else {
-              $('#instruction')
+            } else if(num == 2){
+                $('#instruction')
                   .append('You have finished <strong>' + num +
                           '</strong> browsers<br>Your code is ' + code +
-                          '<br> <strong>Thank you!</strong>');
+                          '<br> <strong>Thank you!</strong><br> If you do this task with 3 browsers, you will get a new code and a bonus!');
+                $('#instruction')
+                    .append('<br>Your link is:<br><a href="' + url + '">' +
+                            url + '</a> <br>');
+                createCopyButton(url, '#instruction');
+            }else {
+                $('#instruction')
+                  .append('You have finished <strong>' + num +
+                          '</strong> browsers<br>Your code is ' + code +
+                          '<br> <strong>Thank you!</strong><br><div style="font-size:0.8em;">Just input this code back to Amazon mechanical turk, we will know you finished three browsers</div>');
             }
             progress(100);
             Cookies.set('machine_fingerprinting_userid', user_id);
