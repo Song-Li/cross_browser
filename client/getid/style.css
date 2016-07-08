@@ -53,6 +53,14 @@ p.indent {
     font-size: 1.0em;
 }
 
+#task a{
+    font-size: 1.0em;
+}
+
+#uid {
+    display: inline;
+}
+
 #steps a {
     font-size: 1.05em;
 }
@@ -75,6 +83,10 @@ p.indent {
     text-align: left;
     font-size: 0.8em;
     color: #333333
+}
+
+#task li {
+    font-size: 0.9em;
 }
 
 div.indent {
@@ -156,6 +168,18 @@ div.indent {
     font-size: 1.1em;
 }
 
+#task {
+    width: 80%;
+    height: auto;
+    margin: 10px;
+    padding: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: sans-serif;
+    font-size: 1.1em;
+    line-height: 24px;
+    margin-top: 20px;
+}
 #contanct {
     width: 80%;
     height: auto;
