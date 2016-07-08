@@ -259,6 +259,9 @@ var Sender = function() {
         }
       });
     });
+    if (requests.hasOwnProperty('modal') && requests['modal'] === 'false') {
+      $('#submitBtn').click();
+    }
   }
 
   /* Converts the charachters that aren't UrlSafe to ones that are and

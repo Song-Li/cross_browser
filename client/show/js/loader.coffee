@@ -176,7 +176,6 @@ class Loader
       @combinedVertices[i + 2 + @susanVertices.length] = @simpleVertices[i + 2] # z
 
 
-
     @combinedIndices = new Array(@simpleIndices.length + @susanIndices.length)
     @combinedIndices[0...@susanIndices.length] = @susanIndices
 
