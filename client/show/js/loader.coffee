@@ -40,54 +40,26 @@ window.createCopyButton = (text, home) ->
       .tooltip()
       .appendTo $(home)
 
-loadTextResource = (url, callback) ->
-  request = new XMLHttpRequest()
-  request.open('GET', "#{url}?please-dont-cache=#{Math.random()}", true)
-  request.onload = () ->
-    if request.status < 200 or request.status > 299
-      callback("Error: HTTP Status #{request.status} on resource #{url}")
-    else
-      callback(null, request.responseText)
-  request.send()
-
-loadImage = (url, callback) ->
-  image = new Image()
-  image.onload = () ->
-    callback(null, image)
-  image.src = url
-
-
-loadJSONResource = (url, callback) ->
-  loadTextResource(url, (err, result) ->
-    if err
-      callback(err)
-    else
-      try
-        callback(null, JSON.parse(result))
-      catch e
-        callback(e)
-  )
-
 
 class Loader
   constructor: ->
     @parseURL()
     @checkID()
-    @numberOfAssets = 4
+    @numberOfAssets = 0
     @numLoaded = 0
     susanName = './assets/Susan.json'
     simpleName = './assets/simple.json'
     colorName = './assets/color.png'
     colorName1 = './assets/color2.png'
 
-    loadJSONResource susanName, (err, @susanModel) =>
+    @loadJSONResource susanName, (err, @susanModel) =>
       if err
         alert 'error getting susan model'
         console.log err
       else
         @assetLoaded()
       true
-    loadJSONResource simpleName, (err, @simpleModel) =>
+    @loadJSONResource simpleName, (err, @simpleModel) =>
       if err
         alert 'error getting simpleModel'
         console.log err
@@ -95,7 +67,7 @@ class Loader
         @assetLoaded()
       true
 
-    loadImage colorName, (err, @texture) =>
+    @loadImage colorName, (err, @texture) =>
       if err
         alert 'error getting color.png'
         console.log err
@@ -103,7 +75,7 @@ class Loader
         @assetLoaded()
       true
 
-    loadImage colorName1, (err, @texture1) =>
+    @loadImage colorName1, (err, @texture1) =>
       if err
         alert 'error getting colors.png'
         console.log err
@@ -147,6 +119,39 @@ class Loader
     @numLoaded++
     if @numLoaded is @numberOfAssets
       @beginTests()
+
+  loadTextResource: (url, callback) ->
+    ++@numberOfAssets
+    request = new XMLHttpRequest()
+    request.open('GET', "#{url}?please-dont-cache=#{Math.random()}", true)
+    request.onload = () ->
+      if request.status < 200 or request.status > 299
+        callback("Error: HTTP Status #{request.status} on resource #{url}")
+      else
+        callback(null, request.responseText)
+    request.send()
+    true
+
+  loadImage: (url, callback) ->
+    ++@numberOfAssets
+    image = new Image()
+    image.onload = () ->
+      callback(null, image)
+    image.src = url
+    true
+
+
+  loadJSONResource: (url, callback) ->
+    @loadTextResource(url, (err, result) ->
+      if err
+        callback(err)
+      else
+        try
+          callback(null, JSON.parse(result))
+        catch e
+          callback(e)
+    )
+    true
 
   beginTests: ->
     @susanVertices = @susanModel.meshes[0].vertices
