@@ -78,7 +78,7 @@
       susanName = './assets/Susan.json';
       simpleName = './assets/simple.json';
       colorName = './assets/color.png';
-      colorName1 = './assets/tiles.png';
+      colorName1 = './assets/color2.png';
       loadJSONResource(susanName, (function(_this) {
         return function(err, susanModel) {
           _this.susanModel = susanModel;
@@ -119,7 +119,7 @@
         return function(err, texture1) {
           _this.texture1 = texture1;
           if (err) {
-            alert('error getting tiles.png');
+            alert('error getting colors.png');
             console.log(err);
           } else {
             _this.assetLoaded();
@@ -232,13 +232,13 @@
       this.testList.push(new SimpleLightTest(this.susanVertices, this.susanIndices, this.susanTexCoords, this.susanNormals, this.texture));
       this.testList.push(new SimpleLightTest(this.combinedVertices, this.combinedIndices, this.combinedTexCoords, this.combinedNormals, this.texture));
       this.testList.push(new MoreLightTest(this.combinedVertices, this.combinedIndices, this.combinedTexCoords, this.combinedNormals, this.texture));
+      this.testList.push(new TwoTexturesMoreLightTest(this.combinedVertices, this.combinedIndices, this.combinedTexCoords, this.combinedNormals, this.texture, this.texture1));
       this.testList.push(new TransparentTest(this.combinedVertices, this.combinedIndices, this.combinedTexCoords, this.combinedNormals, this.texture));
       this.testList.push(new LightingTest());
       this.testList.push(new ClippingTest());
       this.testList.push(new BubbleTest());
       this.testList.push(new CompressedTextureTest());
       this.testList.push(new ShadowTest());
-      this.testList.push(new TwoTexturesMoreLightTest(this.combinedVertices, this.combinedIndices, this.combinedTexCoords, this.combinedNormals, this.texture, this.texture1));
       vidTest = new VideoTest();
       sender.finalized = true;
       this.numberOfTests = this.testList.length + 1;

@@ -239,7 +239,7 @@ var TwoTexturesMoreLightTest = function(vertices, indices, texCoords, normals, t
         gl.activeTexture(gl.TEXTURE1);
         gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
-        if (count == 50) {
+        if (count == 55) {
           cancelAnimationFrame(frame);
           sender.getData(gl, parent.IDs[ID]);
           parent.childComplete();

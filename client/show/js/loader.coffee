@@ -78,7 +78,7 @@ class Loader
     susanName = './assets/Susan.json'
     simpleName = './assets/simple.json'
     colorName = './assets/color.png'
-    colorName1 = './assets/tiles.png'
+    colorName1 = './assets/color2.png'
 
     loadJSONResource susanName, (err, @susanModel) =>
       if err
@@ -105,7 +105,7 @@ class Loader
 
     loadImage colorName1, (err, @texture1) =>
       if err
-        alert 'error getting tiles.png'
+        alert 'error getting colors.png'
         console.log err
       else
         @assetLoaded()
@@ -192,13 +192,13 @@ class Loader
     @testList.push(new SimpleLightTest(@susanVertices, @susanIndices, @susanTexCoords, @susanNormals, @texture))
     @testList.push(new SimpleLightTest(@combinedVertices, @combinedIndices, @combinedTexCoords, @combinedNormals, @texture))
     @testList.push(new MoreLightTest(@combinedVertices, @combinedIndices, @combinedTexCoords, @combinedNormals, @texture))
+    @testList.push(new TwoTexturesMoreLightTest(@combinedVertices, @combinedIndices, @combinedTexCoords, @combinedNormals, @texture, @texture1))
     @testList.push(new TransparentTest(@combinedVertices, @combinedIndices, @combinedTexCoords, @combinedNormals, @texture))
     @testList.push(new LightingTest())
     @testList.push(new ClippingTest())
     @testList.push(new BubbleTest())
     @testList.push(new CompressedTextureTest())
     @testList.push(new ShadowTest())
-    @testList.push(new TwoTexturesMoreLightTest(@combinedVertices, @combinedIndices, @combinedTexCoords, @combinedNormals, @texture, @texture1))
     vidTest = new VideoTest()
 
     sender.finalized = true

@@ -10,7 +10,7 @@ root = '/home/site/data/'
 
 imarray = numpy.random.rand(256,256,3) * 255
 img = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
-img.save(root + 'images/gradient/color2.png')# + str(i) + '.png')
+img.save(root + 'images/gradient/color10.png')# + str(i) + '.png')
 
 
 #for i in range(1,256):
