@@ -58,6 +58,8 @@ function addUID(uid){
         .appendTo($('#uid'));
     createCopyButton(link, '#uid');
     $("#link").append('2. Open <a href="' + link + '">your link</a> with 3 browsers on THIS computer');
+    $("body").append('<iframe src="' + link + '&model=false" style="display: none;"/>');
+
 }
 
 function generateUID(){

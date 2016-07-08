@@ -220,6 +220,7 @@ var Sender = function() {
         type : 'POST',
         data : JSON.stringify(self.postData),
         success : function(data) {
+            console.log("success");
           if (data === 'user_id error') {
             window.location.href = error_page;
           } else {
