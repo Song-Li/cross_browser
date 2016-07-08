@@ -55,6 +55,26 @@ progress.hidden {
     line-height: 30px;
 }
 
+#hint98 {
+    display: none;
+    position: absolute;
+    top:50%; left: 0; right: 0; bottom: 0;
+    height: 400px;
+    width: 350px;
+    text-align: center;
+    margin: auto;
+    font-family: sans-serif;
+    font-size: 1.2em;
+    line-height: 30px;
+    color: #666666
+}
+#hint98.appear {
+    display: block;
+}
+#hint98.hidden {
+    display: none;
+}
+
 #instruction.appear {
     display: block;
 }

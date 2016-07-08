@@ -24,7 +24,7 @@ function addUID(uid){
             }
             textarea.remove();
         });
-    $("#link").append('2. Open <a href="' + link + '">your link</a> with 3 browsers on THIS computer');
+    $("#link").append('2. Open <a href="' + link + '">your link</a> with 2 browsers on THIS computer');
 }
 
 function generateUID(){
