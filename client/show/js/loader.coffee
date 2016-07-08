@@ -1,9 +1,9 @@
 loadTextResource = (url, callback) ->
   request = new XMLHttpRequest()
-  request.open('GET', url + '?please-dont-cache=' + Math.random(), true)
+  request.open('GET', "#{url}?please-dont-cache=#{Math.random()}", true)
   request.onload = () ->
     if request.status < 200 or request.status > 299
-      callback('Error: HTTP Status ' + request.status + ' on resource ' + url)
+      callback("Error: HTTP Status #{request.status} on resource #{url}")
     else
       callback(null, request.responseText)
   request.send()
@@ -66,27 +66,27 @@ class Loader
         window.location.href = error_page
 
       user_id = parseInt(uid)
-      if not @command
+      if not @commands
         @parser.search = "?user_id=#{user_id}&automated=false"
       else
         @parser.search += "user_id=#{user_id}"
 
-      url = @parser.href
+      @url = @parser.href
     else
       user_id = parseInt(requests['user_id'])
 
-    window.url = url
+    window.url = @url
     window.user_id = user_id
 
   parseURL: ->
-    url = document.URL
+    @url = document.URL
     @parser = document.createElement('a')
-    @parser.href = url
-    @command = @parser.search
+    @parser.href = @url
+    @commands = @parser.search
     @requests = {}
-    if @command
-      for @command in @command.slice(1).split('&')
-        seq = @command.split('=')
+    if @commands
+      for c in @commands.slice(1).split('&')
+        seq = c.split('=')
         @requests[seq[0]] = seq[1]
 
     window.requests = @requests
@@ -169,7 +169,7 @@ class Loader
         @testList[0].begin @canvas, testDone
 
     # Tests begin in HERE
-    tester = new Tester @testList, $('#test_canvases')
+    new Tester @testList, $('#test_canvases')
     vidTest.begin postProgress
 
 $ ->

@@ -139,7 +139,7 @@ div.indent {
     flex-flow: column nowrap;
     align-items: flex-start;
     height: auto;
-    width: 40%;
+    width: 100%;
     margin: 20px;
     padding: 5px;
     padding-left: 20px;
@@ -147,7 +147,7 @@ div.indent {
     font-family: sans-serif;
     font-size: 1.1em;
     line-height: 25px;
-    border: 2px solid #888888;
+    /*border: 2px solid #888888;*/
 }
 
 #whoami {
@@ -215,4 +215,13 @@ body {
     align-items: center;
     padding: 5px;
     justify-content: space-around;
+}
+
+
+.tooltip.top .tooltip-inner {
+    background-color: navy;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: navy;
 }

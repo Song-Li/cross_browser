@@ -90,7 +90,9 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     manufacturer = one_test['manufacturer']
     timezone = one_test['timezone']
     resolution = one_test['resolution']
-    fontlist = "_".join(one_test['fontlist'])
+    fontlist = one_test['fontlist']
+    if isinstance(fontlist, list):
+        fontlist = "_".join(fontlist)
     plgs = one_test['plugins']
     cookie = one_test['cookie']
     localStorage = one_test['localstorage']
@@ -156,7 +158,7 @@ def index(req):
 
     h = hasher()
     string = ''
-    for i in range(0, len(pixels) - 10):
+    for i in range(0, len(pixels) - 6):
         string += pixels[i]
     h.update(string)
     hash_code = encode(h.digest()).replace('=', '')

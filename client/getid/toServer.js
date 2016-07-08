@@ -5,26 +5,46 @@ function killCookie() {
         { expires: new Date(2000, 01, 01) });
 }
 
+function createCopyButton(text, home) {
+    var clipboard = new Clipboard('.btn');
+    clipboard.on('success', function(e) {
+        e.clearSelection();
+    });
+
+    clipboard.on('error', function(e) {
+        var trigger = $(e.trigger);
+        if (trigger.prop('data-toggle') === 'tooltip') {
+            trigger.prop('data-original-title',
+                "Press Cmd+C to copy")
+                .tooltip('fixTitle')
+                .tooltip('show');
+
+            setTimeout(function() {
+                trigger.tooltip('hide');
+            }, 3000);
+        }
+    });
+
+    $('<button type="button" class="btn btn-default"'
+        + 'data-clipboard-action="copy"'
+        + 'data-clipboard-text="' + text + '"'
+        + 'data-toggle="tooltip"'
+        + 'data-trigger="manual"'
+        + 'data-placement="auto"'
+        + 'data-html="true"'
+        + '>Copy</button>')
+        .tooltip()
+        .appendTo($(home));
+}
+
 function addUID(uid){
     var link = 'http://mf.songli.us/show/?user_id=' + uid + '&automated=false'
-    $('<a href=' + link + '>' + link + '</a>').appendTo($('#uid'));
-    $('<button type="button" class="btn btn-default">Copy</button>')
-        .appendTo($('#uid'))
-        .click({text: link}, function(event) {
-            var text = event.data.text;
-            var textarea = $('<textarea>' + text + '</textarea>')
-                .prop('style', 'position: absolute; left: -9999px; top: 0px;')
-                .appendTo($('body'))
-                .select();
-            var copySupported = document.queryCommandSupported('copy');
-            if (copySupported) {
-                document.execCommand('copy');
-            } else {
-                window.alert("Copy to clipboard: Ctrl+C, Enter", text);
-            }
-            textarea.remove();
-        });
-    $("#link").append('2. Open <a href="' + link + '">your link</a> with 2 browsers on THIS computer');
+    $('<a style="padding-right: 10px;"/>')
+        .text(link)
+        .prop('href', link)
+        .appendTo($('#uid'));
+    createCopyButton(link, '#uid');
+    $("#link").append('2. Open <a href="' + link + '">your link</a> with 3 browsers on THIS computer');
 }
 
 function generateUID(){
