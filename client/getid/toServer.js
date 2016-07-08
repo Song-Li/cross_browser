@@ -1,9 +1,8 @@
 var ip_address = "54.221.117.15"
 
-function killCookie() {
+
     Cookies.set('machine_fingerprinting_userid', 1,
         { expires: new Date(2000, 01, 01) });
-}
 
 function createCopyButton(text, home) {
     var clipboard = new Clipboard('.btn');

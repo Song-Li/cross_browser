@@ -34,21 +34,21 @@
          */
         this.materials = [];
         loader = new THREE.DDSLoader();
-        map1 = loader.load(textureRoot + 'disturb_dxt1_nomip.dds');
+        map1 = loader.load(textureRoot + "disturb_dxt1_nomip.dds");
         map1.minFilter = map1.magFilter = THREE.LinearFilter;
         map1.anisotropy = 4;
-        map2 = loader.load(textureRoot + 'disturb_dxt1_mip.dds');
+        map2 = loader.load(textureRoot + "disturb_dxt1_mip.dds");
         map2.anisotropy = 4;
-        map3 = loader.load(textureRoot + 'hepatica_dxt3_mip.dds');
+        map3 = loader.load(textureRoot + "hepatica_dxt3_mip.dds");
         map3.anisotropy = 4;
-        map4 = loader.load(textureRoot + 'explosion_dxt5_mip.dds');
+        map4 = loader.load(textureRoot + "explosion_dxt5_mip.dds");
         map4.anisotropy = 4;
-        map5 = loader.load(textureRoot + 'disturb_argb_nomip.dds');
+        map5 = loader.load(textureRoot + "disturb_argb_nomip.dds");
         map5.minFilter = map5.magFilter = THREE.LinearFilter;
         map5.anisotropy = 4;
-        map6 = loader.load(textureRoot + 'disturb_argb_mip.dds');
+        map6 = loader.load(textureRoot + "disturb_argb_mip.dds");
         map6.anisotropy = 4;
-        cubemap1 = loader.load(textureRoot + 'Mountains.dds', (function(_this) {
+        cubemap1 = loader.load(textureRoot + "Mountains.dds", (function(_this) {
           return function(texture) {
             texture.magFilter = THREE.LinearFilter;
             texture.minFilter = THREE.LinearFilter;
@@ -56,7 +56,7 @@
             return _this.materials[0].needsUpdate = true;
           };
         })(this));
-        cubemap2 = loader.load(textureRoot + 'Mountains_argb_mip.dds', (function(_this) {
+        cubemap2 = loader.load(textureRoot + "Mountains_argb_mip.dds", (function(_this) {
           return function(texture) {
             texture.magFilter = THREE.LinearFilter;
             texture.minFilter = THREE.LinearFilter;
@@ -64,7 +64,7 @@
             return _this.materials[1].needsUpdate = true;
           };
         })(this));
-        cubemap3 = loader.load(textureRoot + 'Mountains_argb_nomip.dds', (function(_this) {
+        cubemap3 = loader.load(textureRoot + "Mountains_argb_nomip.dds", (function(_this) {
           return function(texture) {
             texture.magFilter = THREE.LinearFilter;
             texture.minFilter = THREE.LinearFilter;
@@ -168,13 +168,13 @@
         this.scene = new THREE.Scene();
         this.materials = [];
         loader = new THREE.PVRLoader();
-        disturb_4bpp_rgb = loader.load(textureRoot + 'disturb_4bpp_rgb.pvr');
-        disturb_4bpp_rgb_v3 = loader.load(textureRoot + 'disturb_4bpp_rgb_v3.pvr');
-        disturb_4bpp_rgb_mips = loader.load(textureRoot + 'disturb_4bpp_rgb_mips.pvr');
-        disturb_2bpp_rgb = loader.load(textureRoot + 'disturb_2bpp_rgb.pvr');
-        flare_4bpp_rgba = loader.load(textureRoot + 'flare_4bpp_rgba.pvr');
-        flare_2bpp_rgba = loader.load(textureRoot + 'flare_2bpp_rgba.pvr');
-        park3_cube_nomip_4bpp_rgb = loader.load(textureRoot + 'park3_cube_nomip_4bpp_rgb.pvr', (function(_this) {
+        disturb_4bpp_rgb = loader.load(textureRoot + "disturb_4bpp_rgb.pvr");
+        disturb_4bpp_rgb_v3 = loader.load(textureRoot + "disturb_4bpp_rgb_v3.pvr");
+        disturb_4bpp_rgb_mips = loader.load(textureRoot + "disturb_4bpp_rgb_mips.pvr");
+        disturb_2bpp_rgb = loader.load(textureRoot + "disturb_2bpp_rgb.pvr");
+        flare_4bpp_rgba = loader.load(textureRoot + "flare_4bpp_rgba.pvr");
+        flare_2bpp_rgba = loader.load(textureRoot + "flare_2bpp_rgba.pvr");
+        park3_cube_nomip_4bpp_rgb = loader.load(textureRoot + "park3_cube_nomip_4bpp_rgb.pvr", (function(_this) {
           return function(texture) {
             texture.magFilter = THREE.LinearFilter;
             texture.minFilter = THREE.LinearFilter;
@@ -182,7 +182,7 @@
             return _this.meshes[0].needsUpdate = true;
           };
         })(this));
-        park3_cube_mip_2bpp_rgb_v3 = loader.load(textureRoot + 'park3_cube_mip_2bpp_rgb_v3.pvr', (function(_this) {
+        park3_cube_mip_2bpp_rgb_v3 = loader.load(textureRoot + "park3_cube_mip_2bpp_rgb_v3.pvr", (function(_this) {
           return function(texture) {
             texture.magFilter = THREE.LinearFilter;
             texture.minFilter = THREE.LinearFilter;

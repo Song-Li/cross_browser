@@ -74,16 +74,10 @@ def getBrowser(vendor, agent):
 
 
 def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys):
-    user_id = one_test['user_id']
-    cursor = db.cursor()
-    cursor.execute("SELECT image_id FROM {} WHERE user_id='{}' AND agent='{}'".format(table_name, user_id, agent))
-    row = cursor.fetchone()
-    if row is not None:
-        return row[0]
 
+    user_id = one_test['user_id']
     vendor = one_test['inc']
     browser = getBrowser(vendor, agent)
-
     gpu = one_test['gpu']
     fps = float(one_test['fps'])
     fonts = one_test['fontlist']
@@ -96,6 +90,17 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     plgs = one_test['plugins']
     cookie = one_test['cookie']
     localStorage = one_test['localstorage']
+
+    cursor = db.cursor()
+    cursor.execute("SELECT image_id FROM {} WHERE user_id='{}' AND agent='{}'".format(table_name, user_id, agent))
+    row = cursor.fetchone()
+    if row is not None:
+        image_id = row[0]
+        sql = "UPDATE {} SET ip='{}', vendor='{}', gpu='{}', agent='{}', browser='{}', fps='{}', manufacturer='{}', timezone='{}', resolution='{}', fontlist='{}', accept='{}', encoding='{}', language='{}', headerkeys='{}', plugins='{}', cookie='{}', localstorage='{}' where image_id='{}'".format(table_name, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, image_id)
+        cursor.execute(sql)
+        db.commit()
+        return image_id
+
 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
