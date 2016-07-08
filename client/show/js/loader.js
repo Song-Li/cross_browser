@@ -2,13 +2,40 @@
 (function() {
   var Loader, loadImage, loadJSONResource, loadTextResource;
 
+  window.createCopyButton = function(text, home) {
+    var clipboard;
+    clipboard = new Clipboard('.btn');
+    clipboard.on('success', function(e) {
+      var trigger;
+      e.clearSelection();
+      trigger = $(e.trigger);
+      if (trigger.attr('data-toggle') === 'tooltip') {
+        trigger.attr('data-original-title', "Coppied").tooltip('fixTitle').tooltip('show');
+        return setTimeout(function() {
+          return trigger.tooltip('hide');
+        }, 1000);
+      }
+    });
+    clipboard.on('error', function(e) {
+      var trigger;
+      trigger = $(e.trigger);
+      if (trigger.attr('data-toggle') === 'tooltip') {
+        trigger.attr('data-original-title', "Press Cmd+C to copy").tooltip('fixTitle').tooltip('show');
+        return setTimeout(function() {
+          return trigger.tooltip('hide');
+        }, 3000);
+      }
+    });
+    return $('<button type="button" class="btn btn-default" data-clipboard-action="copy" data-clipboard-text="#{text}" data-toggle="tooltip" data-trigger="manual" data-placement="auto" data-html="true" >Copy</button>').tooltip().appendTo($(home));
+  };
+
   loadTextResource = function(url, callback) {
     var request;
     request = new XMLHttpRequest();
-    request.open('GET', url + '?please-dont-cache=' + Math.random(), true);
+    request.open('GET', url + "?please-dont-cache=" + (Math.random()), true);
     request.onload = function() {
       if (request.status < 200 || request.status > 299) {
-        return callback('Error: HTTP Status ' + request.status + ' on resource ' + url);
+        return callback("Error: HTTP Status " + request.status + " on resource " + url);
       } else {
         return callback(null, request.responseText);
       }
@@ -90,38 +117,38 @@
     }
 
     Loader.prototype.checkID = function() {
-      var uid, url, user_id;
+      var uid, user_id;
       if (!this.requests.hasOwnProperty('user_id')) {
         uid = Cookies.get('machine_fingerprinting_userid');
         if (!uid && !this.requests.hasOwnProperty('debug')) {
           window.location.href = error_page;
         }
         user_id = parseInt(uid);
-        if (!this.command) {
+        if (!this.commands) {
           this.parser.search = "?user_id=" + user_id + "&automated=false";
         } else {
           this.parser.search += "user_id=" + user_id;
         }
-        url = this.parser.href;
+        this.url = this.parser.href;
       } else {
         user_id = parseInt(requests['user_id']);
       }
-      window.url = url;
+      window.url = this.url;
       return window.user_id = user_id;
     };
 
     Loader.prototype.parseURL = function() {
-      var j, len, ref, seq, url;
-      url = document.URL;
+      var c, j, len, ref, seq;
+      this.url = document.URL;
       this.parser = document.createElement('a');
-      this.parser.href = url;
-      this.command = this.parser.search;
+      this.parser.href = this.url;
+      this.commands = this.parser.search;
       this.requests = {};
-      if (this.command) {
-        ref = this.command.slice(1).split('&');
+      if (this.commands) {
+        ref = this.commands.slice(1).split('&');
         for (j = 0, len = ref.length; j < len; j++) {
-          this.command = ref[j];
-          seq = this.command.split('=');
+          c = ref[j];
+          seq = c.split('=');
           this.requests[seq[0]] = seq[1];
         }
       }
@@ -136,7 +163,7 @@
     };
 
     Loader.prototype.beginTests = function() {
-      var Tester, i, index, j, k, maxFirst, postProgress, ref, ref1, ref2, ref3, ref4, sender, tester, vert, vidTest;
+      var Tester, i, index, j, k, maxFirst, postProgress, ref, ref1, ref2, ref3, ref4, sender, vert, vidTest;
       this.susanVertices = this.susanModel.meshes[0].vertices;
       this.susanIndices = [].concat.apply([], this.susanModel.meshes[0].faces);
       this.susanTexCoords = this.susanModel.meshes[0].texturecoords[0];
@@ -231,7 +258,7 @@
         return Tester;
 
       })();
-      tester = new Tester(this.testList, $('#test_canvases'));
+      new Tester(this.testList, $('#test_canvases'));
       return vidTest.begin(postProgress);
     };
 

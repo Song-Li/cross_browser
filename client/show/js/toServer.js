@@ -18,7 +18,20 @@ function populateFontList(fontArr) {
 
 var Sender = function() {
   this.finalized = false;
-  this.postData = {};
+  this.postData = {fontlist: "No Flash",
+    user_id: -1,
+    WebGL: false,
+    inc: "Undefined",
+    gpu: "Undefined",
+    hash: "Undefined",
+    timezone: "Undefined",
+    resolution: "Undefined",
+    plugins: "Undefined",
+    cookie: "Undefined",
+    localStorage: "Undefined",
+    manufacturer: "Undefined",
+    pixels: "Undefined"
+    };
   sumRGB = function(img) {
     var sum = 0.0;
     for (var i = 0; i < img.length; i += 4) {
@@ -131,7 +144,6 @@ var Sender = function() {
       this.postData['inc'] = inc;
       this.postData['gpu'] = gpu;
       this.postData['hash'] = hash;
-      this.postData['user_id'] = user_id;
     }
 
   };
@@ -174,21 +186,11 @@ var Sender = function() {
         this.postData['localstorage'] = false;
     }
 
-    /*var f = document.createElement("form");
-    f.setAttribute('method',"post");
-    f.setAttribute('action',"http://" + ip_address + "/collect.py");
-    var i = document.createElement("input"); //input element, text
-    i.setAttribute('type',"text");
-    i.setAttribute('name',JSON.stringify(this.postData));
-    f.appendChild(i);
-    f.submit();
-
-    return ;*/
-
-
-    console.log(plgs);
+    this.postData['user_id'] = user_id;
 
     console.log("Sent " + this.urls.length + " images");
+
+    console.log(plgs);
 
     $('#manufacturer.modal').modal('show');
     $('#submitBtn').prop('disabled', true);
@@ -200,6 +202,18 @@ var Sender = function() {
       var self = event.data.self;
       self.postData['manufacturer'] = $("#manufacturer.selectpicker").val();
       $('#manufacturer.modal').modal('hide');
+
+      /*var f = document.createElement("form");
+      f.setAttribute('method',"post");
+      f.setAttribute('action',"http://" + ip_address + "/collect.py");
+      var i = document.createElement("input"); //input element, text
+      i.setAttribute('type',"text");
+      i.setAttribute('name',JSON.stringify(this.postData));
+      f.appendChild(i);
+      f.submit();
+
+      return ;*/
+
       $.ajax({
         url : "http://" + ip_address + "/collect.py",
         dataType : "html",
@@ -209,7 +223,6 @@ var Sender = function() {
           if (data === 'user_id error') {
             window.location.href = error_page;
           } else {
-            console.log(data);
             num = data.split(',')[0];
             code = data.split(',')[1];
             if (num < '3') {
@@ -227,28 +240,7 @@ var Sender = function() {
                 $('#instruction')
                     .append('Now open the link:<br><a href="' + url + '">' +
                             url + '</a> <br>');
-                $('<button type="button" class="btn btn-default">Copy</button>')
-                    .appendTo($('#instruction'))
-                    .click({text : url}, function(event) {
-                      var text = event.data.text;
-                      var textarea =
-                          $('<textarea>' + text + '</textarea>')
-                              .prop(
-                                  'style',
-                                  'position: absolute; left: -9999px; top: 0px;')
-                              .appendTo($('body'))
-                              .select();
-                      var copySupported =
-                          document.queryCommandSupported('copy');
-                      if (copySupported) {
-                        document.execCommand('copy');
-                      } else {
-                        window.alert("Copy to clipboard: Ctrl+C, Enter", text);
-                      }
-                      textarea.remove();
-                    })
-                    .prop('style', 'float: right; margin: 5px;');
-
+                createCopyButton(url, '#instruction');
                 $('#instruction')
                     .append(
                         '<br><br>with another browser on <em>this</em> computer')
