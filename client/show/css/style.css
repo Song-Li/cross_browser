@@ -158,3 +158,12 @@ body {
   width: 0px;
   height: 0px;
 }
+
+
+.tooltip .tooltip-inner {
+    background-color: navy;
+}
+
+.tooltip .tooltip-arrow {
+    border-top-color: navy;
+}

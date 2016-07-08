@@ -240,28 +240,7 @@ var Sender = function() {
                 $('#instruction')
                     .append('Now open the link:<br><a href="' + url + '">' +
                             url + '</a> <br>');
-                $('<button type="button" class="btn btn-default">Copy</button>')
-                    .appendTo($('#instruction'))
-                    .click({text : url}, function(event) {
-                      var text = event.data.text;
-                      var textarea =
-                          $('<textarea>' + text + '</textarea>')
-                              .prop(
-                                  'style',
-                                  'position: absolute; left: -9999px; top: 0px;')
-                              .appendTo($('body'))
-                              .select();
-                      var copySupported =
-                          document.queryCommandSupported('copy');
-                      if (copySupported) {
-                        document.execCommand('copy');
-                      } else {
-                        window.alert("Copy to clipboard: Ctrl+C, Enter", text);
-                      }
-                      textarea.remove();
-                    })
-                    .prop('style', 'float: right; margin: 5px;');
-
+                createCopyButton(url, '#instruction');
                 $('#instruction')
                     .append(
                         '<br><br>with another browser on <em>this</em> computer')

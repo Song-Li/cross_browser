@@ -9,12 +9,24 @@ function createCopyButton(text, home) {
     var clipboard = new Clipboard('.btn');
     clipboard.on('success', function(e) {
         e.clearSelection();
+        var trigger = $(e.trigger);
+        if (trigger.attr('data-toggle') === 'tooltip') {
+            trigger.attr('data-original-title',
+                "Coppied")
+                .tooltip('fixTitle')
+                .tooltip('show');
+
+            setTimeout(function() {
+                trigger.tooltip('hide');
+            }, 1000);
+        }
     });
 
     clipboard.on('error', function(e) {
         var trigger = $(e.trigger);
-        if (trigger.prop('data-toggle') === 'tooltip') {
-            trigger.prop('data-original-title',
+        console.log(trigger);
+        if (trigger.attr('data-toggle') === 'tooltip') {
+            trigger.attr('data-original-title',
                 "Press Cmd+C to copy")
                 .tooltip('fixTitle')
                 .tooltip('show');
@@ -39,8 +51,9 @@ function createCopyButton(text, home) {
 
 function addUID(uid){
     var link = 'http://mf.songli.us/show/?user_id=' + uid + '&automated=false'
-    $('<a style="padding-right: 10px;"/>')
+    $('<a/>')
         .text(link)
+        .attr('style', "padding-right: 10px;")
         .prop('href', link)
         .appendTo($('#uid'));
     createCopyButton(link, '#uid');

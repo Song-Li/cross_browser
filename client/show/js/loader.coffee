@@ -1,3 +1,45 @@
+window.createCopyButton = (text, home) ->
+  clipboard = new Clipboard '.btn'
+
+  clipboard.on 'success', (e) ->
+    e.clearSelection()
+
+    trigger = $(e.trigger)
+
+    if trigger.attr('data-toggle') is 'tooltip'
+      trigger.attr 'data-original-title', "Coppied"
+        .tooltip 'fixTitle'
+        .tooltip 'show'
+
+      setTimeout(() ->
+        trigger.tooltip 'hide'
+      , 1000)
+
+
+  clipboard.on 'error', (e) ->
+    trigger = $(e.trigger)
+
+    if trigger.attr('data-toggle') is 'tooltip'
+      trigger.attr 'data-original-title', "Press Cmd+C to copy"
+        .tooltip 'fixTitle'
+        .tooltip 'show'
+
+      setTimeout(() ->
+        trigger.tooltip 'hide'
+      , 3000)
+
+
+  $('<button type="button" class="btn btn-default"
+      data-clipboard-action="copy"
+      data-clipboard-text="#{text}"
+      data-toggle="tooltip"
+      data-trigger="manual"
+      data-placement="auto"
+      data-html="true"
+      >Copy</button>')
+      .tooltip()
+      .appendTo $(home)
+
 loadTextResource = (url, callback) ->
   request = new XMLHttpRequest()
   request.open('GET', "#{url}?please-dont-cache=#{Math.random()}", true)

@@ -2,6 +2,33 @@
 (function() {
   var Loader, loadImage, loadJSONResource, loadTextResource;
 
+  window.createCopyButton = function(text, home) {
+    var clipboard;
+    clipboard = new Clipboard('.btn');
+    clipboard.on('success', function(e) {
+      var trigger;
+      e.clearSelection();
+      trigger = $(e.trigger);
+      if (trigger.attr('data-toggle') === 'tooltip') {
+        trigger.attr('data-original-title', "Coppied").tooltip('fixTitle').tooltip('show');
+        return setTimeout(function() {
+          return trigger.tooltip('hide');
+        }, 1000);
+      }
+    });
+    clipboard.on('error', function(e) {
+      var trigger;
+      trigger = $(e.trigger);
+      if (trigger.attr('data-toggle') === 'tooltip') {
+        trigger.attr('data-original-title', "Press Cmd+C to copy").tooltip('fixTitle').tooltip('show');
+        return setTimeout(function() {
+          return trigger.tooltip('hide');
+        }, 3000);
+      }
+    });
+    return $('<button type="button" class="btn btn-default" data-clipboard-action="copy" data-clipboard-text="#{text}" data-toggle="tooltip" data-trigger="manual" data-placement="auto" data-html="true" >Copy</button>').tooltip().appendTo($(home));
+  };
+
   loadTextResource = function(url, callback) {
     var request;
     request = new XMLHttpRequest();
