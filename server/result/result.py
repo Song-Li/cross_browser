@@ -12,7 +12,7 @@ import MySQLdb
 from hashlib import sha512 as hasher1, sha256 as hasher2
 from base64 import urlsafe_b64encode as encode
 
-browser_to_id = {'Chrome': 0, 'Firefox': 1, 'others': 2}
+browser_to_id = {'Chrome': 0, 'Firefox': 1, 'others': 2, 'OPR': 2, 'Edge': 2, 'IE': 2}
 case_number = 33
 standard_pics = []
 open_root = "/home/site/data/"
