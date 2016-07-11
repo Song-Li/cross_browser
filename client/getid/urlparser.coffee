@@ -1,4 +1,6 @@
-window.killCookie = killCookie = () ->
+root = exports ? this
+
+root.killCookie = killCookie = () ->
   Cookies.set 'machine_fingerprinting_userid', 1,
           expires: new Date(2000, 1, 1)
 
@@ -13,7 +15,7 @@ $ ->
       seq = c.split('=')
       requests[seq[0]] = seq[1]
 
-  window.requests = requests
+  root.requests = requests
 
-  if requests.hasOwnProperty('killCookie') and requests['killCookie'] is 'true'
+  if requests['killCookie']? and requests['killCookie'] is 'true'
     killCookie()

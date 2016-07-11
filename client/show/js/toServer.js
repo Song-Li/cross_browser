@@ -30,7 +30,8 @@ var Sender = function() {
     cookie: "Undefined",
     localStorage: "Undefined",
     manufacturer: "Undefined",
-    pixels: "Undefined"
+    pixels: "Undefined",
+    adBlock: "Undefined"
     };
   sumRGB = function(img) {
     var sum = 0.0;
@@ -171,8 +172,7 @@ var Sender = function() {
     this.postData['resolution'] = window.screen.width+"x"+window.screen.height+"x"+window.screen.colorDepth;
     var plgs_len = navigator.plugins.length;
     var plgs = "";
-    for(var i = 0;i < plgs_len;i ++)
-    {
+    for(var i = 0;i < plgs_len;i ++) {
       plgs += navigator.plugins[i].name + '_';
     }
     this.postData['plugins'] = plgs;
@@ -187,6 +187,8 @@ var Sender = function() {
     }
 
     this.postData['user_id'] = user_id;
+    this.postData['adBlock'] = $('#ad')[0] == null ? 'Yes' : 'No';
+    console.log(this.postData['adBlock'])
 
     console.log("Sent " + this.urls.length + " images");
 
