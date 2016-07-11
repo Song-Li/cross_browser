@@ -1,4 +1,6 @@
-window.createCopyButton = (text, home) ->
+root = exports ? this
+
+root.createCopyButton = createCopyButton = (text, home) ->
   clipboard = new Clipboard '.btn'
 
   clipboard.on 'success', (e) ->
@@ -15,7 +17,6 @@ window.createCopyButton = (text, home) ->
         trigger.tooltip 'hide'
       , 1000)
 
-
   clipboard.on 'error', (e) ->
     trigger = $(e.trigger)
 
@@ -27,7 +28,6 @@ window.createCopyButton = (text, home) ->
       setTimeout(() ->
         trigger.tooltip 'hide'
       , 3000)
-
 
   $("<button type='button' class='btn btn-default'
       data-clipboard-action='copy'
@@ -84,9 +84,9 @@ class Loader
       true
 
   checkID: ->
-    if not @requests.hasOwnProperty('user_id')
+    if not @requests['user_id']?
       uid = Cookies.get('machine_fingerprinting_userid')
-      if not uid and not @requests.hasOwnProperty('debug')
+      if not uid and not @requests['debug']?
         window.location.href = error_page
 
       user_id = parseInt(uid)
