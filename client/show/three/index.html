@@ -4,41 +4,14 @@
     <title>three.js webgl - materials - compressed textures</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <style>
-      body {
-        margin: 0px;
-        color: #fff;
-        overflow: hidden;
-      }
-
-      a { color: #e00 }
-
-      #info {
-        position: absolute;
-        top: 0px; width: 100%;
-        color: #ffffff;
-        padding: 5px;
-        font-family:Monospace;
-        font-size:13px;
-        text-align:center;
-        z-index:1000;
-      }
-    </style>
   </head>
   <body>
     <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <div id="info">
-      <a href="http://threejs.org" target="_blank">three.js</a> - webgl - compressed textures -
-      leaf texture by <a href="http://opengameart.org/node/10505">lauris71</a>, explosion texture by <a href="http://opengameart.org/node/7728">bart</a>
-    </div>
-    <script src="../js/util.js"></script>
-    <script src="three.js"></script>
-    <script src="js/loaders/DDSLoader.js"></script>
-    <script src="js/loaders/PVRLoader.js"></script>
-
-    <script src="js/Detector.js"></script>
-
-    <script src="texture.js">
+    <script type="text/javascript">
+      var canvas = $('<canvas/>').appendTo($('body'));
+      var ctx = canvas[0].getContext('2d');
+      ctx.font = "30px Arial";
+      ctx.fillText("ᠮᠣᠩᠭᠣᠯ", 10, 100);
     </script>
   </body>
 </html>
