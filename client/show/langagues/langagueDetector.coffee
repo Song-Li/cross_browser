@@ -66,12 +66,12 @@ root.LanguageDector = class LanguageDector
 
     @results = []
 
-  begin: (cb) ->
+  begin: (@cb) ->
     tester = (index) =>
       if index is @codes.length
         sender.postLangsDetected @results
         console.log "Langs done"
-        cb()
+        @cb()
       else
         text = ""
         for c in @codes[index]

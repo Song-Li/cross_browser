@@ -234,6 +234,7 @@ class Loader
     for test in @asyncTests
       test.begin postProgress
 
+    true
 
 $ ->
   loader = new Loader()

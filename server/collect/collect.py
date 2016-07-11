@@ -19,16 +19,16 @@ inited = 0
 global root
 root = '/home/site/data/'
 
-def saveImg(inputArray, name):
+def saveImg(toSave, name):
     global root
     img_root = root + 'images/origins/'
     if not os.path.exists(img_root):
         os.makedirs(img_root)
-    width = inputArray['w']
-    height = inputArray['h']
+    width = toSave['w']
+    height = toSave['h']
     img = Image.new('RGB', (width, height))
     pixel_map = img.load()
-    img_data = rawToIntArray(decode(padb64(inputArray['pixels'])))
+    img_data = rawToIntArray(decode(padb64(toSave['pixels'])))
 
     curr = 0
     for i in range(width):

@@ -30,13 +30,14 @@
 
     LanguageDector.prototype.begin = function(cb) {
       var tester;
+      this.cb = cb;
       tester = (function(_this) {
         return function(index) {
           var c, i, len, ref, text;
           if (index === _this.codes.length) {
             sender.postLangsDetected(_this.results);
             console.log("Langs done");
-            return cb();
+            return _this.cb();
           } else {
             text = "";
             ref = _this.codes[index];

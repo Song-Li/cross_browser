@@ -183,7 +183,7 @@
     };
 
     Loader.prototype.beginTests = function() {
-      var Tester, i, index, j, k, l, len, maxFirst, postProgress, ref, ref1, ref2, ref3, ref4, ref5, results, sender, test, vert;
+      var Tester, i, index, j, k, l, len, maxFirst, postProgress, ref, ref1, ref2, ref3, ref4, ref5, sender, test, vert;
       this.susanVertices = this.susanModel.meshes[0].vertices;
       this.susanIndices = [].concat.apply([], this.susanModel.meshes[0].faces);
       this.susanTexCoords = this.susanModel.meshes[0].texturecoords[0];
@@ -283,12 +283,11 @@
       })();
       new Tester(this.testList, $('#test_canvases'));
       ref5 = this.asyncTests;
-      results = [];
       for (l = 0, len = ref5.length; l < len; l++) {
         test = ref5[l];
-        results.push(test.begin(postProgress));
+        test.begin(postProgress);
       }
-      return results;
+      return true;
     };
 
     return Loader;
