@@ -203,11 +203,14 @@ class Loader
     @testList.push(new BubbleTest())
     @testList.push(new CompressedTextureTest())
     @testList.push(new ShadowTest())
-    vidTest = new VideoTest()
+
+    @asyncTests = []
+    @asyncTests.push new VideoTest()
+    @asyncTests.push new LanguageDector()
 
     sender.finalized = true
 
-    @numberOfTests = @testList.length + 1
+    @numberOfTests = @testList.length + @asyncTests.length
     @numComplete = 0
     postProgress = () =>
       progress(++@numComplete / @numberOfTests * 98.0)
@@ -228,7 +231,10 @@ class Loader
 
     # Tests begin in HERE
     new Tester @testList, $('#test_canvases')
-    vidTest.begin postProgress
+    for test in @asyncTests
+      test.begin postProgress
+
+    true
 
 $ ->
   loader = new Loader()

@@ -19,19 +19,20 @@ inited = 0
 global root
 root = '/home/site/data/'
 
-def saveImg(b64raw, name):
+def saveImg(toSave, name):
     global root
     img_root = root + 'images/origins/'
     if not os.path.exists(img_root):
         os.makedirs(img_root)
-
-    img = Image.new('RGB', (256,256))
+    width = toSave['w']
+    height = toSave['h']
+    img = Image.new('RGB', (width, height))
     pixel_map = img.load()
-    img_data = rawToIntArray(decode(b64raw))
+    img_data = rawToIntArray(decode(padb64(toSave['pixels'])))
 
     curr = 0
-    for i in range(256):
-        for j in range(256):
+    for i in range(width):
+        for j in range(height):
             pixel_map[i,j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2])
             curr += 3
     img = img.rotate(90)
@@ -106,7 +107,8 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage, dnt, adBlock) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage, dnt, adBlock) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock)
+
         cursor.execute(sql)
         db.commit()
         cursor.close()
@@ -116,7 +118,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
         # If something went wrong with the insert, it was probably
         # the super unlikely race of two threads with the same UID,
         # so the insert can be tried again
-        return insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys)
+        return (db, table_name, ip, one_test, time, agent, accept, encoding, language, keys, DNT)
 
 def rawToIntArray(raw):
     raw = list(raw)
@@ -145,7 +147,6 @@ def index(req):
     global inited
     global root
     db_name = "cross_browser"
-    sub_number = 0
     post_data = str(req.form.list)
     json_data = post_data[8:-7]
     one_test = json.loads(json_data)
@@ -174,16 +175,17 @@ def index(req):
     time = str(datetime.datetime.now())
     image_id = insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys, DNT)
 
+    gpu_imgs = one_test['gpuImgs']
+    for i, img in enumerate(gpu_imgs):
+        saveImg(img, "{}_{}".format(image_id, i))
 
-    pixels = one_test['pixels'].split(" ")
-    for pi in pixels:
-        saveImg(padb64(pi), "{}_{}".format(image_id, sub_number))
-        sub_number += 1
+    for i, img in enumerate(one_test['langsDetected']):
+        saveImg(img, "{}_{}_lang".format(image_id, i))
 
     h = hasher()
     string = ''
-    for i in range(0, len(pixels) - 6):
-        string += pixels[i]
+    for i in range(len(gpu_imgs) - 6):
+        string += gpu_imgs[i]['pixels']
     h.update(string)
     hash_code = encode(h.digest()).replace('=', '')
     cursor.execute("UPDATE {} SET simple_hash='{}' WHERE image_id='{}'".format(table_name, hash_code, image_id))

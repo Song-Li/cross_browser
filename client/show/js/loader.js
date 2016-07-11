@@ -183,7 +183,7 @@
     };
 
     Loader.prototype.beginTests = function() {
-      var Tester, i, index, j, k, maxFirst, postProgress, ref, ref1, ref2, ref3, ref4, sender, vert, vidTest;
+      var Tester, i, index, j, k, l, len, maxFirst, postProgress, ref, ref1, ref2, ref3, ref4, ref5, sender, test, vert;
       this.susanVertices = this.susanModel.meshes[0].vertices;
       this.susanIndices = [].concat.apply([], this.susanModel.meshes[0].faces);
       this.susanTexCoords = this.susanModel.meshes[0].texturecoords[0];
@@ -246,9 +246,11 @@
       this.testList.push(new BubbleTest());
       this.testList.push(new CompressedTextureTest());
       this.testList.push(new ShadowTest());
-      vidTest = new VideoTest();
+      this.asyncTests = [];
+      this.asyncTests.push(new VideoTest());
+      this.asyncTests.push(new LanguageDector());
       sender.finalized = true;
-      this.numberOfTests = this.testList.length + 1;
+      this.numberOfTests = this.testList.length + this.asyncTests.length;
       this.numComplete = 0;
       postProgress = (function(_this) {
         return function() {
@@ -280,7 +282,12 @@
 
       })();
       new Tester(this.testList, $('#test_canvases'));
-      return vidTest.begin(postProgress);
+      ref5 = this.asyncTests;
+      for (l = 0, len = ref5.length; l < len; l++) {
+        test = ref5[l];
+        test.begin(postProgress);
+      }
+      return true;
     };
 
     return Loader;

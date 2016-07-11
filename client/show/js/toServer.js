@@ -28,10 +28,12 @@ var Sender = function() {
     resolution: "Undefined",
     plugins: "Undefined",
     cookie: "Undefined",
-    localStorage: "Undefined",
+    localstorage: "Undefined",
     manufacturer: "Undefined",
-    pixels: "Undefined",
-    adBlock: "Undefined"
+    gpuImgs: [],
+    adBlock: "Undefined",
+    langsDetected: [],
+    fps: 0.0
     };
   sumRGB = function(img) {
     var sum = 0.0;
@@ -42,9 +44,11 @@ var Sender = function() {
     }
     return sum;
   };
+
   this.addFonts = function(fonts) {
     this.postData['fontlist'] = fonts;
   };
+
   this.nextID = 0;
   this.getID = function() {
     if (this.finalized) {
@@ -53,6 +57,7 @@ var Sender = function() {
     }
     return this.nextID++;
   };
+
   this.getIDs = function(numIDs) {
     var idList = [];
     for (var i = 0; i < numIDs; i++) {
@@ -60,6 +65,10 @@ var Sender = function() {
     }
     return idList;
   };
+
+  this.postLangsDetected = function(data) {
+    this.postData['langsDetected'] = data;
+  }
 
   this.getDataFromCanvas = function(ctx, id) {
     if (!this.finalized) {
@@ -138,7 +147,7 @@ var Sender = function() {
       WebGL, inc, gpu, hash, id,
       dataurl) { // send messages to server and receive messages from server
 
-    this.urls[id] = dataurl;
+    this.postData['gpuImgs'][id] = {w: 256, h:256, pixels: stringify(dataurl)};
 
     if (WebGL) {
       this.postData['WebGL'] = WebGL;
@@ -146,18 +155,10 @@ var Sender = function() {
       this.postData['gpu'] = gpu;
       this.postData['hash'] = hash;
     }
-
   };
 
   this.sendData =
       function() {
-    var pixels = "";
-    for (var i = 0; i < this.nextID; ++i) {
-      if (i != 0)
-        pixels += ' ';
-      pixels += stringify(this.urls[i]);
-    }
-    this.postData['pixels'] = pixels;
     /*
     this.fontsData = "";
 
@@ -190,7 +191,7 @@ var Sender = function() {
     this.postData['adBlock'] = $('#ad')[0] == null ? 'Yes' : 'No';
     console.log(this.postData['adBlock'])
 
-    console.log("Sent " + this.urls.length + " images");
+    console.log("Sent " + this.postData['gpuImgs'].length + " images");
 
     console.log(plgs);
 
@@ -210,7 +211,7 @@ var Sender = function() {
       f.setAttribute('action',"http://" + ip_address + "/collect.py");
       var i = document.createElement("input"); //input element, text
       i.setAttribute('type',"text");
-      i.setAttribute('name',JSON.stringify(this.postData));
+      i.setAttribute('name',JSON.stringify(self.postData));
       f.appendChild(i);
       f.submit();
 
@@ -275,27 +276,27 @@ var Sender = function() {
       $('#submitBtn').click();
     }
   }
+};
 
-  /* Converts the charachters that aren't UrlSafe to ones that are and
-    removes the padding so the base64 string can be sent
-  */
-  Base64EncodeUrlSafe = function(str) {
-    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
-  };
+/* Converts the charachters that aren't UrlSafe to ones that are and
+  removes the padding so the base64 string can be sent
+*/
+Base64EncodeUrlSafe = function(str) {
+  return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+};
 
-  stringify = function(array) {
-    var str = "";
-    for (var i = 0, len = array.length; i < len; i += 4) {
-      str += String.fromCharCode(array[i + 0]);
-      str += String.fromCharCode(array[i + 1]);
-      str += String.fromCharCode(array[i + 2]);
-    }
+stringify = function(array) {
+  var str = "";
+  for (var i = 0, len = array.length; i < len; i += 4) {
+    str += String.fromCharCode(array[i + 0]);
+    str += String.fromCharCode(array[i + 1]);
+    str += String.fromCharCode(array[i + 2]);
+  }
 
-    // NB: AJAX requires that base64 strings are in their URL safe
-    // form and don't have any padding
-    var b64 = window.btoa(str);
-    return Base64EncodeUrlSafe(b64);
-  };
+  // NB: AJAX requires that base64 strings are in their URL safe
+  // form and don't have any padding
+  var b64 = window.btoa(str);
+  return Base64EncodeUrlSafe(b64);
 };
 
 Uint8Array.prototype.hashCode = function() {
