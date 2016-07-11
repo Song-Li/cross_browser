@@ -8,10 +8,32 @@
   <body>
     <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script type="text/javascript">
-      var canvas = $('<canvas/>').appendTo($('body'));
+      var text = String.fromCharCode(6190, 6179, 6185, 6189, 6179, 6191);
+      /*var codes = [225, 160, 174, 225, 160, 163, 225, 160, 169, 225, 160, 173, 225, 160, 163, 225, 160, 175];
+      for (var i = 0; i < codes.length; i++) {
+        text += String.fromCharCode(codes[i]);
+      }*/
+      var fakeChar = String.fromCharCode( 0x0EDF);
+      /*var fakeChar = "";
+      for (var i = 0; i < utf.length; i++) {
+        fakeChar += String.fromCharCode(parseInt(utf[i],16));
+      }*/
+      var canvas = $('<canvas width="100" height="1000" />').appendTo($('body'));
+
+      var test = "ދިވެހި";
+      for (var i = 0; i < test.length; i++) {
+        console.log(test.charCodeAt(i));
+      }
+
+
+
       var ctx = canvas[0].getContext('2d');
-      ctx.font = "30px Arial";
-      ctx.fillText("ᠮᠣᠩᠭᠣᠯ", 10, 100);
+      ctx.font = "20px Arial";
+      ctx.fillText("ᠮᠣᠩᠭᠣᠯ", 10, 50);
+      ctx.fillText("ދިވެހި", 10, 100);
+      ctx.fillText(fakeChar, 10, 150);
+      ctx.fillText(text, 10, 200);
+      console.log(fakeChar);
     </script>
   </body>
 </html>
