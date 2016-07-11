@@ -73,7 +73,7 @@ def getBrowser(vendor, agent):
     return browser
 
 
-def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys):
+def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys, DNT):
 
     user_id = one_test['user_id']
     vendor = one_test['inc']
@@ -97,7 +97,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     row = cursor.fetchone()
     if row is not None:
         image_id = row[0]
-        sql = "UPDATE {} SET ip='{}', vendor='{}', gpu='{}', agent='{}', browser='{}', fps='{}', manufacturer='{}', timezone='{}', resolution='{}', fontlist='{}', accept='{}', encoding='{}', language='{}', headerkeys='{}', plugins='{}', cookie='{}', localstorage='{}', adBlock='{}' where image_id='{}'".format(table_name, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, adBlock, image_id)
+        sql = "UPDATE {} SET ip='{}', vendor='{}', gpu='{}', agent='{}', browser='{}', fps='{}', manufacturer='{}', timezone='{}', resolution='{}', fontlist='{}', accept='{}', encoding='{}', language='{}', headerkeys='{}', plugins='{}', cookie='{}', localstorage='{}', dnt='{}', adBlock='{}' where image_id='{}'".format(table_name, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock, image_id)
         cursor.execute(sql)
         db.commit()
         return image_id
@@ -106,7 +106,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage, adBlock) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, adBlock)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage, dnt, adBlock) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock)
         cursor.execute(sql)
         db.commit()
         cursor.close()
@@ -161,11 +161,18 @@ def index(req):
     accept = req.headers_in['Accept']
     encoding = req.headers_in['Accept-Encoding']
     language = req.headers_in['Accept-Language']
+
+    DNT = 'NULL'
+    try:
+        DNT = req.headers_in['DNT']
+    except:
+        DNT = 'Not Defined'
+
     keys = "_".join(req.headers_in.keys())
 
     table_name = "new_data"
     time = str(datetime.datetime.now())
-    image_id = insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys)
+    image_id = insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys, DNT)
 
 
     pixels = one_test['pixels'].split(" ")
