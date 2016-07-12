@@ -3,7 +3,7 @@ from boto.mturk.price import Price
 import ConfigParser
 
 config = ConfigParser.ConfigParser()
-config.read("./keys.conf")
+config.read("./keys.ignore")
 ACCESS_ID = config.get('keys', 'ACCESS_ID')
 SECRET_KEY = config.get('keys', 'SECRET_KEY')
 
