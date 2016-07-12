@@ -69,7 +69,6 @@ root.LanguageDector = class LanguageDector
     @results = []
 
   begin: (@cb) ->
-    @count = 0
     tester = (index) =>
       if index is @codes.length
         console.log @results
@@ -81,9 +80,9 @@ root.LanguageDector = class LanguageDector
         for c in @codes[index]
           text += String.fromCharCode c
 
-        @ctx.fillStyle= "white"
+        @ctx.fillStyle = "white"
         @ctx.fillRect 0, 0, @width, @height
-        @ctx.fillStyle= "black"
+        @ctx.fillStyle = "black"
         @ctx.font = "#{@fontSize}px sans-serif"
         @ctx.fillText text, 5, @height - @extraHeigth/2.0
         @results.push

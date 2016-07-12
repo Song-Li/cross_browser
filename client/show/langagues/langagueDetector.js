@@ -33,7 +33,6 @@
     LanguageDector.prototype.begin = function(cb) {
       var tester;
       this.cb = cb;
-      this.count = 0;
       tester = (function(_this) {
         return function(index) {
           var c, i, len, ref, text;
