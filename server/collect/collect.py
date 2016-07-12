@@ -91,7 +91,11 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     plgs = one_test['plugins']
     cookie = one_test['cookie']
     localStorage = one_test['localstorage']
-    adBlock = one_test['adBlock']
+    adBlock = 'Null'
+    try:
+        adBlock = one_test['adBlock']
+    except:
+        adBlock = 'Null'
 
     cursor = db.cursor()
     cursor.execute("SELECT image_id FROM {} WHERE user_id='{}' AND agent='{}'".format(table_name, user_id, agent))
@@ -159,9 +163,15 @@ def index(req):
 
     agent = req.headers_in[ 'User-Agent' ]
     agent = agent.replace(',', ' ')
-    accept = req.headers_in['Accept']
-    encoding = req.headers_in['Accept-Encoding']
-    language = req.headers_in['Accept-Language']
+    accept = 'NULL'
+    encodeing = 'NULL'
+    language = 'NULL'
+    try:
+        accept = req.headers_in['Accept']
+        encoding = req.headers_in['Accept-Encoding']
+        language = req.headers_in['Accept-Language']
+    except:
+        pass
 
     DNT = 'NULL'
     try:
