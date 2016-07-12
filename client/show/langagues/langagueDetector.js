@@ -37,7 +37,7 @@
         return function(index) {
           var c, i, len, ref, text;
           if (index === _this.codes.length) {
-            console.log(_this.results);
+            console.log("Lang done");
             sender.postLangsDetected(_this.results);
             return _this.cb();
           } else {

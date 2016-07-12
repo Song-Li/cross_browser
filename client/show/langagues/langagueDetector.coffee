@@ -7,17 +7,17 @@ safeParseJSON = (s) ->
     return false
 
 raf = (
-    window.requestAnimationFrame or
-    window.mozRequestAnimationFrame or
-    window.webkitRequestAnimationFrame or
-    window.oRequestAnimationFrame
+  window.requestAnimationFrame or
+  window.mozRequestAnimationFrame or
+  window.webkitRequestAnimationFrame or
+  window.oRequestAnimationFrame
 )
 
 caf = (
-    window.cancelAnimationFrame or
-    window.mozcancelAnimationFrame or
-    window.webkitcancelAnimationFrame or
-    window.ocancelAnimationFrame
+  window.cancelAnimationFrame or
+  window.mozcancelAnimationFrame or
+  window.webkitcancelAnimationFrame or
+  window.ocancelAnimationFrame
 )
 
 root.LanguageDector = class LanguageDector
@@ -57,7 +57,8 @@ root.LanguageDector = class LanguageDector
     [1808,1834,1825,1821,1808],
     [1931,1960,1928,1964,1920,1960],
     [5123,5316,5251,5198,5200,5222],
-    [5091,5043,5033], [55295]]"
+    [5091,5043,5033],
+    [55295]]"
 
     @fontSize = 20
     @extraHeigth = 15
@@ -71,9 +72,8 @@ root.LanguageDector = class LanguageDector
   begin: (@cb) ->
     tester = (index) =>
       if index is @codes.length
-        console.log @results
+        console.log "Lang done"
         sender.postLangsDetected @results
-
         @cb()
       else
         text = ""
@@ -84,7 +84,8 @@ root.LanguageDector = class LanguageDector
         @ctx.fillRect 0, 0, @width, @height
         @ctx.fillStyle = "black"
         @ctx.font = "#{@fontSize}px sans-serif"
-        @ctx.fillText text, 5, @height - @extraHeigth/2.0
+        @ctx.fillText text, 5,  @height - @extraHeigth/2.0
+
         @results.push
           w: @width
           h: @height

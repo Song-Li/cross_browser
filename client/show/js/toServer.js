@@ -68,7 +68,7 @@ var Sender = function() {
 
   this.postLangsDetected = function(data) {
     this.postData['langsDetected'] = data;
-  }
+  };
 
   this.getDataFromCanvas = function(ctx, id) {
     if (!this.finalized) {
