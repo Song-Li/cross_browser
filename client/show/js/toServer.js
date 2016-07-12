@@ -147,7 +147,7 @@ var Sender = function() {
       WebGL, inc, gpu, hash, id,
       dataurl) { // send messages to server and receive messages from server
 
-    this.postData['gpuImgs'][id] = {w: 256, h:256, pixels: stringify(dataurl)};
+    this.postData['gpuImgs'][id] = {w: 256, h: 256, pixels: stringify(dataurl)};
 
     if (WebGL) {
       this.postData['WebGL'] = WebGL;
