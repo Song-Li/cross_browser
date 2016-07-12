@@ -1,11 +1,9 @@
 from boto.mturk.connection import MTurkConnection
 from boto.mturk.price import Price
 
-#ACCESS_ID = 'AKIAID3UBXF43NAUDSRQ'
-#SECRET_KEY = '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'
-
-ACCESS_ID = 'AKIAJUIWAR2Q2YQG2VAQ'
-SECRET_KEY = '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'
+ACCESS_ID = 'U2FsdGVkX1/qMoSUWBeff4jFDihBczJbZNFHc6Kn/tlpEDKiCCp9DGmdSte2CVmB'
+SECRET_KEY = 'U2FsdGVkX19KzfE5gaEi5Y5RFyZWOTHz8+IssrQ2Xi1LfK+MFAQFZYzlGxRsyWlCdgL1sB0ZVDHlI4gBqROpZw=='
+#encrypited
 
 
 HOST = 'mechanicalturk.amazonaws.com'
