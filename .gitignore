@@ -13,3 +13,4 @@ install_manifest.txt
 *imgs*
 *results*
 osx_script
+*.ignore
