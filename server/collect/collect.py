@@ -24,16 +24,15 @@ def saveImg(toSave, name):
     img_root = root + 'images/origins/'
     if not os.path.exists(img_root):
         os.makedirs(img_root)
-    width = toSave['w']
-    height = toSave['h']
-    #                       rows, cols
-    img = Image.new('RGB', (width, height))
+    cols = toSave['w']
+    rows = toSave['h']
+    img = Image.new('RGB', (cols, rows))
     pixel_map = img.load()
     img_data = rawToIntArray(decode(padb64(toSave['pixels'])))
 
     curr = 0
-    for i in range(height):
-        for j in range(width):
+    for j in range(rows):
+        for i in range(cols):
             pixel_map[i, j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2])
             curr += 3
 

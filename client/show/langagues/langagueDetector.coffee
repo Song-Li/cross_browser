@@ -59,7 +59,9 @@ root.LanguageDector = class LanguageDector
     [5123,5316,5251,5198,5200,5222],
     [5091,5043,5033], [55295]]"
 
-    @height = 20
+    @fontSize = 20
+    @extraHeigth = 15
+    @height = @fontSize + @extraHeigth
     @width = 100
     @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('#test_canvases')
     @ctx = @canvas[0].getContext '2d'
@@ -67,18 +69,23 @@ root.LanguageDector = class LanguageDector
     @results = []
 
   begin: (@cb) ->
+    @count = 0
     tester = (index) =>
       if index is @codes.length
+        console.log @results
         sender.postLangsDetected @results
-        console.log "Langs done"
+
         @cb()
       else
         text = ""
         for c in @codes[index]
           text += String.fromCharCode c
 
-        @ctx.clearRect 0, 0, @width, @height
-        @ctx.fillText text, 0, @height - 1
+        @ctx.fillStyle= "white"
+        @ctx.fillRect 0, 0, @width, @height
+        @ctx.fillStyle= "black"
+        @ctx.font = "#{@fontSize}px sans-serif"
+        @ctx.fillText text, 5, @height - @extraHeigth/2.0
         @results.push
           w: @width
           h: @height

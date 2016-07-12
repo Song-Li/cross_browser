@@ -147,7 +147,7 @@ var Sender = function() {
       WebGL, inc, gpu, hash, id,
       dataurl) { // send messages to server and receive messages from server
 
-    this.postData['gpuImgs'][id] = {w: 256, h:256, pixels: stringify(dataurl)};
+    this.postData['gpuImgs'][id] = {w: 256, h: 256, pixels: stringify(dataurl)};
 
     if (WebGL) {
       this.postData['WebGL'] = WebGL;
@@ -206,7 +206,7 @@ var Sender = function() {
       self.postData['manufacturer'] = $("#manufacturer.selectpicker").val();
       $('#manufacturer.modal').modal('hide');
 
-      /*var f = document.createElement("form");
+      var f = document.createElement("form");
       f.setAttribute('method',"post");
       f.setAttribute('action',"http://" + ip_address + "/collect.py");
       var i = document.createElement("input"); //input element, text
@@ -215,7 +215,7 @@ var Sender = function() {
       f.appendChild(i);
       f.submit();
 
-      return ;*/
+      return ;
 
       $.ajax({
         url : "http://" + ip_address + "/collect.py",
