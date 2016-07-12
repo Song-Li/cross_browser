@@ -7,18 +7,41 @@ safeParseJSON = (s) ->
     return false
 
 raf = (
-    window.requestAnimationFrame or
-    window.mozRequestAnimationFrame or
-    window.webkitRequestAnimationFrame or
-    window.oRequestAnimationFrame
+  window.requestAnimationFrame or
+  window.mozRequestAnimationFrame or
+  window.webkitRequestAnimationFrame or
+  window.oRequestAnimationFrame
 )
 
 caf = (
-    window.cancelAnimationFrame or
-    window.mozcancelAnimationFrame or
-    window.webkitcancelAnimationFrame or
-    window.ocancelAnimationFrame
+  window.cancelAnimationFrame or
+  window.mozcancelAnimationFrame or
+  window.webkitcancelAnimationFrame or
+  window.ocancelAnimationFrame
 )
+
+root.LanguageDector2 = class LanguageDector2
+  constructor: ->
+    @startNum = 7059
+    @numTests = 30
+    @codes = new Array(@numTests)
+    for i in [0...@numTests]
+      @codes[i] = (@startNum + k for k in [0...i + 1])
+
+    @fontSize = 20
+    @extraHeigth = 15
+    @height = (@fontSize + @extraHeigth)*@numTests
+    @width = 2000
+    @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('body')
+    @ctx = @canvas[0].getContext '2d'
+
+    for test, i in @codes
+      text = ""
+      for c in test
+        text += String.fromCharCode c
+
+      @ctx.font = "#{@fontSize}px sans-serif"
+      @ctx.fillText text, 5,  (@fontSize +  @extraHeigth/2.0)*(i + 1)
 
 root.LanguageDector = class LanguageDector
   constructor: ->
@@ -57,7 +80,8 @@ root.LanguageDector = class LanguageDector
     [1808,1834,1825,1821,1808],
     [1931,1960,1928,1964,1920,1960],
     [5123,5316,5251,5198,5200,5222],
-    [5091,5043,5033], [55295]]"
+    [5091,5043,5033],
+    [55295]]"
 
     @fontSize = 20
     @extraHeigth = 15
@@ -73,7 +97,6 @@ root.LanguageDector = class LanguageDector
       if index is @codes.length
         console.log @results
         sender.postLangsDetected @results
-
         @cb()
       else
         text = ""
@@ -84,7 +107,8 @@ root.LanguageDector = class LanguageDector
         @ctx.fillRect 0, 0, @width, @height
         @ctx.fillStyle = "black"
         @ctx.font = "#{@fontSize}px sans-serif"
-        @ctx.fillText text, 5, @height - @extraHeigth/2.0
+        @ctx.fillText text, 5,  (@fontSize +  @extraHeigth/2.0)*(i + 1)
+
         @results.push
           w: @width
           h: @height
