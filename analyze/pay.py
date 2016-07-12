@@ -1,9 +1,11 @@
 from boto.mturk.connection import MTurkConnection
 from boto.mturk.price import Price
+import ConfigParser
 
-ACCESS_ID = 'U2FsdGVkX1/qMoSUWBeff4jFDihBczJbZNFHc6Kn/tlpEDKiCCp9DGmdSte2CVmB'
-SECRET_KEY = 'U2FsdGVkX19KzfE5gaEi5Y5RFyZWOTHz8+IssrQ2Xi1LfK+MFAQFZYzlGxRsyWlCdgL1sB0ZVDHlI4gBqROpZw=='
-#encrypited
+config = ConfigParser.ConfigParser()
+config.read("./keys.conf")
+ACCESS_ID = config.get('keys', 'ACCESS_ID')
+SECRET_KEY = config.get('keys', 'SECRET_KEY')
 
 
 HOST = 'mechanicalturk.amazonaws.com'
