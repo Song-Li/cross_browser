@@ -84,9 +84,9 @@ root.LanguageDector = class LanguageDector
           h: @height
           pixels: stringify @ctx.getImageData(0, 0, @width, @height).data
 
-        raf () ->
+        raf ->
           tester index + 1
 
-    raf () ->
+    raf ->
       tester 0
 

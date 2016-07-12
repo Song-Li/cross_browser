@@ -10,7 +10,7 @@ import json
 from PIL import Image, ImageChops, ImageFilter
 import linecache
 import MySQLdb
-from random import randint, seed
+from random import randint
 from base64 import urlsafe_b64decode as decode, urlsafe_b64encode as encode
 from hashlib import md5 as hasher
 
@@ -26,16 +26,17 @@ def saveImg(toSave, name):
         os.makedirs(img_root)
     width = toSave['w']
     height = toSave['h']
+    #                       rows, cols
     img = Image.new('RGB', (width, height))
     pixel_map = img.load()
     img_data = rawToIntArray(decode(padb64(toSave['pixels'])))
 
     curr = 0
-    for i in range(width):
-        for j in range(height):
-            pixel_map[i,j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2])
+    for i in range(height):
+        for j in range(width):
+            pixel_map[i, j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2])
             curr += 3
-    img = img.rotate(90)
+
     img.save(img_root + name + '.png')
 
 def gen_image_id(cursor, table_name, MAX_ID):
