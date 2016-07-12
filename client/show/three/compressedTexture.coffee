@@ -1,4 +1,7 @@
-window.CompressedTextureTest = class CompressedTextureTest
+root = exports ? this
+
+root.CompressedTextureTest = class CompressedTextureTest
+
   textureRoot = 'three/textures/compressed/'
   geometry = new THREE.BoxGeometry(150, 150, 150)
   startX = -400
@@ -12,7 +15,6 @@ window.CompressedTextureTest = class CompressedTextureTest
       @camera.position.z = 1000
 
       @scene = new THREE.Scene()
-
 
       ###
       This is how compressed textures are supposed to be used:
@@ -224,7 +226,7 @@ window.CompressedTextureTest = class CompressedTextureTest
       raf animate
 
   constructor: ->
-    if !Detector.webgl then Detector.addGetWebGLMessage()
+    if not Detector.webgl then Detector.addGetWebGLMessage()
     @tests = []
     @tests.push new DDSTest sender.getID()
     @tests.push new PVRTest sender.getID()

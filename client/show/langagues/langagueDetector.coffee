@@ -20,29 +20,6 @@ caf = (
   window.ocancelAnimationFrame
 )
 
-root.LanguageDector2 = class LanguageDector2
-  constructor: ->
-    @startNum = 7059
-    @numTests = 30
-    @codes = new Array(@numTests)
-    for i in [0...@numTests]
-      @codes[i] = (@startNum + k for k in [0...i + 1])
-
-    @fontSize = 20
-    @extraHeigth = 15
-    @height = (@fontSize + @extraHeigth)*@numTests
-    @width = 2000
-    @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('body')
-    @ctx = @canvas[0].getContext '2d'
-
-    for test, i in @codes
-      text = ""
-      for c in test
-        text += String.fromCharCode c
-
-      @ctx.font = "#{@fontSize}px sans-serif"
-      @ctx.fillText text, 5,  (@fontSize +  @extraHeigth/2.0)*(i + 1)
-
 root.LanguageDector = class LanguageDector
   constructor: ->
     @codes = safeParseJSON "[[76,97,116,105,110],
@@ -95,7 +72,7 @@ root.LanguageDector = class LanguageDector
   begin: (@cb) ->
     tester = (index) =>
       if index is @codes.length
-        console.log @results
+        console.log "Lang done"
         sender.postLangsDetected @results
         @cb()
       else
@@ -107,7 +84,7 @@ root.LanguageDector = class LanguageDector
         @ctx.fillRect 0, 0, @width, @height
         @ctx.fillStyle = "black"
         @ctx.font = "#{@fontSize}px sans-serif"
-        @ctx.fillText text, 5,  (@fontSize +  @extraHeigth/2.0)*(i + 1)
+        @ctx.fillText text, 5,  @height - @extraHeigth/2.0
 
         @results.push
           w: @width
