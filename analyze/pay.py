@@ -1,8 +1,10 @@
 from boto.mturk.connection import MTurkConnection
 from boto.mturk.price import Price
+import MySQLdb
 import ConfigParser
+db_name = 'cross_browser'
 
-def decode(code):
+def decode(cursor, code):
     mapping = ['D','E','F','B','G','M','N','A','I','L']
     res = ""
     for c in code:
@@ -13,7 +15,26 @@ def decode(code):
                 return '-1'
         else:
             res += '_'
+
+    if res == '':
+        return '-1'
+
+    uid = -1
+    if res.find('_') != -1:
+        uid = int(res[:-2])
+    else:
+        uid = int(res)
+
+    cursor.execute("SELECT payed FROM {} WHERE id='{}'".format('uid', uid))
+    data = cursor.fetchone()
+    if data == None or data[0] != None:
+        return '-1'
+
     return res
+
+def update(cursor, uid, text):
+    cursor.execute("UPDATE {} SET payed='{}' WHERE id='{}'".format('uid', text, uid))
+    
 
 def bonus(mturk, price, workerId, assignmentId):
     mturk.grant_bonus(workerId, assignmentId, price, 'Thank you for finishing three browsers!')
@@ -28,8 +49,6 @@ def reject(mturk, workerId, assignmentId):
     mturk.reject_assignment(assignmentId, feedback="Not the right code or you have already done the same task!")
     print 'rejected', workerId
 
-
-
 config = ConfigParser.ConfigParser()
 config.read("./keys.ignore")
 ACCESS_ID = config.get('keys', 'ACCESS_ID')
@@ -43,27 +62,31 @@ mturk = MTurkConnection(aws_access_key_id=ACCESS_ID,
         aws_secret_access_key=SECRET_KEY,
         host=HOST)
 hits = mturk.get_all_hits()
+db = MySQLdb.connect("localhost", "erik", "erik", db_name)
+cursor = db.cursor()
 
 
 for hit in hits:
-    print "hit ID: ", hit.HITId
     assignments = mturk.get_assignments(hit.HITId, status="Submitted", page_size=100)
     #assignments = mturk.get_assignments(hit.HITId, page_size=100)
-    print len(assignments)
+    if len(assignments) != 0:
+        print len(assignments)
     for assignment in assignments:
         print assignment.WorkerId
         answers = assignment.answers[0]
         code = "-1"
         for answer in answers:
             if answer.qid == 'Q5FreeTextInput':
-                code = decode(answer.fields[0])
+                code = decode(cursor, answer.fields[0])
 
         if code != '-1':
             if(code.find('_') != -1):
                 bonus(mturk, price, assignment.WorkerId, assignment.AssignmentId)
+                update(cursor, code[:-2], 'bouns')
+                db.commit()
             else:
                 approve(mturk, assignment.WorkerId, assignment.AssignmentId)
+                update(cursor, code, 'approve')
+                db.commit()
         else:
             reject(mturk, assignment.WorkerId, assignment.AssignmentId)
-
-
