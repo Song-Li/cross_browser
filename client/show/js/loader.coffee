@@ -1,3 +1,7 @@
+# This file is responsible for laoding the in the assets needed
+# by each program if they are shared and it is responsible for
+# syncronizing the tests and sender
+
 root = exports ? this
 
 root.createCopyButton = createCopyButton = (text, home) ->

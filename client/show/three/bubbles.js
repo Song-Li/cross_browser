@@ -1,3 +1,9 @@
+/***
+* This test uses a cube texture which is a different type of texture
+* that uses 6 images to simulate a 3D texture.  This test also utilizes
+* bubbles that are modeled using a Fersnel Shader
+***/
+
 var BubbleTest = function() {
   var ID = sender.getID();
 
