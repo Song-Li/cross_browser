@@ -1,3 +1,10 @@
+# Compressed Texture Test
+# This test use two different formats of compressed textures to test how
+# the GPU decompress the textures (and which formats it supports).  Compressed
+# textures differ from normal textures as webgl cannot decompress them and
+# thus the raw byte values are sent directly to the GPU for decompression
+# This makes use of a variety of different webgl compressed texture extensions
+
 root = exports ? this
 
 root.CompressedTextureTest = class CompressedTextureTest
@@ -8,6 +15,9 @@ root.CompressedTextureTest = class CompressedTextureTest
   xStop = Math.abs startX
   startY = -200
   delta = 250
+
+  # class that takes care of loading and testing the .dds compressed
+  # texture format
   class DDSTest
     constructor: (@id) ->
 
@@ -126,6 +136,8 @@ root.CompressedTextureTest = class CompressedTextureTest
 
       raf animate
 
+  # class that takes care of loading and testing the .pvr texture format
+  # As of July 13th, 2016 .pvr is still in draft mode for webgl
   class PVRTest
     constructor: (@id) ->
       @camera = new THREE.PerspectiveCamera(60, 1, 1, 2000)
