@@ -17,7 +17,7 @@ root = exports ? this
 safeParseJSON = (s) ->
   try
     JSON.parse s
-  catch e
+  catch
     false
 
 raf = (

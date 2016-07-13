@@ -20,11 +20,10 @@ sort of box
   root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
   safeParseJSON = function(s) {
-    var e, error;
+    var error;
     try {
       return JSON.parse(s);
     } catch (error) {
-      e = error;
       return false;
     }
   };
