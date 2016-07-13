@@ -1,9 +1,11 @@
-# Compressed Texture Test
-# This test use two different formats of compressed textures to test how
-# the GPU decompress the textures (and which formats it supports).  Compressed
-# textures differ from normal textures as webgl cannot decompress them and
-# thus the raw byte values are sent directly to the GPU for decompression
-# This makes use of a variety of different webgl compressed texture extensions
+###
+Compressed Texture Test
+This test use two different formats of compressed textures to test how
+the GPU decompress the textures (and which formats it supports).  Compressed
+textures differ from normal textures as webgl cannot decompress them and
+thus the raw byte values are sent directly to the GPU for decompression
+This makes use of a variety of different webgl compressed texture extensions
+###
 
 root = exports ? this
 

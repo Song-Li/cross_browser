@@ -1,8 +1,9 @@
-# This test uses a depth texture to do shadow mapping
-# A depth texture uses the webgl float texture extension and the webgl
-# depth texture extensions.  This is testing whether those extensions exist
-# and how they are implemented on the GPU
-
+###
+This test uses a depth texture to do shadow mapping
+A depth texture uses the webgl float texture extension and the webgl
+depth texture extensions.  This is testing whether those extensions exist
+and how they are implemented on the GPU
+###
 
 window.ShadowTest = class ShadowTest
     constructor: ->
