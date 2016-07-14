@@ -34,7 +34,7 @@ var Sender = function() {
     adBlock: "Undefined",
     langsDetected: [],
     fps: 0.0
-    };
+  };
   sumRGB = function(img) {
     var sum = 0.0;
     for (var i = 0; i < img.length; i += 4) {
