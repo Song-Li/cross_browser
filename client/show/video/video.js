@@ -153,6 +153,7 @@ var VideoCollector = function(webmVid, mp4Vid, id) {
 
 // Document on ready jquery shortcut
 var VideoTest = function() {
+
   var vidCollector =
       new VideoCollector("./video/rainbow.webm", "./video/rainbow.mp4", 0);
 
