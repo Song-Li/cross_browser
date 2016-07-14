@@ -5,6 +5,7 @@ import ConfigParser
 db_name = 'cross_browser'
 
 def decode(cursor, code):
+    code.strip()
     mapping = ['D','E','F','B','G','M','N','A','I','L']
     res = ""
     for c in code:
@@ -67,17 +68,18 @@ cursor = db.cursor()
 
 
 for hit in hits:
+    if hit.HITStatus != 'Assignable':
+        continue
     assignments = mturk.get_assignments(hit.HITId, status="Submitted", page_size=100)
     #assignments = mturk.get_assignments(hit.HITId, page_size=100)
-    if len(assignments) != 0:
-        print len(assignments)
+
     for assignment in assignments:
-        print assignment.WorkerId
         answers = assignment.answers[0]
         code = "-1"
         for answer in answers:
             if answer.qid == 'Q5FreeTextInput':
                 code = decode(cursor, answer.fields[0])
+        print code
 
         if code != '-1':
             if(code.find('_') != -1):
