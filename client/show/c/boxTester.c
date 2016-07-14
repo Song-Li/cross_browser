@@ -1,11 +1,13 @@
 #include <stdlib.h>
 
+#define imAccess(__array, __y, __x) (__array)[(__y)*cols + (__x)]
+
 int boxTester(unsigned char * pixels, int rows, int cols) {
   int * xCountSet = (int *)calloc(cols, sizeof(int));
   for (int j = 0; j < rows; ++j) {
     int xcount = 0;
     for (int i = 0; i < cols; ++i) {
-      if (pixels[j*cols + i])
+      if (imAccess(pixels, j, i))
         ++xcount;
     }
     ++xCountSet[xcount];
@@ -20,7 +22,7 @@ int boxTester(unsigned char * pixels, int rows, int cols) {
   for (int i = 0; i < cols; ++i) {
     int ycount = 0;
     for (int j = 0; j < rows; ++j) {
-      if (pixels[j*cols + i])
+      if (imAccess(pixels, j, i))
         ++ycount;
     }
     ++yCountSet[ycount];
