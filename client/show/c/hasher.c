@@ -17,7 +17,7 @@ static int mod_table[] = {0, 2, 1};
 char *base64_encode(const unsigned char *data, size_t input_length,
                     size_t *output_length) {
 
-  *output_length = 4 * ((input_length + 2) / 3) - mod_table[input_length % 3];
+  *output_length = 4 * ((input_length + 2) / 3);
 
   char *encoded_data = malloc(*output_length);
   if (encoded_data == NULL)
@@ -36,6 +36,9 @@ char *base64_encode(const unsigned char *data, size_t input_length,
     encoded_data[j++] = encoding_table[(triple >> (1 * 6)) & 0x3F];
     encoded_data[j++] = encoding_table[(triple >> (0 * 6)) & 0x3F];
   }
+
+  for (int i = 0; i < mod_table[input_length % 3]; i++)
+    encoded_data[*output_length - 1 - i] = '=';
 
   return encoded_data;
 }

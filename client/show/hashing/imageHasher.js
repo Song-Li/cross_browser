@@ -5,9 +5,7 @@
   root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
   hasher = $(function() {
-    var emscripten;
-    emscripten = Module();
-    return hasher = emscripten.cwrap('pixelsToHashCode', 'string', ['string', 'number']);
+    return Module().cwrap('pixelsToHashCode', 'string', ['string', 'number']);
   });
 
   root.hashRGB = hashRGB = function(pixels) {

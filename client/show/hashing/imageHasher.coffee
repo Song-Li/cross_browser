@@ -2,8 +2,7 @@ root = exports ? this
 
 
 hasher = $ ->
-  emscripten = Module()
-  hasher = emscripten.cwrap 'pixelsToHashCode', 'string', ['string', 'number']
+  Module().cwrap 'pixelsToHashCode', 'string', ['string', 'number']
 
 root.hashRGB = hashRGB = (pixels) ->
   raw = ""

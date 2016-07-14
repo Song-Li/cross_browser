@@ -71,22 +71,42 @@ root.LanguageDector = class LanguageDector
     [1808,1834,1825,1821,1808],
     [1931,1960,1928,1964,1920,1960],
     [5123,5316,5251,5198,5200,5222],
-    [5091,5043,5033],
-    [55295]]"
+    [5091,5043,5033]]"
 
-    @fontSize = 20
+    @fontSize = 10
     @extraHeigth = 15
     @height = @fontSize + @extraHeigth
-    @width = 100
+    @width = 500
     @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('#test_canvases')
     @ctx = @canvas[0].getContext '2d'
 
     @results = []
 
+    @boxTester = Module().cwrap 'boxTester', 'number', ['string', 'number', 'number']
+
+  testIfBoxes: (pixels, rows, cols) ->
+    binaryImage = new Uint8Array rows*cols
+    for i in [0...rows*cols]
+      R = pixels[4*i + 0]
+      G = pixels[4*i + 1]
+      B = pixels[4*i + 2]
+      L = R * 299/1000 + G * 587/1000 + B * 114/1000
+      if L < 255/2
+        binaryImage[i] = 1
+      else
+        binaryImage[i] = 0
+
+    raw = ""
+    for pix in binaryImage
+      raw += String.fromCharCode pix
+
+    @boxTester raw, rows, cols
+
   begin: (@cb) ->
+    @count = 0
     tester = (index) =>
       if index is @codes.length
-        console.log "Lang done"
+        console.log @results
         sender.postLangsDetected @results
         @cb()
       else
@@ -94,19 +114,21 @@ root.LanguageDector = class LanguageDector
         for c in @codes[index]
           text += String.fromCharCode c
 
+
+        @ctx.shadowBlur = 0
+        @ctx.shadowColor = "#00FFFFFF"
         @ctx.fillStyle = "white"
         @ctx.fillRect 0, 0, @width, @height
         @ctx.fillStyle = "black"
         @ctx.font = "#{@fontSize}px sans-serif"
-        @ctx.fillText text, 5,  @height - @extraHeigth/2.0
-
-        @results.push
-          w: @width
-          h: @height
-          pixels: stringify @ctx.getImageData(0, 0, @width, @height).data
+        @ctx.strokeText text, 5,  @height - @extraHeigth/2.0
+        # Pixel array is ROW-MAJOR
+        pixels = @ctx.getImageData(0, 0, @width, @height).data
+        isBoxes = @testIfBoxes pixels, @height, @width
+        @results.push(if isBoxes then 0 else 1)
 
         raf ->
-          tester index + 1
+            tester index + 1
 
     raf ->
       tester 0

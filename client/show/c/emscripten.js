@@ -9488,6 +9488,162 @@ function _keccak_chi($A) {
  return;
 }
 
+function _boxTester($pixels, $rows, $cols) {
+ $pixels = $pixels | 0;
+ $rows = $rows | 0;
+ $cols = $cols | 0;
+ var $0 = 0, $1 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $2 = 0, $20 = 0, $21 = 0, $22 = 0, $23 = 0, $24 = 0, $25 = 0, $26 = 0;
+ var $27 = 0, $28 = 0, $29 = 0, $3 = 0, $30 = 0, $31 = 0, $32 = 0, $33 = 0, $34 = 0, $35 = 0, $36 = 0, $37 = 0, $38 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $exitcond = 0;
+ var $exitcond27 = 0, $exitcond28 = 0, $exitcond29 = 0, $exitcond30 = 0, $exitcond31 = 0, $i$022 = 0, $i1$017 = 0, $i2$014 = 0, $j$026 = 0, $j3$010 = 0, $j4$08 = 0, $not$ = 0, $not$1 = 0, $not$2 = 0, $not$3 = 0, $numXCounts$0$ = 0, $numXCounts$0$lcssa = 0, $numXCounts$016 = 0, $numYCounts$0$ = 0, $numYCounts$0$$lcssa = 0;
+ var $numYCounts$0$lcssa = 0, $numYCounts$07 = 0, $phitmp = 0, $xcount$0$ = 0, $xcount$0$lcssa = 0, $xcount$021 = 0, $ycount$0$ = 0, $ycount$0$lcssa = 0, $ycount$09 = 0, label = 0, sp = 0;
+ sp = STACKTOP;
+ $0 = _calloc($cols, 4) | 0;
+ $1 = ($rows | 0) > 0;
+ if ($1) {
+  $2 = ($cols | 0) > 0;
+  $j$026 = 0;
+  while (1) {
+   if ($2) {
+    $3 = Math_imul($j$026, $cols) | 0;
+    $i$022 = 0;
+    $xcount$021 = 0;
+    while (1) {
+     $5 = $i$022 + $3 | 0;
+     $6 = $pixels + $5 | 0;
+     $7 = HEAP8[$6 >> 0] | 0;
+     $not$3 = $7 << 24 >> 24 != 0;
+     $8 = $not$3 & 1;
+     $xcount$0$ = $8 + $xcount$021 | 0;
+     $9 = $i$022 + 1 | 0;
+     $exitcond30 = ($9 | 0) == ($cols | 0);
+     if ($exitcond30) {
+      $xcount$0$lcssa = $xcount$0$;
+      break;
+     } else {
+      $i$022 = $9;
+      $xcount$021 = $xcount$0$;
+     }
+    }
+   } else {
+    $xcount$0$lcssa = 0;
+   }
+   $10 = $0 + ($xcount$0$lcssa << 2) | 0;
+   $11 = HEAP32[$10 >> 2] | 0;
+   $12 = $11 + 1 | 0;
+   HEAP32[$10 >> 2] = $12;
+   $13 = $j$026 + 1 | 0;
+   $exitcond31 = ($13 | 0) == ($rows | 0);
+   if ($exitcond31) {
+    break;
+   } else {
+    $j$026 = $13;
+   }
+  }
+ }
+ $4 = ($cols | 0) > 0;
+ if ($4) {
+  $i1$017 = 0;
+  $numXCounts$016 = 0;
+  while (1) {
+   $14 = $0 + ($i1$017 << 2) | 0;
+   $15 = HEAP32[$14 >> 2] | 0;
+   $not$2 = ($15 | 0) != 0;
+   $16 = $not$2 & 1;
+   $numXCounts$0$ = $16 + $numXCounts$016 | 0;
+   $17 = $i1$017 + 1 | 0;
+   $exitcond29 = ($17 | 0) == ($cols | 0);
+   if ($exitcond29) {
+    $numXCounts$0$lcssa = $numXCounts$0$;
+    break;
+   } else {
+    $i1$017 = $17;
+    $numXCounts$016 = $numXCounts$0$;
+   }
+  }
+ } else {
+  $numXCounts$0$lcssa = 0;
+ }
+ _free($0);
+ $18 = _calloc($rows, 4) | 0;
+ $19 = ($cols | 0) > 0;
+ if ($19) {
+  $20 = ($rows | 0) > 0;
+  $i2$014 = 0;
+  while (1) {
+   if ($20) {
+    $j3$010 = 0;
+    $ycount$09 = 0;
+    while (1) {
+     $22 = Math_imul($j3$010, $cols) | 0;
+     $23 = $22 + $i2$014 | 0;
+     $24 = $pixels + $23 | 0;
+     $25 = HEAP8[$24 >> 0] | 0;
+     $not$1 = $25 << 24 >> 24 != 0;
+     $26 = $not$1 & 1;
+     $ycount$0$ = $26 + $ycount$09 | 0;
+     $27 = $j3$010 + 1 | 0;
+     $exitcond27 = ($27 | 0) == ($rows | 0);
+     if ($exitcond27) {
+      $ycount$0$lcssa = $ycount$0$;
+      break;
+     } else {
+      $j3$010 = $27;
+      $ycount$09 = $ycount$0$;
+     }
+    }
+   } else {
+    $ycount$0$lcssa = 0;
+   }
+   $28 = $18 + ($ycount$0$lcssa << 2) | 0;
+   $29 = HEAP32[$28 >> 2] | 0;
+   $30 = $29 + 1 | 0;
+   HEAP32[$28 >> 2] = $30;
+   $31 = $i2$014 + 1 | 0;
+   $exitcond28 = ($31 | 0) == ($cols | 0);
+   if ($exitcond28) {
+    break;
+   } else {
+    $i2$014 = $31;
+   }
+  }
+ }
+ $21 = ($rows | 0) > 0;
+ if ($21) {
+  $j4$08 = 0;
+  $numYCounts$07 = 0;
+ } else {
+  $numYCounts$0$lcssa = 1;
+  _free($18);
+  $36 = ($numXCounts$0$lcssa | 0) < 5;
+  $37 = $36 & $numYCounts$0$lcssa;
+  $38 = $37 & 1;
+  return $38 | 0;
+ }
+ while (1) {
+  $32 = $18 + ($j4$08 << 2) | 0;
+  $33 = HEAP32[$32 >> 2] | 0;
+  $not$ = ($33 | 0) != 0;
+  $34 = $not$ & 1;
+  $numYCounts$0$ = $34 + $numYCounts$07 | 0;
+  $35 = $j4$08 + 1 | 0;
+  $exitcond = ($35 | 0) == ($rows | 0);
+  if ($exitcond) {
+   $numYCounts$0$$lcssa = $numYCounts$0$;
+   break;
+  } else {
+   $j4$08 = $35;
+   $numYCounts$07 = $numYCounts$0$;
+  }
+ }
+ $phitmp = ($numYCounts$0$$lcssa | 0) < 5;
+ $numYCounts$0$lcssa = $phitmp;
+ _free($18);
+ $36 = ($numXCounts$0$lcssa | 0) < 5;
+ $37 = $36 & $numYCounts$0$lcssa;
+ $38 = $37 & 1;
+ return $38 | 0;
+}
+
 function ___stdio_write($f, $buf, $len) {
  $f = $f | 0;
  $buf = $buf | 0;
@@ -9639,97 +9795,118 @@ function _base64_encode($data, $input_length, $output_length) {
  $data = $data | 0;
  $input_length = $input_length | 0;
  $output_length = $output_length | 0;
- var $$0 = 0, $0 = 0, $1 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $2 = 0, $20 = 0, $21 = 0, $22 = 0, $23 = 0, $24 = 0, $25 = 0;
- var $26 = 0, $27 = 0, $28 = 0, $29 = 0, $3 = 0, $30 = 0, $31 = 0, $32 = 0, $33 = 0, $34 = 0, $35 = 0, $36 = 0, $37 = 0, $38 = 0, $39 = 0, $4 = 0, $40 = 0, $41 = 0, $42 = 0, $43 = 0;
- var $44 = 0, $45 = 0, $46 = 0, $47 = 0, $48 = 0, $49 = 0, $5 = 0, $50 = 0, $51 = 0, $52 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $i$02 = 0, $i$2 = 0, $i$3 = 0, $j$01 = 0, label = 0, sp = 0;
+ var $$0 = 0, $$off = 0, $0 = 0, $1 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $2 = 0, $20 = 0, $21 = 0, $22 = 0, $23 = 0, $24 = 0;
+ var $25 = 0, $26 = 0, $27 = 0, $28 = 0, $29 = 0, $3 = 0, $30 = 0, $31 = 0, $32 = 0, $33 = 0, $34 = 0, $35 = 0, $36 = 0, $37 = 0, $38 = 0, $39 = 0, $4 = 0, $40 = 0, $41 = 0, $42 = 0;
+ var $43 = 0, $44 = 0, $45 = 0, $46 = 0, $47 = 0, $48 = 0, $49 = 0, $5 = 0, $50 = 0, $51 = 0, $52 = 0, $53 = 0, $54 = 0, $55 = 0, $56 = 0, $57 = 0, $58 = 0, $6 = 0, $7 = 0, $8 = 0;
+ var $9 = 0, $i$04 = 0, $i$2 = 0, $i$3 = 0, $i1$02 = 0, $j$03 = 0, label = 0, sp = 0;
  sp = STACKTOP;
  $0 = $input_length + 2 | 0;
  $1 = ($0 >>> 0) / 3 & -1;
  $2 = $1 << 2;
- $3 = ($input_length >>> 0) % 3 & -1;
- $4 = 200 + ($3 << 2) | 0;
- $5 = HEAP32[$4 >> 2] | 0;
- $6 = $2 - $5 | 0;
- HEAP32[$output_length >> 2] = $6;
- $7 = _malloc($6) | 0;
- $8 = ($7 | 0) == (0 | 0);
- if ($8) {
+ HEAP32[$output_length >> 2] = $2;
+ $3 = _malloc($2) | 0;
+ $4 = ($3 | 0) == (0 | 0);
+ if ($4) {
   $$0 = 0;
   return $$0 | 0;
  }
- $9 = ($input_length | 0) == 0;
- if ($9) {
-  $$0 = $7;
+ $5 = ($input_length | 0) == 0;
+ if ($5) {
+  $$0 = $3;
   return $$0 | 0;
  } else {
-  $i$02 = 0;
-  $j$01 = 0;
+  $i$04 = 0;
+  $j$03 = 0;
  }
  while (1) {
-  $10 = $i$02 + 1 | 0;
-  $11 = $data + $i$02 | 0;
-  $12 = HEAP8[$11 >> 0] | 0;
-  $13 = $12 & 255;
-  $14 = $10 >>> 0 < $input_length >>> 0;
-  if ($14) {
-   $15 = $i$02 + 2 | 0;
-   $16 = $data + $10 | 0;
-   $17 = HEAP8[$16 >> 0] | 0;
-   $18 = $17 & 255;
-   $26 = $18;
-   $i$2 = $15;
+  $11 = $i$04 + 1 | 0;
+  $12 = $data + $i$04 | 0;
+  $13 = HEAP8[$12 >> 0] | 0;
+  $14 = $13 & 255;
+  $15 = $11 >>> 0 < $input_length >>> 0;
+  if ($15) {
+   $16 = $i$04 + 2 | 0;
+   $17 = $data + $11 | 0;
+   $18 = HEAP8[$17 >> 0] | 0;
+   $19 = $18 & 255;
+   $27 = $19;
+   $i$2 = $16;
   } else {
-   $26 = 0;
-   $i$2 = $10;
+   $27 = 0;
+   $i$2 = $11;
   }
-  $19 = $i$2 >>> 0 < $input_length >>> 0;
-  if ($19) {
-   $20 = $i$2 + 1 | 0;
-   $21 = $data + $i$2 | 0;
-   $22 = HEAP8[$21 >> 0] | 0;
-   $23 = $22 & 255;
-   $29 = $23;
-   $i$3 = $20;
+  $20 = $i$2 >>> 0 < $input_length >>> 0;
+  if ($20) {
+   $21 = $i$2 + 1 | 0;
+   $22 = $data + $i$2 | 0;
+   $23 = HEAP8[$22 >> 0] | 0;
+   $24 = $23 & 255;
+   $30 = $24;
+   $i$3 = $21;
   } else {
-   $29 = 0;
+   $30 = 0;
    $i$3 = $i$2;
   }
-  $24 = $13 << 16;
-  $25 = $26 << 8;
-  $27 = $25 | $24;
-  $28 = $29 | $25;
-  $30 = $13 >>> 2;
-  $31 = 872 + $30 | 0;
-  $32 = HEAP8[$31 >> 0] | 0;
-  $33 = $j$01 | 1;
-  $34 = $7 + $j$01 | 0;
-  HEAP8[$34 >> 0] = $32;
-  $35 = $27 >>> 12;
-  $36 = $35 & 63;
-  $37 = 872 + $36 | 0;
-  $38 = HEAP8[$37 >> 0] | 0;
-  $39 = $j$01 | 2;
-  $40 = $7 + $33 | 0;
-  HEAP8[$40 >> 0] = $38;
-  $41 = $28 >>> 6;
-  $42 = $41 & 63;
-  $43 = 872 + $42 | 0;
-  $44 = HEAP8[$43 >> 0] | 0;
-  $45 = $j$01 | 3;
-  $46 = $7 + $39 | 0;
-  HEAP8[$46 >> 0] = $44;
-  $47 = $29 & 63;
-  $48 = 872 + $47 | 0;
-  $49 = HEAP8[$48 >> 0] | 0;
-  $50 = $j$01 + 4 | 0;
-  $51 = $7 + $45 | 0;
-  HEAP8[$51 >> 0] = $49;
-  $52 = $i$3 >>> 0 < $input_length >>> 0;
-  if ($52) {
-   $i$02 = $i$3;
-   $j$01 = $50;
+  $25 = $14 << 16;
+  $26 = $27 << 8;
+  $28 = $26 | $25;
+  $29 = $30 | $26;
+  $31 = $14 >>> 2;
+  $32 = 872 + $31 | 0;
+  $33 = HEAP8[$32 >> 0] | 0;
+  $34 = $j$03 | 1;
+  $35 = $3 + $j$03 | 0;
+  HEAP8[$35 >> 0] = $33;
+  $36 = $28 >>> 12;
+  $37 = $36 & 63;
+  $38 = 872 + $37 | 0;
+  $39 = HEAP8[$38 >> 0] | 0;
+  $40 = $j$03 | 2;
+  $41 = $3 + $34 | 0;
+  HEAP8[$41 >> 0] = $39;
+  $42 = $29 >>> 6;
+  $43 = $42 & 63;
+  $44 = 872 + $43 | 0;
+  $45 = HEAP8[$44 >> 0] | 0;
+  $46 = $j$03 | 3;
+  $47 = $3 + $40 | 0;
+  HEAP8[$47 >> 0] = $45;
+  $48 = $30 & 63;
+  $49 = 872 + $48 | 0;
+  $50 = HEAP8[$49 >> 0] | 0;
+  $51 = $j$03 + 4 | 0;
+  $52 = $3 + $46 | 0;
+  HEAP8[$52 >> 0] = $50;
+  $53 = $i$3 >>> 0 < $input_length >>> 0;
+  if ($53) {
+   $i$04 = $i$3;
+   $j$03 = $51;
   } else {
-   $$0 = $7;
+   break;
+  }
+ }
+ $6 = ($input_length >>> 0) % 3 & -1;
+ $$off = $6 + -1 | 0;
+ $7 = $$off >>> 0 < 2;
+ if (!$7) {
+  $$0 = $3;
+  return $$0 | 0;
+ }
+ $8 = 200 + ($6 << 2) | 0;
+ $9 = HEAP32[$output_length >> 2] | 0;
+ $10 = HEAP32[$8 >> 2] | 0;
+ $i1$02 = 0;
+ while (1) {
+  $54 = $i1$02 ^ -1;
+  $55 = $9 + $54 | 0;
+  $56 = $3 + $55 | 0;
+  HEAP8[$56 >> 0] = 61;
+  $57 = $i1$02 + 1 | 0;
+  $58 = ($57 | 0) < ($10 | 0);
+  if ($58) {
+   $i1$02 = $57;
+  } else {
+   $$0 = $3;
    break;
   }
  }
@@ -10164,6 +10341,43 @@ function ___stdout_write($f, $buf, $len) {
  return $9 | 0;
 }
 
+function _calloc($n_elements, $elem_size) {
+ $n_elements = $n_elements | 0;
+ $elem_size = $elem_size | 0;
+ var $$ = 0, $0 = 0, $1 = 0, $10 = 0, $11 = 0, $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $req$0 = 0, label = 0, sp = 0;
+ sp = STACKTOP;
+ $0 = ($n_elements | 0) == 0;
+ if ($0) {
+  $req$0 = 0;
+ } else {
+  $1 = Math_imul($elem_size, $n_elements) | 0;
+  $2 = $elem_size | $n_elements;
+  $3 = $2 >>> 0 > 65535;
+  if ($3) {
+   $4 = ($1 >>> 0) / ($n_elements >>> 0) & -1;
+   $5 = ($4 | 0) == ($elem_size | 0);
+   $$ = $5 ? $1 : -1;
+   $req$0 = $$;
+  } else {
+   $req$0 = $1;
+  }
+ }
+ $6 = _malloc($req$0) | 0;
+ $7 = ($6 | 0) == (0 | 0);
+ if ($7) {
+  return $6 | 0;
+ }
+ $8 = $6 + -4 | 0;
+ $9 = HEAP32[$8 >> 2] | 0;
+ $10 = $9 & 3;
+ $11 = ($10 | 0) == 0;
+ if ($11) {
+  return $6 | 0;
+ }
+ _memset($6 | 0, 0, $req$0 | 0) | 0;
+ return $6 | 0;
+}
+
 function _memcpy(dest, src, num) {
  dest = dest | 0;
  src = src | 0;
@@ -10502,14 +10716,16 @@ var FUNCTION_TABLE_ii = [b0,___stdio_close];
 var FUNCTION_TABLE_iiii = [b1,___stdout_write,___stdio_seek,___stdio_write];
 var FUNCTION_TABLE_vi = [b2,_cleanup392];
 
-  return { _pixelsToHashCode: _pixelsToHashCode, _fflush: _fflush, _memset: _memset, _malloc: _malloc, _memcpy: _memcpy, _bitshift64Lshr: _bitshift64Lshr, _free: _free, ___errno_location: ___errno_location, _bitshift64Shl: _bitshift64Shl, runPostSets: runPostSets, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setThrew: setThrew, setTempRet0: setTempRet0, getTempRet0: getTempRet0, dynCall_ii: dynCall_ii, dynCall_iiii: dynCall_iiii, dynCall_vi: dynCall_vi };
+  return { _pixelsToHashCode: _pixelsToHashCode, _fflush: _fflush, _boxTester: _boxTester, _memset: _memset, _malloc: _malloc, _memcpy: _memcpy, _bitshift64Lshr: _bitshift64Lshr, _free: _free, ___errno_location: ___errno_location, _bitshift64Shl: _bitshift64Shl, runPostSets: runPostSets, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setThrew: setThrew, setTempRet0: setTempRet0, getTempRet0: getTempRet0, dynCall_ii: dynCall_ii, dynCall_iiii: dynCall_iiii, dynCall_vi: dynCall_vi };
 })
 // EMSCRIPTEN_END_ASM
 (e.Ya, e.Za, buffer);
 e._pixelsToHashCode = Z._pixelsToHashCode;
 e._fflush = Z._fflush;
+e._boxTester = Z._boxTester;
+var kb = e._memset = Z._memset;
 e.runPostSets = Z.runPostSets;
-var kb = e._memset = Z._memset, Da = e._malloc = Z._malloc, pc = e._memcpy = Z._memcpy, mb = e._bitshift64Lshr = Z._bitshift64Lshr, Ma = e._free = Z._free;
+var Da = e._malloc = Z._malloc, pc = e._memcpy = Z._memcpy, mb = e._bitshift64Lshr = Z._bitshift64Lshr, Ma = e._free = Z._free;
 e.___errno_location = Z.___errno_location;
 var nb = e._bitshift64Shl = Z._bitshift64Shl;
 e.dynCall_ii = Z.dynCall_ii;
