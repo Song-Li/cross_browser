@@ -194,7 +194,7 @@ var Sender = function() {
     this.postData['adBlock'] = $('#ad')[0] == null ? 'Yes' : 'No';
     console.log(this.postData['adBlock'])
 
-    console.log("Sent " + this.postData['gpuImgs'].length + " images");
+    console.log("Sent " + this.postData['imageHashes'].length + " images");
 
     console.log(plgs);
 

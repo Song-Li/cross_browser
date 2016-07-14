@@ -4,9 +4,7 @@
 
   root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
-  hasher = $(function() {
-    return Module().cwrap('pixelsToHashCode', 'string', ['string', 'number']);
-  });
+  hasher = null;
 
   root.hashRGB = hashRGB = function(pixels) {
     var i, j, raw, ref;
@@ -16,6 +14,7 @@
       raw += String.fromCharCode(pixels[i + 1]);
       raw += String.fromCharCode(pixels[i + 2]);
     }
+    hasher = hasher != null ? hasher : Module().cwrap('pixelsToHashCode', 'string', ['string', 'number']);
     return hasher(raw, raw.length);
   };
 

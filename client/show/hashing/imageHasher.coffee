@@ -1,8 +1,7 @@
 root = exports ? this
 
 
-hasher = $ ->
-  Module().cwrap 'pixelsToHashCode', 'string', ['string', 'number']
+hasher = null
 
 root.hashRGB = hashRGB = (pixels) ->
   raw = ""
@@ -11,4 +10,5 @@ root.hashRGB = hashRGB = (pixels) ->
     raw += String.fromCharCode pixels[i + 1]
     raw += String.fromCharCode pixels[i + 2]
 
+  hasher = hasher ? Module().cwrap 'pixelsToHashCode', 'string', ['string', 'number']
   return hasher raw, raw.length
