@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>three.js webgl - materials - compressed textures</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="hasher.js"></script>
+    <div id="test_canvases">
+
+    </div>
+    <script type="text/javascript">
+      Base64EncodeUrlSafe = function(str) {
+        return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+      };
+      $(function() {
+        var emscripten = Module();
+        var hasher = emscripten.cwrap('pixelsToHashCode', 'string', ['string', 'number']);
+        var testString = "abcdefghijk";
+        var hash = hasher(testString, testString.length);
+        console.log(hasher(testString, testString.length));
+        console.log(hasher(testString, testString.length))
+      })
+    </script>
+  </body>
+</html>
