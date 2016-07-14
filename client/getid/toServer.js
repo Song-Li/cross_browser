@@ -1,4 +1,6 @@
-var ip_address = "54.221.117.15"
+//var ip_address = "54.221.117.15"
+var ip_address = "128.180.123.19";
+var domain = ip_address + '/mf'
 
 function createCopyButton(text, home) {
     var clipboard = new Clipboard('.btn');
@@ -45,7 +47,7 @@ function createCopyButton(text, home) {
 }
 
 function addUID(uid){
-    var link = 'http://mf.songli.us/show/?user_id=' + uid + '&automated=false'
+    var link = 'http://' + domain + '/show/?user_id=' + uid + '&automated=false'
     $('<a/>')
         .text(link)
         .attr('style', "padding-right: 10px;")

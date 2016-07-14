@@ -1,6 +1,6 @@
-var ip_address = "54.221.117.15";
+//var ip_address = "54.221.117.15";
 var error_page = "http://mf.songli.us/error"
-// var ip_address = "128.180.123.19";
+var ip_address = "128.180.123.19";
 // var ip_address = "52.90.197.136";
 
 function populateFontList(fontArr) {
