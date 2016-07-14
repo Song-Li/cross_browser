@@ -13,13 +13,13 @@ from hashlib import sha512 as hasher1, sha256 as hasher2
 from base64 import urlsafe_b64encode as encode
 
 browser_to_id = {'chrome': 0, 'firefox': 1, 'others': 2}
-case_number = 34
+case_number = 26
 standard_pics = []
 open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
 db_name = "cross_browser"
-table_name = "in_use"
-client = "mac"
+table_name = "data_bk"
+client = ""
 
 def getBrowser(vendor, agent):
     browser = ''
@@ -66,7 +66,6 @@ def gen_hash_db(cursor):
         hash_codes = gen_hash_codes(row[0])
         for i in range(case_number):
             cursor.execute("INSERT INTO {} (image_id, hash) VALUES ('{}', '{}')".format('hashes', str(row[0]) + '_' + str(i), hash_codes[i]))
-    db.commit()
     return 0
 
 def updateBrowser(uids, cursor):
@@ -192,8 +191,9 @@ def index():
     for row in cursor:
         uids.append(row[0])
 
-    #updateBrowser(uids, cursor)
+   #updateBrowser(uids, cursor)
     getRes('Chrome', 'Firefox', cursor)
+    #gen_hash_db(cursor)
 
     db.commit()
     db.close()
