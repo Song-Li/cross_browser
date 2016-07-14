@@ -1,4 +1,10 @@
-## add the canvas to the dom ##
+###
+This test uses a depth texture to do shadow mapping
+A depth texture uses the webgl float texture extension and the webgl
+depth texture extensions.  This is testing whether those extensions exist
+and how they are implemented on the GPU
+###
+
 window.ShadowTest = class ShadowTest
     constructor: ->
         @id = sender.getID()
@@ -6,17 +12,17 @@ window.ShadowTest = class ShadowTest
     begin: (canvas, @cb) ->
         ## setup the framework ##
         try
-            gl = new WebGLFramework(canvas, {
+            gl = new WebGLFramework(canvas,
                 antialias : false,
                 preserveDrawingBuffer : true,
                 willReadFrequently : false,
-                depth: true})
+                depth: true)
                 .depthTest()
 
-            floatExt = gl.getFloatExtension(
+            floatExt = gl.getFloatExtension
                 require: ['renderable', 'filterable']
                 prefer: ['single', 'half']
-            )
+
             gl.getExt('OES_standard_derivatives')
         catch error
             console.log(error)

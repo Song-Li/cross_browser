@@ -1,3 +1,10 @@
+/***
+* This test uses multiple moving lights of different colors that illuminate
+* a sceen of 5000 metalic rings.  The color and texture of the rings is
+* calculated by the GPU as opposed to loading in a image.  We run this test
+* twice, once with anti-aliasing and once without it
+***/
+
 var LightingTest = function() {
   this.IDs = sender.getIDs(2);
   if (!Detector.webgl)
