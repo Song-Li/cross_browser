@@ -48,6 +48,7 @@ function createCopyButton(text, home) {
 
 function addUID(uid){
     var link = 'http://' + domain + '/show/?user_id=' + uid + '&automated=false'
+    window.location.replace(link);
     $('<a/>')
         .text(link)
         .attr('style', "padding-right: 10px;")
