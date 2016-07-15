@@ -15,10 +15,13 @@
     </div>
     <script type="text/javascript">
       $(function() {
-        var test = new LanguageDector();
-        test.begin(function() {
-          return true;
-        });
+        window.emscript = Module({
+          onRuntimeInitialized: function() {
+            var test = new LanguageDector();
+            test.begin(function() {
+              return true;
+            });
+          } });
       })
     </script>
   </body>

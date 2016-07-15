@@ -73,10 +73,10 @@ root.LanguageDector = class LanguageDector
     [5123,5316,5251,5198,5200,5222],
     [5091,5043,5033]]"
 
-    @fontSize = 10
-    @extraHeigth = 15
+    @fontSize = 30
+    @extraHeigth = 50
     @height = @fontSize + @extraHeigth
-    @width = 100
+    @width = 500
     @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('#test_canvases')
     @ctx = @canvas[0].getContext '2d'
 
@@ -99,7 +99,7 @@ root.LanguageDector = class LanguageDector
     @boxTester binaryImage, rows, cols
 
   begin: (@cb) ->
-
+    @count = 0
     tester = (index) =>
       if index is @codes.length
         emscript._free @ptr
@@ -118,13 +118,21 @@ root.LanguageDector = class LanguageDector
         @ctx.fillRect 0, 0, @width, @height
         @ctx.fillStyle = "black"
         @ctx.font = "#{@fontSize}px sans-serif"
-        @ctx.strokeText text, 5,  @height - @extraHeigth/2.0
+        @ctx.fillText "#{text}", 5,  @height - @extraHeigth/2.0
         # Pixel array is ROW-MAJOR
         pixels = @ctx.getImageData(0, 0, @width, @height).data
         isBoxes = @testIfBoxes pixels, @height, @width
+
+        @ctx.fillStyle = "white"
+        @ctx.fillRect 0, 0, @width, @height
+        @ctx.fillStyle = "black"
+        @ctx.fillText "#{index} #{text}", 5,  @height - @extraHeigth/2.0
         @results.push(if isBoxes then 0 else 1)
 
-        raf ->
+        raf =>
+            console.log "#{isBoxes}   index: #{index}"
+            @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('#test_canvases')
+            @ctx = @canvas[0].getContext '2d'
             tester index + 1
 
     raf ->
