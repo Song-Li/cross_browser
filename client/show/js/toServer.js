@@ -192,7 +192,7 @@ var Sender = function() {
     this.postData['user_id'] = user_id;
     this.postData['adBlock'] = $('#ad')[0] == null ? 'Yes' : 'No';
 
-    console.log("Sent " + this.postData['gpuImageHashes'].length + " images");
+    console.log(this.postData['gpuImageHashes']);
 
     $('#manufacturer.modal').modal('show');
     $('#submitBtn').prop('disabled', true);
