@@ -74,7 +74,7 @@ root.LanguageDector = class LanguageDector
     [5091,5043,5033]]"
 
     @fontSize = 30
-    @extraHeigth = 50
+    @extraHeigth = 100
     @height = @fontSize + @extraHeigth
     @width = 500
     @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('#test_canvases')
