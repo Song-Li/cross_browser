@@ -1,4 +1,4 @@
-
+root = exports ? this
 hasher = null
 
 root.hashRGB = hashRGB = (pixels) ->

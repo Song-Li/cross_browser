@@ -93,8 +93,8 @@ class Loader
       true
 
     root.emscript = emscript = root.emscript ? Module
-      onRuntimeInitialized: @assetLoaded
-
+      onRuntimeInitialized: () =>
+        @assetLoaded()
   checkID: ->
     if not @requests['user_id']?
       uid = Cookies.get('machine_fingerprinting_userid')

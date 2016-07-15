@@ -101,7 +101,11 @@
         };
       })(this));
       root.emscript = emscript = (ref = root.emscript) != null ? ref : Module({
-        onRuntimeInitialized: this.assetLoaded
+        onRuntimeInitialized: (function(_this) {
+          return function() {
+            return _this.assetLoaded();
+          };
+        })(this)
       });
     }
 
