@@ -92,13 +92,24 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     cookie = one_test['cookie']
     localStorage = one_test['localstorage']
     adBlock = one_test['adBlock']
+    gpu_image_hashes = ""
+    if isinstance(one_test['gpuImageHashes'], list):
+        gpu_image_hashes = "_".join(one_test['gpuImageHashes'])
+    else:
+        gpu_image_hashes = one_test['gpuImageHashes']
+
+    langs_detected = ""
+    if isinstance(one_test['langsDetected'], list):
+        langs_detected = "_".join(one_test['langsDetected'])
+    else:
+        langs_detected = one_test['langsDetected']
 
     cursor = db.cursor()
     cursor.execute("SELECT image_id FROM {} WHERE user_id='{}' AND agent='{}'".format(table_name, user_id, agent))
     row = cursor.fetchone()
     if row is not None:
         image_id = row[0]
-        sql = "UPDATE {} SET ip='{}', vendor='{}', gpu='{}', agent='{}', browser='{}', fps='{}', manufacturer='{}', timezone='{}', resolution='{}', fontlist='{}', accept='{}', encoding='{}', language='{}', headerkeys='{}', plugins='{}', cookie='{}', localstorage='{}', dnt='{}', adBlock='{}', fonts='{}' where image_id='{}'".format(table_name, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock, fonts, image_id)
+        sql = "UPDATE {} SET ip='{}', vendor='{}', gpu='{}', agent='{}', browser='{}', fps='{}', manufacturer='{}', timezone='{}', resolution='{}', fontlist='{}', accept='{}', encoding='{}', language='{}', headerkeys='{}', plugins='{}', cookie='{}', localstorage='{}', dnt='{}', adBlock='{}', fonts='{}', gpu_image_hashes='{}', langs_detected='{}' where image_id='{}'".format(table_name, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock, fonts, gpu_image_hashes, langs_detected, image_id)
         cursor.execute(sql)
         db.commit()
         return image_id
@@ -107,7 +118,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage, dnt, adBlock, fonts) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock, fonts)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage, dnt, adBlock, fonts, gpu_image_hashes, langs_detected) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock, fonts, gpu_image_hashes, langs_detected)
 
         cursor.execute(sql)
         db.commit()
@@ -181,21 +192,6 @@ def index(req):
     time = str(datetime.datetime.now())
     image_id = insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys, DNT)
 
-    gpu_imgs = one_test['gpuImgs']
-    for i, img in enumerate(gpu_imgs):
-        saveImg(img, "{}_{}".format(image_id, i))
-
-    for i, img in enumerate(one_test['langsDetected']):
-        saveImg(img, "{}_{}_lang".format(image_id, i))
-
-    h = hasher()
-    string = ''
-    for i in range(len(gpu_imgs) - 6):
-        string += gpu_imgs[i]['pixels']
-    h.update(string)
-    hash_code = encode(h.digest()).replace('=', '')
-    cursor.execute("UPDATE {} SET simple_hash='{}' WHERE image_id='{}'".format(table_name, hash_code, image_id))
-    db.commit()
 
     cursor.execute("SELECT COUNT(*) FROM {} WHERE user_id='{}'".format(table_name, one_test['user_id']))
     row = cursor.fetchone()[0]

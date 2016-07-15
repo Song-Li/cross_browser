@@ -35,7 +35,7 @@ def insert_into_db(db, table_name, ip):
 
 def index(req):
     ip = req.connection.remote_ip
-    db_name = "cross_browser"
+    db_name = "cross_browser_hashes"
     table_name = "uid"
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     uid = insert_into_db(db, table_name, ip)

@@ -34,8 +34,6 @@ caf = (
   window.ocancelAnimationFrame
 )
 
-root.emscript = emscript = root.emscript ? Module()
-
 root.LanguageDector = class LanguageDector
   constructor: ->
     @codes = safeParseJSON "[[76,97,116,105,110],
@@ -84,8 +82,7 @@ root.LanguageDector = class LanguageDector
 
     @results = []
 
-    @boxTester = emscript.cwrap 'boxTester', 'number', ['number', 'number', 'number']
-    @ptr = emscript._malloc @width*@height
+    @boxTester = emscript.cwrap 'boxTester', 'number', ['array', 'number', 'number']
 
   testIfBoxes: (pixels, rows, cols) ->
     binaryImage = new Uint8Array rows*cols
@@ -99,11 +96,10 @@ root.LanguageDector = class LanguageDector
       else
         binaryImage[i] = 0
 
-    emscript.writeArrayToMemory binaryImage, @ptr
-    @boxTester @ptr, rows, cols
+    @boxTester binaryImage, rows, cols
 
   begin: (@cb) ->
-    @count = 0
+
     tester = (index) =>
       if index is @codes.length
         emscript._free @ptr
