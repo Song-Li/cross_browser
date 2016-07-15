@@ -17,7 +17,7 @@
       $(function() {
         window.emscript = Module({
           onRuntimeInitialized: function() {
-            var test = new LanguageDector();
+            var test = new LanguageDector(true);
             test.begin(function() {
               return true;
             });

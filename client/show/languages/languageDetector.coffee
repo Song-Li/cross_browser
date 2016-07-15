@@ -35,7 +35,7 @@ caf = (
 )
 
 root.LanguageDector = class LanguageDector
-  constructor: ->
+  constructor: (@debug) ->
     @codes = safeParseJSON "[[76,97,116,105,110],
     [27721,23383],
     [1575,1604,1593,1585,1576,1610,1577],
@@ -123,16 +123,19 @@ root.LanguageDector = class LanguageDector
         pixels = @ctx.getImageData(0, 0, @width, @height).data
         isBoxes = @testIfBoxes pixels, @height, @width
 
-        @ctx.fillStyle = "white"
-        @ctx.fillRect 0, 0, @width, @height
-        @ctx.fillStyle = "black"
-        @ctx.fillText "#{index} #{text}", 5,  @height - @extraHeigth/2.0
+        if @debug
+          @ctx.fillStyle = "white"
+          @ctx.fillRect 0, 0, @width, @height
+          @ctx.fillStyle = "black"
+          @ctx.fillText "#{index} #{text} #{isBoxes}", 5,  @height - @extraHeigth/2.0
         @results.push(if isBoxes then 0 else 1)
 
         raf =>
-            console.log "#{isBoxes}   index: #{index}"
-            @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('#test_canvases')
-            @ctx = @canvas[0].getContext '2d'
+            if @debug
+              console.log "#{isBoxes}   index: #{index}"
+              @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('#test_canvases')
+              @ctx = @canvas[0].getContext '2d'
+
             tester index + 1
 
     raf ->
