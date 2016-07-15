@@ -34,6 +34,8 @@ caf = (
   window.ocancelAnimationFrame
 )
 
+root.emscript = emscript = root.emscript ? Module()
+
 root.LanguageDector = class LanguageDector
   constructor: ->
     @codes = safeParseJSON "[[76,97,116,105,110],
@@ -76,13 +78,14 @@ root.LanguageDector = class LanguageDector
     @fontSize = 10
     @extraHeigth = 15
     @height = @fontSize + @extraHeigth
-    @width = 500
+    @width = 100
     @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('#test_canvases')
     @ctx = @canvas[0].getContext '2d'
 
     @results = []
 
-    @boxTester = Module().cwrap 'boxTester', 'number', ['string', 'number', 'number']
+    @boxTester = emscript.cwrap 'boxTester', 'number', ['number', 'number', 'number']
+    @ptr = emscript._malloc @width*@height
 
   testIfBoxes: (pixels, rows, cols) ->
     binaryImage = new Uint8Array rows*cols
@@ -96,16 +99,14 @@ root.LanguageDector = class LanguageDector
       else
         binaryImage[i] = 0
 
-    raw = ""
-    for pix in binaryImage
-      raw += String.fromCharCode pix
-
-    @boxTester raw, rows, cols
+    emscript.writeArrayToMemory binaryImage, @ptr
+    @boxTester @ptr, rows, cols
 
   begin: (@cb) ->
     @count = 0
     tester = (index) =>
       if index is @codes.length
+        emscript._free @ptr
         console.log @results
         sender.postLangsDetected @results
         @cb()
