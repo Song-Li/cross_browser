@@ -8,9 +8,6 @@ root.hashRGB = hashRGB = (pixels) ->
     RGB[3*i + 1] = pixels[4*i + 1]
     RGB[3*i + 2] = pixels[4*i + 2]
 
-
   hasher = hasher ? emscript.cwrap 'pixelsToHashCode', 'string', ['array', 'number']
 
-  b64 = hasher RGB, RGB.length
-
-  return b64
+  hasher RGB, RGB.length

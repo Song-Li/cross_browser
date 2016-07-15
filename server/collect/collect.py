@@ -109,7 +109,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     row = cursor.fetchone()
     if row is not None:
         image_id = row[0]
-        sql = "UPDATE {} SET ip='{}', vendor='{}', gpu='{}', agent='{}', browser='{}', fps='{}', manufacturer='{}', timezone='{}', resolution='{}', fontlist='{}', accept='{}', encoding='{}', language='{}', headerkeys='{}', plugins='{}', cookie='{}', localstorage='{}', dnt='{}', adBlock='{}', fonts='{}' where image_id='{}', gpu_image_hashes='{}', langs_detected='{}'".format(table_name, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock, fonts, gpu_image_hashes, langs_detected, image_id)
+        sql = "UPDATE {} SET ip='{}', vendor='{}', gpu='{}', agent='{}', browser='{}', fps='{}', manufacturer='{}', timezone='{}', resolution='{}', fontlist='{}', accept='{}', encoding='{}', language='{}', headerkeys='{}', plugins='{}', cookie='{}', localstorage='{}', dnt='{}', adBlock='{}', fonts='{}', gpu_image_hashes='{}', langs_detected='{}' where image_id='{}'".format(table_name, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock, fonts, gpu_image_hashes, langs_detected, image_id)
         cursor.execute(sql)
         db.commit()
         return image_id
@@ -118,7 +118,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     MAX_ID = int(1e9)
     image_id = gen_image_id(cursor, table_name, MAX_ID)
     try:
-        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage, dnt, adBlock, fonts, gpu_image_hashes, langs_detected) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock, fonts, gpu_image_hashes, langs_detected)
+        sql = "INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, headerkeys, plugins, cookie, localstorage, dnt, adBlock, fonts, gpu_image_hashes, langs_detected) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, timezone, resolution, fontlist, accept, encoding, language, keys, plgs, cookie, localStorage, DNT, adBlock, fonts, gpu_image_hashes, langs_detected)
 
         cursor.execute(sql)
         db.commit()
