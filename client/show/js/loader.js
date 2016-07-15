@@ -43,10 +43,10 @@
 
   Loader = (function() {
     function Loader() {
-      var colorName, colorName1, simpleName, susanName;
+      var colorName, colorName1, emscript, ref, simpleName, susanName;
       this.parseURL();
       this.checkID();
-      this.numberOfAssets = 0;
+      this.numberOfAssets = 1;
       this.numLoaded = 0;
       susanName = './assets/Susan.json';
       simpleName = './assets/simple.json';
@@ -100,6 +100,9 @@
           return true;
         };
       })(this));
+      root.emscript = emscript = (ref = root.emscript) != null ? ref : Module({
+        onRuntimeInitialized: this.assetLoaded
+      });
     }
 
     Loader.prototype.checkID = function() {

@@ -1,6 +1,3 @@
-root = exports ? this
-
-root.emscript = emscript = root.emscript ? Module()
 
 hasher = null
 

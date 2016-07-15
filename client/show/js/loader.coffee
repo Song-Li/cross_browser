@@ -54,7 +54,7 @@ class Loader
   constructor: ->
     @parseURL()
     @checkID()
-    @numberOfAssets = 0
+    @numberOfAssets = 1
     @numLoaded = 0
     susanName = './assets/Susan.json'
     simpleName = './assets/simple.json'
@@ -91,6 +91,9 @@ class Loader
       else
         @assetLoaded()
       true
+
+    root.emscript = emscript = root.emscript ? Module
+      onRuntimeInitialized: @assetLoaded
 
   checkID: ->
     if not @requests['user_id']?

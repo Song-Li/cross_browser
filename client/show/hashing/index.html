@@ -16,13 +16,20 @@
         return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
       };
       $(function() {
-        var emscripten = Module();
-        var hasher = emscripten.cwrap('pixelsToHashCode', 'string', ['string', 'number']);
-        var testString = "abcdefghijk";
-        var hash = hasher(testString, testString.length);
-        console.log(hasher(testString, testString.length));
-        console.log(hasher(testString, testString.length))
-      })
+        var emscripten = null;
+        ready = function () {
+          var hasher = emscripten.cwrap('pixelsToHashCode', 'string', ['string', 'number']);
+          var testString = "abcdefghijk";
+          var hash = hasher(testString, testString.length);
+          console.log(hasher(testString, testString.length));
+          console.log(hasher(testString, testString.length));
+        }
+
+        emscripten = Module({
+          onRuntimeInitialized: ready
+          });
+      });
+
     </script>
   </body>
 </html>

@@ -34,8 +34,6 @@ caf = (
   window.ocancelAnimationFrame
 )
 
-root.emscript = emscript = root.emscript ? Module()
-
 root.LanguageDector = class LanguageDector
   constructor: ->
     @codes = safeParseJSON "[[76,97,116,105,110],
