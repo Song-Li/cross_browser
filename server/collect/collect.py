@@ -100,7 +100,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
 
     langs_detected = ""
     if isinstance(one_test['langsDetected'], list):
-        langs_detected = "_".join(one_test['langsDetected'])
+        langs_detected = "_".join(str(x) for x in one_test['langsDetected'])
     else:
         langs_detected = one_test['langsDetected']
 

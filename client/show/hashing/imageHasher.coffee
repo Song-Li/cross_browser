@@ -10,4 +10,4 @@ root.hashRGB = hashRGB = (pixels) ->
 
   hasher = hasher ? emscript.cwrap 'pixelsToHashCode', 'string', ['array', 'number']
 
-  hasher RGB, RGB.length
+  hash = hasher RGB, RGB.length
