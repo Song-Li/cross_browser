@@ -99,7 +99,7 @@ root.LanguageDector = class LanguageDector
     @boxTester binaryImage, rows, cols
 
   begin: (@cb) ->
-    @count = 0
+
     tester = (index) =>
       if index is @codes.length
         emscript._free @ptr

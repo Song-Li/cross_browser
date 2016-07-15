@@ -95,6 +95,8 @@ class Loader
     root.emscript = emscript = root.emscript ? Module
       onRuntimeInitialized: () =>
         @assetLoaded()
+
+
   checkID: ->
     if not @requests['user_id']?
       uid = Cookies.get('machine_fingerprinting_userid')
@@ -114,6 +116,7 @@ class Loader
     window.url = @url
     window.user_id = user_id
 
+
   parseURL: ->
     @url = document.URL
     @parser = document.createElement('a')
@@ -127,10 +130,12 @@ class Loader
 
     window.requests = @requests
 
+
   assetLoaded: ->
     @numLoaded++
     if @numLoaded is @numberOfAssets
       @beginTests()
+
 
   loadTextResource: (url, callback) ->
     ++@numberOfAssets
@@ -143,6 +148,7 @@ class Loader
         callback(null, request.responseText)
     request.send()
     true
+
 
   loadImage: (url, callback) ->
     ++@numberOfAssets
@@ -164,6 +170,7 @@ class Loader
           callback(e)
     )
     true
+
 
   beginTests: ->
     @susanVertices = @susanModel.meshes[0].vertices
@@ -249,6 +256,7 @@ class Loader
       test.begin postProgress
 
     true
+
 
 $ ->
   loader = new Loader()
