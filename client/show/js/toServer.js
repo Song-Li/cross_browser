@@ -230,7 +230,7 @@ var Sender = function() {
             code = data.split(',')[1];
             if (num < '2') {
               $('#instruction')
-                  .append('现在请点击右上交 <strong>...</strong>并选择<string>用浏览器打开'
+                  .append('现在请点击右上交 <strong>...</strong>并选择<string>用浏览器打开' + 
                           '</strong>');
 
             } else if(num == 2){
