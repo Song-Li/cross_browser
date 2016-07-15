@@ -146,7 +146,7 @@ def getEncrypt(code):
 def index(req):
     global inited
     global root
-    db_name = "cross_browser"
+    db_name = "cross_browser_hashes"
     post_data = str(req.form.list)
     json_data = post_data[8:-7]
     one_test = json.loads(json_data)
