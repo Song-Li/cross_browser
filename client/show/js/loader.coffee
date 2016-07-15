@@ -227,7 +227,7 @@ class Loader
     if not mobileAndTabletCheck()
       @asyncTests.push new VideoTest()
 
-    @asyncTests.push new LanguageDector()
+    @asyncTests.push new LanguageDector false
 
     sender.finalized = true
 

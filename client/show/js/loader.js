@@ -267,7 +267,7 @@
       if (!mobileAndTabletCheck()) {
         this.asyncTests.push(new VideoTest());
       }
-      this.asyncTests.push(new LanguageDector());
+      this.asyncTests.push(new LanguageDector(false));
       sender.finalized = true;
       this.numberOfTests = this.testList.length + this.asyncTests.length;
       this.numComplete = 0;

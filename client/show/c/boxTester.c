@@ -33,5 +33,5 @@ int boxTester(unsigned char * pixels, int rows, int cols) {
       ++numYCounts;
   free(yCountSet);
 
-  return numYCounts <= 4 && numXCounts <= 4;
+  return numYCounts <= 5 && numXCounts <= 5;
 }
