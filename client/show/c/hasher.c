@@ -6,6 +6,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define USE512 0
+#define USE256 1
+
 static char encoding_table[] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
     'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -64,24 +67,34 @@ unsigned char *hashSha256(const unsigned char *msg, size_t length) {
 }
 
 char *pixelsToHashCode(const unsigned char *pixels, size_t length) {
+  size_t hashLength = 0;
+#if USE512
+  hashLength += sha3_512_hash_size;
+#endif
+#if USE256
+  hashLength += sha3_256_hash_size;
+#endif
 
-  unsigned char *combinedHash = (unsigned char *)malloc(
-      (sha3_512_hash_size + sha3_256_hash_size) * sizeof(char));
+  unsigned char *combinedHash =
+      (unsigned char *)malloc((hashLength) * sizeof(char));
 
+  size_t offset = 0;
+#if USE512
   unsigned char *sha512 = hashSha512(pixels, length);
-  memcpy((void *)combinedHash, (const void *)sha512,
-         sha3_512_hash_size);
+  memcpy((void *)combinedHash, (const void *)sha512, sha3_512_hash_size);
   free(sha512);
+  offset += sha3_512_hash_size;
+#endif
 
+#if USE256
   unsigned char *sha256 = hashSha256(pixels, length);
-  memcpy((void *)(combinedHash + sha3_512_hash_size),
-         (const void *)sha256, sha3_256_hash_size);
+  memcpy((void *)(combinedHash + offset), (const void *)sha256,
+         sha3_256_hash_size);
   free(sha256);
-
+#endif
 
   size_t b64length;
-  char *b64 = base64_encode(
-      combinedHash, sha3_512_hash_size + sha3_256_hash_size, &b64length);
+  char *b64 = base64_encode(combinedHash, hashLength, &b64length);
   b64 = realloc(b64, b64length + 1);
   b64[b64length] = '\0';
 
