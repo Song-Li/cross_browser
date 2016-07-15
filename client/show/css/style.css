@@ -46,13 +46,12 @@ progress.hidden {
     display: none;
     position: absolute;
     top:0; left: 0; right: 0; bottom: 0;
-    height: 400px;
-    width: 350px;
+    height: 50%;
+    width: 70%;
     text-align: center;
     margin: auto;
     font-family: sans-serif;
-    font-size: 1.2em;
-    line-height: 30px;
+    font-size: 3.2vw;
 }
 
 #hint98 {

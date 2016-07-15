@@ -194,7 +194,7 @@ var Sender = function() {
 
     console.log(this.postData['gpuImageHashes']);
 
-    $('#manufacturer.modal').modal('show');
+    //$('#manufacturer.modal').modal('show');
     $('#submitBtn').prop('disabled', true);
     $('#manufacturer.selectpicker').on('changed.bs.select', function() {
       $('#submitBtn').prop('disabled', false);
@@ -230,21 +230,18 @@ var Sender = function() {
             code = data.split(',')[1];
             if (num < '2') {
               $('#instruction')
-                  .append('现在请点击右上交 <strong>...</strong>并选择<string>用浏览器打开' + 
-                          '</strong>');
+                  .append('现在请点击右上角 <strong>"..."</strong><br>并选择<strong>"用浏览器打开" </strong>');
 
             } else if(num == 2){
                 $('#instruction')
-                  .append('您已经完成！ 谢谢您的支持！ <div style="font-size:0.8em; color:red;">如果您手机上还装有其它浏览器，用另外一个浏览器打开您的链接，那对我们将是更大的帮助<strong>bonus</strong>!<div>');
+                  .append('您已经完成！ 谢谢您的支持！ <div style="font-size:0.8em; color:red;">如果您手机上还装有其它浏览器，用另外一个浏览器打开您的链接，那对我们将是更大的帮助!<div>');
                 $('#instruction')
                     .append('您的链接是:<br><a href="' + url + '">' +
                             url + '</a> <br>');
                 createCopyButton(url, '#instruction');
             }else {
                 $('#instruction')
-                  .append('You have finished <strong>' + num +
-                          '</strong> browsers<br>Your code is ' + code +
-                          '<br> <strong>Thank you!</strong><br><div style="font-size:0.8em;">Just input this code back to Amazon mechanical turk, we will know you finished three browsers</div>');
+                  .append('谢谢您的支持，您的支持对我们是莫大的鼓励！');
             }
             progress(100);
             Cookies.set('machine_fingerprinting_userid', user_id);
@@ -252,9 +249,9 @@ var Sender = function() {
         }
       });
     });
-    if (requests.hasOwnProperty('modal') && requests['modal'] === 'false') {
-      $('#submitBtn').click();
-    }
+    //if (requests.hasOwnProperty('modal') && requests['modal'] === 'false') {
+    $('#submitBtn').click();
+    //}
   }
 };
 
