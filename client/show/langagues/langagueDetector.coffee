@@ -84,8 +84,7 @@ root.LanguageDector = class LanguageDector
 
     @results = []
 
-    @boxTester = emscript.cwrap 'boxTester', 'number', ['number', 'number', 'number']
-    @ptr = emscript._malloc @width*@height
+    @boxTester = emscript.cwrap 'boxTester', 'number', ['array', 'number', 'number']
 
   testIfBoxes: (pixels, rows, cols) ->
     binaryImage = new Uint8Array rows*cols
@@ -99,8 +98,7 @@ root.LanguageDector = class LanguageDector
       else
         binaryImage[i] = 0
 
-    emscript.writeArrayToMemory binaryImage, @ptr
-    @boxTester @ptr, rows, cols
+    @boxTester binaryImage, rows, cols
 
   begin: (@cb) ->
     @count = 0

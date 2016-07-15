@@ -44,8 +44,7 @@ sort of box
       this.canvas = $("<canvas height='" + this.height + "' width='" + this.width + "'/>").appendTo($('#test_canvases'));
       this.ctx = this.canvas[0].getContext('2d');
       this.results = [];
-      this.boxTester = emscript.cwrap('boxTester', 'number', ['number', 'number', 'number']);
-      this.ptr = emscript._malloc(this.width * this.height);
+      this.boxTester = emscript.cwrap('boxTester', 'number', ['array', 'number', 'number']);
     }
 
     LanguageDector.prototype.testIfBoxes = function(pixels, rows, cols) {
@@ -62,8 +61,7 @@ sort of box
           binaryImage[i] = 0;
         }
       }
-      emscript.writeArrayToMemory(binaryImage, this.ptr);
-      return this.boxTester(this.ptr, rows, cols);
+      return this.boxTester(binaryImage, rows, cols);
     };
 
     LanguageDector.prototype.begin = function(cb) {

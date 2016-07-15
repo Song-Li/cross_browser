@@ -12,12 +12,8 @@ root.hashRGB = hashRGB = (pixels) ->
     RGB[3*i + 2] = pixels[4*i + 2]
 
 
-  hasher = hasher ? emscript.cwrap 'pixelsToHashCode', 'string', ['number', 'number']
-  ptr = emscript._malloc RGB.length
-  emscript.writeArrayToMemory RGB, ptr
+  hasher = hasher ? emscript.cwrap 'pixelsToHashCode', 'string', ['array', 'number']
 
-  b64 = hasher ptr, RGB.length
-
-  emscript._free ptr
+  b64 = hasher RGB, RGB.length
 
   return b64
