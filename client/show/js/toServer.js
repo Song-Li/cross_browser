@@ -222,7 +222,7 @@ var Sender = function() {
         type : 'POST',
         data : JSON.stringify(self.postData),
         success : function(data) {
-            console.log("success");
+            console.log("成功");
           if (data === 'user_id error') {
             window.location.href = error_page;
           } else {
@@ -230,33 +230,14 @@ var Sender = function() {
             code = data.split(',')[1];
             if (num < '2') {
               $('#instruction')
-                  .append('You have finished <strong>' + num +
-                          '</strong> browsers<br>');
+                  .append('现在请点击右上交 <strong>...</strong>并选择<string>用浏览器打开'
+                          '</strong>');
 
-              if (!requests.hasOwnProperty('automated') ||
-                  requests['automated'] === 'true') {
-                $('#instruction')
-                    .append(
-                        'Please close this browser and check a different browser for your completion code');
-
-              } else {
-                $('#instruction')
-                    .append('Now open the link:<br><a href="' + url + '">' +
-                            url + '</a> <br>');
-                createCopyButton(url, '#instruction');
-                $('#instruction')
-                    .append(
-                        '<br><br>with another browser on <em>this</em> computer')
-                    .append(
-                        '<div id= "browsers" style="text-align: center;">(Firefox, chrome, safair or edge)</div>');
-              }
             } else if(num == 2){
                 $('#instruction')
-                  .append('You have finished <strong>' + num +
-                          '</strong> browsers<br>Your code is ' + code +
-                          '<br> <strong>Thank you!</strong><div style="font-size:0.8em; color:red;">If you do this task with 3 browsers, you will get a new code and a <strong>bonus</strong>!<div>');
+                  .append('您已经完成！ 谢谢您的支持！ <div style="font-size:0.8em; color:red;">如果您手机上还装有其它浏览器，用另外一个浏览器打开您的链接，那对我们将是更大的帮助<strong>bonus</strong>!<div>');
                 $('#instruction')
-                    .append('Your link is:<br><a href="' + url + '">' +
+                    .append('您的链接是:<br><a href="' + url + '">' +
                             url + '</a> <br>');
                 createCopyButton(url, '#instruction');
             }else {
