@@ -17,8 +17,8 @@ case_number = 33
 standard_pics = []
 open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
-db_name = "cross_browser_hashes"
-table_name = "new_data"
+db_name = "cross_browser_cn"
+table_name = "data"
 
 def getDifference(img1, img2):
     sub = ImageChops.subtract(img1,img2, 0.005)
