@@ -66,9 +66,15 @@ function generatePage(){
             var res = JSON.parse(data.toString());
             var len = res.length;
             generateButton('Refresh');
+            var selector = $('<select class="selectpicker" data-live-search="true" title="uid" data-width="100px"/>').appendTo($('#left'));
             for(var i = 0;i < len;++ i){
                 generateButton(res[i]);
+                $('<option/>').text(res[i]).appendTo(selector);
             }
+            selector.selectpicker();
+            selector.on('changed.bs.select', function(event, clickedIndex, newValue, oldValue) {
+                toServer($(this).val());
+            });
         }
     });
 
@@ -80,16 +86,17 @@ function Base64DecodeUrl(str){
 
 function draw(ip, hashCodes){
     var numImages;
-    for (browser in hashCodes) {
+    for (var browser in hashCodes) {
         numImages = hashCodes[browser].length;
         break;
     }
     var canSubtract = Object.keys(hashCodes).length == 3;
     for (var i = 0; i < numImages; i++) {
         var div1 = $('<div class="imgDiv"/>').appendTo($('#right'));
+        $('<p/>').text(i).appendTo(div1);
         $('<br/><div> This - Standard and Standard - This </div> <br/>').appendTo($('#right'));
         var div2 = $('<div class="imgDiv"/>').appendTo($('#right'));
-        for (browser in hashCodes) {
+        for (var browser in hashCodes) {
             var innerDiv = $('<div class="innerDiv"/>').appendTo(div1);
             generateImg(root + ip + '/' + browser + '_' + i + '_0' + ".png", innerDiv);
             generateImg(root + ip + '/' + browser + '_' + i + '_1' + ".png", innerDiv);
