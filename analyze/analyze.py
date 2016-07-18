@@ -18,7 +18,7 @@ standard_pics = []
 open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
 db_name = "cross_browser"
-table_name = "data_bk"
+table_name = "in_use"
 client = ""
 
 def getBrowser(vendor, agent):
@@ -81,6 +81,11 @@ def updateBrowser(uids, cursor):
 def getRes(b1, b2, cursor):
     tuids = []
     uids = []
+    cnt_in = []
+    for i in range(24):
+        cnt_in.append(1)
+    cnt_in[19] = 0
+        
     cursor.execute("SELECT COUNT(DISTINCT(ip)) FROM {}".format(table_name))
     print 'ip', cursor.fetchone()[0]
     cursor.execute("SELECT COUNT(DISTINCT(user_id)) FROM {}".format(table_name))
@@ -109,6 +114,8 @@ def getRes(b1, b2, cursor):
     hash_all_unique = []
     index = []
     diff = []
+
+
     for i in range(case_number):
         hash_all.append([])
         hash_all_unique.append([])
@@ -129,12 +136,12 @@ def getRes(b1, b2, cursor):
         for i in range(case_number):
             cursor.execute("SELECT hash FROM {} WHERE image_id='{}'".format('hashes', str(image1_id) + '_' + str(i)))
             hash1_val = cursor.fetchone()[0]
-            if i <= 23:# and i != 20 and i != 22:
+            if i <= 23 and cnt_in[i] == 1:
                 s1 += hash1_val
 
             cursor.execute("SELECT hash FROM {} WHERE image_id='{}'".format('hashes', str(image2_id) + '_' + str(i)))
             hash2_val = cursor.fetchone()[0]
-            if i <= 23:# and i != 20 and i != 22:
+            if i <= 23 and cnt_in[i] == 1:
                 s2 += hash2_val
 
             #if hash1_val == hash2_val and (hash1_val not in hash_all[i]):
@@ -164,21 +171,21 @@ def getRes(b1, b2, cursor):
 
     print 'Unique user'
     for i in range(len(hash_long)):
-    #    print hash_long.count(row)
+        #print hash_long.count(row)
         if hash_long.count(hash_long[i]) == 1:
             print '\t', index[i]
             res += 1
     print 'Cross_browser unique', float(res) / len(hash_long_unique)
     print res,len(hash_long_unique)
 
-    return 0
+    #return 0
     
     for i in range(case_number):
         res = 0
         for row in hash_all[i]:
             if hash_all[i].count(row) == 1:
                 res += 1
-        print str(i) + ' ' + str(res) + '%' + str(len(hash_all_unique[i]))
+        print str(i) + ' ' + str(res) + '%' + str(len(hash_all_unique[i])) + '%' + str(len(hash_all[i]))
 
 
 def index():
@@ -191,7 +198,7 @@ def index():
     for row in cursor:
         uids.append(row[0])
 
-   #updateBrowser(uids, cursor)
+    #updateBrowser(uids, cursor)
     getRes('Chrome', 'Firefox', cursor)
     #gen_hash_db(cursor)
 
