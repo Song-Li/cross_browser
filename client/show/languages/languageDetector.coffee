@@ -91,7 +91,7 @@ root.LanguageDector = class LanguageDector
       G = pixels[4*i + 1]
       B = pixels[4*i + 2]
       L = R * 299/1000 + G * 587/1000 + B * 114/1000
-      if L < 255/2
+      if L < 250
         binaryImage[i] = 1
       else
         binaryImage[i] = 0

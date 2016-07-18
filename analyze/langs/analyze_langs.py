@@ -5,6 +5,7 @@ import os
 from sets import Set
 import pdb, traceback, sys
 
+quite = False
 def main():
   img_root = '.'
   uids = Set()
@@ -15,9 +16,10 @@ def main():
 
 
   for uid in uids:
+    # if uid == 563962001:
+
     analyzer = LangAnalyzer(img_root, uid)
-    print analyzer.anaylze()
-    return
+    print "{}  {}".format(uid, sorted(analyzer.analyze()))
 
 def isBoxes(img):
   xCountDict = {}
@@ -45,7 +47,10 @@ def isBoxes(img):
       yCountDict.update({yCount: 1})
 
   numYCounts = len(yCountDict)
-
+  if not quite:
+    print xCountDict
+    print yCountDict
+    print "\n"
   return numXCounts <=5 and numYCounts <= 5
 
 class LangAnalyzer:
@@ -53,7 +58,7 @@ class LangAnalyzer:
     self.img_root = img_root
     self.uid = uid
 
-  def anaylze(self):
+  def analyze(self):
     results = Set()
     for index in range(36):
       img = Image.open("{}/{}_{}_lang.png".format(self.img_root, self.uid, index))
@@ -65,11 +70,13 @@ class LangAnalyzer:
         for i in range(cols):
           R, G, B = pix[i, j]
           L = R * 299/1000.0 + G * 587/1000.0 + B * 114/1000.0
-          if L < 255/2.0:
+          if L < 250:
             bPix[i, j] = 1
           else:
             bPix[i, j] = 0
 
+      if not quite:
+        print index
       if isBoxes(binary):
         results.add(index)
 
