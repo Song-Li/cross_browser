@@ -1,6 +1,7 @@
-var ip_address = "54.221.117.15"
+//var ip_address = "54.221.117.15"
+var ip_address = "139.129.203.226";
 //var ip_address = "128.180.123.19";
-var domain = ip_address + '/mf'
+var domain = "mfcn.songli.us"
 
 function createCopyButton(text, home) {
     var clipboard = new Clipboard('.btn');
