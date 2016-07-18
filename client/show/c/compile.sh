@@ -6,3 +6,10 @@ functions="['_pixelsToHashCode', '_boxTester']"
 flags="-O3 -s MODULARIZE=1 -s NO_EXIT_RUNTIME=1 --closure 1 --llvm-lto 3"
 
 emcc ${flags} ${files} -o ${outName} -s EXPORTED_FUNCTIONS="${functions}"
+
+memFile="emscripten.js.mem"
+
+if [[ -f ${memFile} ]]
+  then
+    cp ${memFile} ../${memFile}
+fi
