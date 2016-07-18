@@ -19,25 +19,6 @@ inited = 0
 global root
 root = '/home/site/data/'
 
-def saveImg(toSave, name):
-    global root
-    img_root = root + 'images/origins/'
-    if not os.path.exists(img_root):
-        os.makedirs(img_root)
-    cols = toSave['w']
-    rows = toSave['h']
-    img = Image.new('RGB', (cols, rows))
-    pixel_map = img.load()
-    img_data = rawToIntArray(decode(padb64(toSave['pixels'])))
-
-    curr = 0
-    for j in range(rows):
-        for i in range(cols):
-            pixel_map[i, j] = (img_data[curr], img_data[curr + 1], img_data[curr + 2])
-            curr += 3
-
-    img.save(img_root + name + '.png')
-
 def gen_image_id(cursor, table_name, MAX_ID):
     cursor.execute("SELECT COUNT(*) FROM {}".format(table_name))
     if not cursor.fetchone()[0]:
@@ -75,7 +56,6 @@ def getBrowser(vendor, agent):
 
 
 def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys, DNT):
-
     user_id = one_test['user_id']
     vendor = one_test['inc']
     browser = getBrowser(vendor, agent)
@@ -157,7 +137,7 @@ def getEncrypt(code):
 def index(req):
     global inited
     global root
-    db_name = "cross_browser_hashes"
+    db_name = "cross_browser_cn"
     post_data = str(req.form.list)
     json_data = post_data[8:-7]
     one_test = json.loads(json_data)
@@ -188,7 +168,7 @@ def index(req):
 
     keys = "_".join(req.headers_in.keys())
 
-    table_name = "new_data"
+    table_name = "data"
     time = str(datetime.datetime.now())
     image_id = insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, language, keys, DNT)
 
