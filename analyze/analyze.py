@@ -11,6 +11,7 @@ import numpy as np
 import MySQLdb
 from hashlib import sha512 as hasher1, sha256 as hasher2
 from base64 import urlsafe_b64encode as encode
+from langs.analyze_langs import LangAnalyzer
 
 browser_to_id = {'chrome': 0, 'firefox': 1, 'others': 2}
 case_number = 26
@@ -85,7 +86,7 @@ def getRes(b1, b2, cursor):
     print 'ip', cursor.fetchone()[0]
     cursor.execute("SELECT COUNT(DISTINCT(user_id)) FROM {}".format(table_name))
     print 'user', cursor.fetchone()[0]
-    
+
     #cursor.execute("SELECT user_id FROM {} WHERE browser='{}'".format(table_name, b1))
     cursor.execute("SELECT user_id FROM {} WHERE browser='{}' AND agent like '%{}%'".format(table_name, b1, client))
     for row in cursor:
@@ -155,7 +156,7 @@ def getRes(b1, b2, cursor):
             index.append(uid)
         #else:
         #    print 'not same: ' + str(uid)
-    
+
     #for i in range(case_number):
     #    print i, diff[i]
     res = 0
@@ -172,7 +173,7 @@ def getRes(b1, b2, cursor):
     print res,len(hash_long_unique)
 
     return 0
-    
+
     for i in range(case_number):
         res = 0
         for row in hash_all[i]:

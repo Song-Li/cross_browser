@@ -3,35 +3,35 @@
 #define imAccess(__array, __y, __x) (__array)[(__y)*cols + (__x)]
 
 int boxTester(unsigned char * pixels, int rows, int cols) {
-  int * xCountSet = (int *)calloc(cols, sizeof(int));
+  int * xCountDict = (int *)calloc(cols, sizeof(int));
   for (int j = 0; j < rows; ++j) {
     int xcount = 0;
     for (int i = 0; i < cols; ++i) {
       if (imAccess(pixels, j, i))
         ++xcount;
     }
-    ++xCountSet[xcount];
+    ++xCountDict[xcount];
   }
   int numXCounts = 0;
   for (int i = 0; i < cols; ++i)
-    if (xCountSet[i])
+    if (xCountDict[i])
       ++numXCounts;
-  free(xCountSet);
+  free(xCountDict);
 
-  int *yCountSet = (int *)calloc(rows, sizeof(int));
+  int *yCountDict = (int *)calloc(rows, sizeof(int));
   for (int i = 0; i < cols; ++i) {
     int ycount = 0;
     for (int j = 0; j < rows; ++j) {
       if (imAccess(pixels, j, i))
         ++ycount;
     }
-    ++yCountSet[ycount];
+    ++yCountDict[ycount];
   }
   int numYCounts = 0;
   for (int j = 0; j < rows; ++j)
-    if (yCountSet[j])
+    if (yCountDict[j])
       ++numYCounts;
-  free(yCountSet);
+  free(yCountDict);
 
   return numYCounts <= 5 && numXCounts <= 5;
 }

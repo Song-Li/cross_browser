@@ -94,7 +94,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     adBlock = one_test['adBlock']
     gpu_image_hashes = ""
     if isinstance(one_test['gpuImageHashes'], list):
-        gpu_image_hashes = "_".join(one_test['gpuImageHashes'])
+        gpu_image_hashes = "&".join(one_test['gpuImageHashes'])
     else:
         gpu_image_hashes = one_test['gpuImageHashes']
 

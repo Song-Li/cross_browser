@@ -127,7 +127,7 @@ root.LanguageDector = class LanguageDector
           @ctx.fillStyle = "white"
           @ctx.fillRect 0, 0, @width, @height
           @ctx.fillStyle = "black"
-          @ctx.fillText "#{index} #{text} #{isBoxes}", 5,  @height - @extraHeigth/2.0
+          @ctx.fillText "#{index} #{text} Boxes: #{isBoxes}", 5,  @height - @extraHeigth/2.0
         @results.push(if isBoxes then 0 else 1)
 
         raf =>
