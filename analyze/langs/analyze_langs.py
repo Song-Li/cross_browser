@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from PIL import Image, ImageChops
+from PIL import Image
 import os
 from sets import Set
 import pdb, traceback, sys
@@ -61,8 +61,6 @@ class LangAnalyzer:
   def analyze(self):
     results = []
     for index in range(36):
-      if index > 28 and index != 33 and index != 34:
-        continue
       img = Image.open("{}/{}_{}_lang.png".format(self.img_root, self.uid, index))
       binary = Image.new('1', img.size)
       bPix = binary.load()

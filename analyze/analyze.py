@@ -23,7 +23,7 @@ open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
 db_name = "cross_browser"
 table_name = "round_2_data"
-extra_selector = "and gpu!='SwiftShader'"
+extra_selector = "and agent like '%NT%' and gpu!='SwiftShader'"
 
 def update_table(db):
     cursor = db.cursor()
@@ -95,7 +95,7 @@ def update_langs(db):
 
     for image_id, in cursor.fetchall():
         langs = LangAnalyzer("{}images/origins/".format(open_root), image_id).analyze()
-        cursor.execute("UPDATE {} SET langs='{}' WHERE image_id='{}'".format(table_name, "&".join(str(x) for x in langs), image_id))
+        cursor.execute("UPDATE {} SET langs='{}' WHERE image_id='{}'".format(table_name, "".join(str(x) for x in langs), image_id))
 
     db.commit()
     cursor.close()
@@ -168,9 +168,23 @@ def getRes(b1, b2, cursor, quiet):
         cursor.execute("SELECT hashes FROM {} WHERE image_id='{}'".format(table_name, image2_id))
         hashes_2 = cursor.fetchone()[0].split("&")
 
-        extras = "timezone, langs, resolution"
+
+        cursor.execute("SELECT langs FROM {} WHERE image_id='{}'".format(table_name, image1_id))
+        langs_1 = [x for i, x in enumerate(list(cursor.fetchone()[0])) if i <= 28 or i == 33 or i == 34]
+        langs_1 = "".join(langs_1)
+
+        cursor.execute("SELECT langs FROM {} WHERE image_id='{}'".format(table_name, image2_id))
+        langs_2 = [x for i, x in enumerate(list(cursor.fetchone()[0])) if i <= 28 or i == 33 or i == 34]
+        langs_2 = "".join(langs_2)
+
+        s1 += langs_1
+        s2 += langs_2
+
+
+        extras = "timezone, resolution"
         # extras = ""
         if extras != "":
+
             cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(extras, table_name, image1_id))
             extras_1 = cursor.fetchone()
 
@@ -193,7 +207,7 @@ def getRes(b1, b2, cursor, quiet):
             hash1_val = hashes_1[i]
             hash2_val = hashes_2[i]
 
-            if i <= 16 and i != 23 and i != 24 and i != 19:
+            if i <= 2 and i != 23 and i != 24 and i != 19:
                 s1 += hash1_val
                 s2 += hash2_val
 
@@ -236,7 +250,7 @@ def getRes(b1, b2, cursor, quiet):
         print 'Cross_browser unique', float(res) / max(len(hash_long_unique), 1)
         print res,len(hash_long_unique)
 
-    return len(hash_long) / float(len(uids))*100, float(res) / max(len(hash_long_unique), 1)*100
+    return len(uids), "{:3.0f}%".format(len(hash_long) / float(len(uids))*100), "{:3.0f}%".format(float(res) / max(len(hash_long_unique), 1)*100)
 
     for i, hashes in enumerate(hash_all):
         res = 0
@@ -258,7 +272,7 @@ def index():
     # return
 
     if False:
-        getRes("Firefox", "Chrome", cursor, False)
+        getRes("Edge", "Firefox", cursor, False)
     else:
         cursor.execute('SELECT DISTINCT(browser) from {}'.format(table_name))
         browsers = [b for b, in cursor.fetchall()]
@@ -275,7 +289,7 @@ def index():
             for b2 in browsers:
                 try:
                     res = result_table[(b1, b2)]
-                    disp.append(("{:3.0f}%  " * len(res)).format(*res))
+                    disp.append(("{} " * len(res)).format(*res))
                 except:
                     disp.append("")
 
