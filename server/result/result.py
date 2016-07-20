@@ -1,5 +1,6 @@
 import BaseHTTPServer
-import os.path
+import os
+from glob import glob
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 import urllib
@@ -93,32 +94,43 @@ def getSubtract(user_id, caseNumber):
     #4 5 for firefox and others
     if not os.path.exists(output_root + 'tmp/'):
         os.makedirs(output_root + 'tmp/')
+    imgs = {}
+    for i in range(3):
+        try:
+            img0 = Image.open(output_root + str(user_id) + '/' + str(i) + '_' + caseNumber + '_0.png')
+            img1 = Image.open(output_root + str(user_id) + '/' + str(i) + '_' + caseNumber + '_2.png')
+            img2 = Image.open(output_root + str(user_id) + '/' + str(i) + '_' + caseNumber + '_3.png')
+            imgs.update({i: (img0, img1, img2)})
+        except:
+            pass
 
-    img1 = Image.open(output_root + str(user_id) + '/' + '0_' + caseNumber + '_2.png')
-    img2 = Image.open(output_root + str(user_id) + '/' + '0_' + caseNumber + '_3.png')
-    img3 = Image.open(output_root + str(user_id) + '/' + '1_' + caseNumber + '_2.png')
-    img4 = Image.open(output_root + str(user_id) + '/' + '1_' + caseNumber + '_3.png')
-    img5 = Image.open(output_root + str(user_id) + '/' + '2_' + caseNumber + '_2.png')
-    img6 = Image.open(output_root + str(user_id) + '/' + '2_' + caseNumber + '_3.png')
+    for f in glob(output_root + 'tmp/*'):
+        os.remove(f)
 
-    img7 = Image.open(output_root + str(user_id) + '/' + '0_' + caseNumber + '_0.png')
-    img8 = Image.open(output_root + str(user_id) + '/' + '1_' + caseNumber + '_0.png')
-    img9 = Image.open(output_root + str(user_id) + '/' + '2_' + caseNumber + '_0.png')
+    compares = {}
+    compare_names = {(0, 1): "chrome and firefox", (0, 2): "chrome and others", (1, 2): "firefox and others"}
+    for i in range(3):
+        if i in imgs:
+            org0, img1, img2 = imgs[i]
+            for j in range(i + 1, 3):
+                if j in imgs:
+                    org1, img3, img4 = imgs[j]
+                    getDifference(img1, img3).save(output_root + 'tmp/{}.png'.format(4*i + 2*j))
+                    getDifference(img2, img4).save(output_root + 'tmp/{}.png'.format(4*i + 2*j + 1))
 
-    getDifference(img1, img3).save(output_root + 'tmp/0.png')
-    getDifference(img2, img4).save(output_root + 'tmp/1.png')
-    getDifference(img1, img5).save(output_root + 'tmp/2.png')
-    getDifference(img2, img6).save(output_root + 'tmp/3.png')
-    getDifference(img3, img5).save(output_root + 'tmp/4.png')
-    getDifference(img4, img6).save(output_root + 'tmp/5.png')
+                    compares.update({(i, j): str(equal(org0, org1))})
 
     f = open(output_root + 'tmp/result.html', 'w')
-    f.write('chrome and firefox: ' + str(equal(img7, img8)) + '<br>')
-    f.write('chrome and others: ' + str(equal(img7, img9)) + '<br>')
-    f.write('firefox and others: ' +str(equal(img8, img9)) + '<br>')
+    for i in range(3):
+        for j in range(i + 1, 3):
+            name = compare_names[(i, j)]
+            if (i, j) in compares:
+                f.write("{}: {} <br>".format(name, compares[(i, j)]))
+            else:
+                f.write("{}: {} <br>".format(name, None))
+
     f.flush()
     f.close()
-
 
 
 def index(req):
