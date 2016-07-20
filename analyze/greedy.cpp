@@ -174,7 +174,8 @@ int main(int argc, char **argv) {
       }
     }
   }
-
+  constexpr size_t numIt = 1 << cutoff;
+  constexpr size_t chunkSize = 1 << 23;
   std::list<ResultTable::Ptr> results;
   std::ifstream binIn ("results.dat", std::ios::in | std::ios::binary);
   if (binIn.is_open()) {
@@ -188,18 +189,20 @@ int main(int argc, char **argv) {
     for (auto & res : results)
       std::cout << *res << std::endl;
   } else {
-#pragma omp parallel for reduction(merge : results)
-    for (size_t mask = 1; mask < std::pow(2, cutoff); ++mask)
-      results.emplace_back(analyze(data, browsers, mask));
+    for (size_t i = 1; i < numIt; i += chunkSize) {
+      const int stop = std::min(i + chunkSize, numIt);
+      #pragma omp parallel for reduction(merge : results)
+          for (size_t mask = i; mask < stop; ++mask)
+            results.emplace_back(analyze(data, browsers, mask));
 
-    std::ofstream out("results.dat", std::ios::out | std::ios::binary);
-    size_t num = results.size();
-    std::cout << num << std::endl;
-    out.write(reinterpret_cast<const char *>(&num), sizeof(num));
-    for (auto &res : results)
-      res->writeToFile(out);
-
-    out.close();
+          std::ofstream out("results_" + std::to_string(i) + ".dat", std::ios::out | std::ios::binary);
+          size_t num = results.size();
+          out.write(reinterpret_cast<const char *>(&num), sizeof(num));
+          for (auto &res : results)
+            res->writeToFile(out);
+        out.close();
+        results.clear();
+    }
   }
 }
 
