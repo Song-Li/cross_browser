@@ -110,7 +110,7 @@ function draw(){
         numImages = hashCodes[browser].length;
         break;
     }
-    var canSubtract = Object.keys(hashCodes).length == 3;
+    var canSubtract = Object.keys(hashCodes).length >= 2;
     for (var i = 0; i < numImages; i++) {
         var div1 = $('<div class="imgDiv"/>').appendTo($('#right'));
         $('<p/>').text(i).appendTo(div1);
@@ -139,18 +139,20 @@ function toServer(id){ //send messages to server and receive messages from serve
         return ;
     }
 
-    /*var f = document.createElement("form");
-    f.setAttribute('method',"post");
-    f.setAttribute('action',"http://" + ip_address + "/result.py");
+    /*if (postData[0] == 'S'){
+        var f = document.createElement("form");
+        f.setAttribute('method',"post");
+        f.setAttribute('action',"http://" + ip_address + "/result.py");
 
-    var i = document.createElement("input"); //input element, text
-    i.setAttribute('type',"text");
-    i.setAttribute('name',postData);
+        var i = document.createElement("input"); //input element, text
+        i.setAttribute('type',"text");
+        i.setAttribute('name',postData);
 
-    f.appendChild(i);
+        f.appendChild(i);
 
-    f.submit();
-    return ;*/
+        f.submit();
+        return ;
+    }*/
 
 
     $.ajax({
