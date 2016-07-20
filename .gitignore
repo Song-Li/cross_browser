@@ -1,7 +1,6 @@
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
-Makefile
 cmake_install.cmake
 install_manifest.txt
 *.sublime*
@@ -15,3 +14,4 @@ install_manifest.txt
 osx_script
 *.ignore
 *.pyc
+*.dSYM
