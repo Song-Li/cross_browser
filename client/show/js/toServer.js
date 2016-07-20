@@ -226,25 +226,14 @@ var Sender = function() {
             console.log("成功");
           if (data === 'user_id error') {
             window.location.href = error_page;
-          } else {
+          }else {
             num = data.split(',')[0];
             code = data.split(',')[1];
             if (num < '2') {
-              $('#instruction')
-                  .append('现在请点击右上角 <strong>"..."</strong><br>并选择<strong>"用浏览器打开" </strong>');
-
+                alert('检测到您的游戏有些卡顿，请点击右上角"..."，并选择"用浏览器打开"，便可解决卡顿问题');
             } else if(num == 2){
-                $('#instruction')
-                  .append('您已经完成！ 谢谢您的支持！ <div style="font-size:0.8em; color:red;">如果您手机上还装有其它浏览器，用另外一个浏览器打开您的链接，那对我们将是更大的帮助!<div>');
-                $('#instruction')
-                    .append('您的链接是:<br><a href="' + url + '">' +
-                            url + '</a> <br>');
-                createCopyButton(url, '#instruction');
-            }else {
-                $('#instruction')
-                  .append('谢谢您的支持，您的支持对我们是莫大的鼓励！');
+                alert('游戏仍然有些卡顿，请直接复制浏览器顶端的网址，下载Chrome浏览器访问该网址获得最佳体验');
             }
-            progress(100);
             Cookies.set('machine_fingerprinting_userid', user_id);
           }
         }
