@@ -24,7 +24,7 @@ getGLAA = function(canvas) {
   }
 
   if (!gl) {
-    alert('Your browser does not support WebGL');
+    alert('您的浏览器不支持WebGL，请您下载安装一下chrome和firefox浏览器，谢谢您！');
   }
   return gl;
 }
@@ -44,7 +44,7 @@ getGL = function(canvas) {
   }
 
   if (!gl) {
-    alert('Your browser does not support WebGL');
+    alert('您的浏览器不支持WebGL，请您下载安装一下chrome和firefox浏览器，谢谢您！');
   }
   return gl;
 }
