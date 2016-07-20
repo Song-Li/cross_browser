@@ -189,7 +189,7 @@ int main(int argc, char **argv) {
       std::cout << *res << std::endl;
   } else {
 #pragma omp parallel for reduction(merge : results)
-    for (size_t mask = 1; mask < std::pow(2, 5); ++mask)
+    for (size_t mask = 1; mask < std::pow(2, cutoff); ++mask)
       results.emplace_back(analyze(data, browsers, mask));
 
     std::ofstream out("results.dat", std::ios::out | std::ios::binary);
