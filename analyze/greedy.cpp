@@ -176,15 +176,31 @@ int main(int argc, char **argv) {
   }
 
   std::list<ResultTable::Ptr> results;
-#pragma omp parallel for reduction(merge : results)
-  for (size_t mask = 1; mask < std::pow(2, cutoff); ++mask)
-    results.emplace_back(analyze(data, browsers, mask));
+  std::ifstream binIn ("results.dat", std::ios::in | std::ios::binary);
+  if (binIn.is_open()) {
+    size_t num;
+    binIn.read(reinterpret_cast<char *>(&num), sizeof(num));
+    std::cout << num << std::endl;
+    results.resize(num, ResultTable::Create());
+    for (auto & res : results)
+      res->loadFromFile(binIn);
 
-  std::ofstream out("results.dat", std::ios::out | std::ios::binary);
-  size_t num = results.size();
-  out.write(reinterpret_cast<const char *>(&num), sizeof(num));
-  for (auto &res : results)
-    res->writeToFile(out);
+    for (auto & res : results)
+      std::cout << *res << std::endl;
+  } else {
+#pragma omp parallel for reduction(merge : results)
+    for (size_t mask = 1; mask < std::pow(2, 5); ++mask)
+      results.emplace_back(analyze(data, browsers, mask));
+
+    std::ofstream out("results.dat", std::ios::out | std::ios::binary);
+    size_t num = results.size();
+    std::cout << num << std::endl;
+    out.write(reinterpret_cast<const char *>(&num), sizeof(num));
+    for (auto &res : results)
+      res->writeToFile(out);
+
+    out.close();
+  }
 }
 
 namespace std {
@@ -239,7 +255,7 @@ ResultTable::Ptr analyze(const std::vector<Test> &data,
 
       if (count) {
         res->data[i][j].cb = crossBrowser / count;
-        res->data[i][j].unique = unique_codes.size() / count;
+        res->data[i][j].unique = unique_codes.size() / crossBrowser;
       } else {
         res->data[i][j].cb = -1;
         res->data[i][j].unique = -1;
