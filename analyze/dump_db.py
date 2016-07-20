@@ -10,7 +10,8 @@ cursor = db.cursor()
 
 cursor.execute("SELECT browser, hashes FROM {}".format(table_name))
 f = open("hashes.txt", "w")
-for browser, hashes in cursor.fetchall():
+for browser, h in cursor.fetchall():
+  hashes = h.split("&")
   f.write(("{} " * (1 + len(hashes))).format(browser, *hashes))
   f.write("\n")
 
