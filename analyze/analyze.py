@@ -25,6 +25,16 @@ db_name = "cross_browser"
 table_name = "round_2_data"
 extra_selector = "and gpu!='SwiftShader'"
 
+def update_table(db):
+    cursor = db.cursor()
+    cursor.execute("SELECT image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock FROM new_data")
+    for image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock in cursor.fetchall():
+        cursor.execute("SELECT COUNT(*) FROM {} where image_id='{}'".format(table_name, image_id))
+        if not cursor.fetchone()[0]:
+            cursor.execute("INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock))
+    db.commit()
+    cursor.close()
+
 def getBrowser(vendor, agent):
     browser = ''
     if agent.find('Vivaldi') != -1:
@@ -68,28 +78,38 @@ def gen_hash_codes(image_id):
         hashes.append(b64m + b64n)
     return hashes
 
-def update_hashes(cursor):
+def update_hashes(db):
+    cursor = db.cursor()
     cursor.execute("SELECT image_id FROM {}".format(table_name))
     for image_id, in cursor.fetchall():
         print image_id
         hash_codes = gen_hash_codes(image_id)
         cursor.execute("UPDATE {} SET hashes='{}' WHERE image_id='{}'".format(table_name, "&".join(hash_codes), image_id))
 
-def update_langs(cursor):
+    db.commit()
+    cursor.close()
+
+def update_langs(db):
+    cursor = db.cursor()
     cursor.execute("SELECT image_id FROM {}".format(table_name))
 
     for image_id, in cursor.fetchall():
         langs = LangAnalyzer("{}images/origins/".format(open_root), image_id).analyze()
         cursor.execute("UPDATE {} SET langs='{}' WHERE image_id='{}'".format(table_name, "&".join(str(x) for x in langs), image_id))
 
+    db.commit()
+    cursor.close()
 
-def updateBrowser(cursor):
+def update_browser(db):
+    cursor = db.cursor()
     cursor.execute("SELECT DISTINCT(user_id) FROM {}".format(table_name))
     for uid, in cursor.fetchall():
         cursor.execute("SELECT image_id, agent, vendor FROM {} WHERE user_id='{}'".format(table_name, uid))
         for image_id, agent, vendor in cursor.fetchall():
             browser = getBrowser(vendor, agent)
             cursor.execute("UPDATE {} SET browser='{}' WHERE image_id='{}'".format(table_name, browser, image_id))
+    db.commit()
+    cursor.close()
 
 
 def getRes(b1, b2, cursor, quiet):
@@ -148,8 +168,8 @@ def getRes(b1, b2, cursor, quiet):
         cursor.execute("SELECT hashes FROM {} WHERE image_id='{}'".format(table_name, image2_id))
         hashes_2 = cursor.fetchone()[0].split("&")
 
-        # extras = "timezone, resolution, langs"
-        extras = ""
+        extras = "timezone, langs, resolution"
+        # extras = ""
         if extras != "":
             cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(extras, table_name, image1_id))
             extras_1 = cursor.fetchone()
@@ -162,10 +182,7 @@ def getRes(b1, b2, cursor, quiet):
 
         uid_stability.update({uid: []})
         for i in range(len(hashes_1)):
-            if i == 23 or i == 24:
-                continue
-            if i > 26:
-                break
+
             if i not in hash_all:
                 hash_all.update({i: []})
             if i not in hash_all_unique:
@@ -174,10 +191,11 @@ def getRes(b1, b2, cursor, quiet):
                 diff.update({i: 0.0})
 
             hash1_val = hashes_1[i]
-            s1 += hash1_val
-
             hash2_val = hashes_2[i]
-            s2 += hash2_val
+
+            if i <= 16 and i != 23 and i != 24 and i != 19:
+                s1 += hash1_val
+                s2 += hash2_val
 
             #if hash1_val == hash2_val and (hash1_val not in hash_all[i]):
             if hash1_val == hash2_val:
@@ -229,14 +247,17 @@ def getRes(b1, b2, cursor, quiet):
 
 
 def index():
-    print 'extra_selector', extra_selector
+    print 'extra_selector="{}"'.format(extra_selector)
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     cursor = db.cursor()
 
+    # update_table(db)
+    # update_browser(db)
+    # update_hashes(db)
+    # update_langs(db)
+    # return
 
-    # updateBrowser(cursor)
-
-    if True:
+    if False:
         getRes("Firefox", "Chrome", cursor, False)
     else:
         cursor.execute('SELECT DISTINCT(browser) from {}'.format(table_name))
@@ -260,8 +281,7 @@ def index():
 
             print row_format.format(b1, *disp)
 
-    update_hashes(cursor)
-    # update_langs(cursor)
+
     db.commit()
     db.close()
 
