@@ -8,12 +8,10 @@ table_name = "round_2_data"
 db = MySQLdb.connect("localhost", "erik", "erik", db_name)
 cursor = db.cursor()
 
-cursor.execute("SELECT hashes FROM {}".format(table_name))
+cursor.execute("SELECT browser, hashes FROM {}".format(table_name))
 f = open("hashes.txt", "w")
-for hashes, in cursor.fetchall():
-  for h in hashes.split("&"):
-    f.write("{} ".format(h))
-
+for browser, hashes in cursor.fetchall():
+  f.write(("{} " * (1 + len(hashes))).format(browser, *hashes))
   f.write("\n")
 
 f.flush()
