@@ -16,8 +16,7 @@ function getRes(){
         type: 'POST',
         data : JSON.stringify(postData),
         success:function(score) {
-            res = JSON.parse(score);
-            if(res['browser'] != '-1'){
+            if(score != '-1'){
                 $('body').append('您的分数是: ' + score);
             }else{
                 generateUID();

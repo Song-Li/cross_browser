@@ -3,7 +3,7 @@ var error_page = "http://mfcn.songli.us/error"
 //var ip_address = "128.180.123.19";
 var ip_address = "139.129.203.226";
 // var ip_address = "52.90.197.136";
-var result_page = "https://mfcn.songli.us/phone/result/"
+var result_page = "https://mfcn.songli.us/";
 
 function populateFontList(fontArr) {
   fonts = [];

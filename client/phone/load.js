@@ -11,7 +11,7 @@ function load(){
         data : JSON.stringify(postData),
         success:function(score) {
             if(score != '-1'){
-                $('body').append('<iframe id="full" src="' + url + '"/>');
+                window.location.href = url;
                 $('#FSForm').hide();
             }else{
                 $('body').append('<iframe src="' + url + '" style="display: none;"/>');
