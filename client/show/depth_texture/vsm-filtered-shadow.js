@@ -2,9 +2,11 @@
 
 /*
 This test uses a depth texture to do shadow mapping
-A depth texture uses the webgl float texture extension and the webgl
-depth texture extensions.  This is testing whether those extensions exist
-and how they are implemented on the GPU
+A depth texture is a special type of float texture that is a rendering target
+and a float texture.  A float texture is a texture that uses floats instead
+of intergers to represent color values.
+This is testing whether those extensions exists and how they are
+implemented on the GPU
  */
 
 (function() {

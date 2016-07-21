@@ -28,8 +28,8 @@ progress {
     appearance: none;
     position: relative;
     overflow: hidden;
-    width: 1.5em;
-    height: 1em;
+    width: 50%;
+    height: 50%;
     padding: 0;
     border: none;
     font-family: "Ubuntu Mono", sans-serif;

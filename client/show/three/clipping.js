@@ -1,8 +1,8 @@
 /***
-* This file uses clipping planes to manipulate a scene and makes it appear
+* This test uses clipping planes to manipulate a scene and makes it appear
 * like movement is happening, however, all the objects are stationary while
-* it is the clipping planes that are infact moving.  This is also where we
-* calculate FPS as this test is the most taking one that we have
+* it is the clipping planes that are moving.  This is also where we
+* calculate FPS as this test is the most gpu intensive test that we have
 ***/
 
 var ClippingTest = function() {

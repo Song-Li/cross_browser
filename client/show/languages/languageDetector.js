@@ -39,7 +39,7 @@ sort of box
       this.fontSize = 30;
       this.extraHeigth = 100;
       this.height = this.fontSize + this.extraHeigth;
-      this.width = 500;
+      this.width = 350;
       this.canvas = $("<canvas height='" + this.height + "' width='" + this.width + "'/>").appendTo($('#test_canvases'));
       this.ctx = this.canvas[0].getContext('2d');
       this.results = [];
@@ -95,7 +95,7 @@ sort of box
               _this.ctx.fillStyle = "white";
               _this.ctx.fillRect(0, 0, _this.width, _this.height);
               _this.ctx.fillStyle = "black";
-              _this.ctx.fillText(index + " " + text + " Boxes: " + (isBoxes ? "boxes" : "text"), 5, _this.height - _this.extraHeigth / 2.0);
+              _this.ctx.fillText(index + " " + text + " " + (isBoxes ? "boxes" : "text"), 5, _this.height - _this.extraHeigth / 2.0);
             }
             _this.results.push(isBoxes ? 0 : 1);
             return raf(function() {
