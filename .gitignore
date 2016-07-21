@@ -15,3 +15,4 @@ install_manifest.txt
 osx_script
 *.ignore
 *.pyc
+*.dSYM
