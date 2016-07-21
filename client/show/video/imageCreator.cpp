@@ -51,25 +51,16 @@ static cv::Vec3b randomColor() {
 }
 
 int main(int agrc, char **argv) {
+  constexpr int AAFactor = 16;
+  constexpr int numRows = 10;
   constexpr int d = 1000;
-  cv::Mat_<cv::Vec3b> out(d, d, cv::Vec3b(255, 255, 255));
+  cv::Mat_<cv::Vec3b> out(AAFactor*d, AAFactor*d, cv::Vec3b(255, 255, 255));
+  constexpr int distBetweenRows = d*AAFactor/numRows;
 
-  for (int j = 50; j < d; j += 100) {
-    for (int i = 0; i < d; ++i) {
-      out(j, i) = cv::Vec3b(0, 0, 0);
-    }
-  }
-
-  for (int j = 0; j < d; ++j) {
-    for (int i = 50; i < d; i += 100) {
-      out(j, i) = cv::Vec3b(0, 0, 0);
-    }
-  }
-
-  for (int j = 50; j < d; j += 100) {
-    for (int i = 50; i < d; i += 100) {
+  for (int j = distBetweenRows/2; j < out.rows; j += distBetweenRows) {
+    for (int i = distBetweenRows/2; i < out.cols; i += distBetweenRows) {
       auto color = randomColor();
-      constexpr double maxRadius = 10;
+      constexpr double maxRadius = 20*AAFactor;
       for (double radius = 0; radius <= maxRadius; radius += 0.5) {
         for (double y = -radius; y <= radius; ++y) {
           double xMag = std::sqrt(radius * radius - y * y);
@@ -81,7 +72,24 @@ int main(int agrc, char **argv) {
     }
   }
 
-  cv::imwrite("grid.png", out);
+  cv::Mat_<cv::Vec3b> AA;
+  cv::resize(out, AA, cv::Size(d, d));
+
+  for (int j = distBetweenRows/2/AAFactor; j < AA.rows; j += distBetweenRows/AAFactor) {
+    for (int i = 0; i < AA.cols; ++i) {
+      if (AA(j, i) == cv::Vec3b(255, 255, 255))
+        AA(j, i) = cv::Vec3b(0, 0, 0);
+    }
+  }
+
+  for (int j = 0; j < AA.rows; ++j) {
+    for (int i = distBetweenRows/2/AAFactor; i < AA.cols; i += distBetweenRows/AAFactor) {
+      if (AA(j, i) == cv::Vec3b(255, 255, 255))
+        AA(j, i) = cv::Vec3b(0, 0, 0);
+    }
+  }
+
+  cv::imwrite("grid.png", AA);
 
   /*cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_ANYDEPTH |
   CV_LOAD_IMAGE_COLOR);
