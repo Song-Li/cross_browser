@@ -250,7 +250,7 @@ var ClippingTest = function() {
     renderer.clippingPlanes = globalClippingPlanes;
     renderer.localClippingEnabled = true;
 
-    var level = 49;
+    var level = 48;
     var transform = new THREE.Matrix4(), tmpMatrix = new THREE.Matrix4();
     var times = [];
     function animate() {
