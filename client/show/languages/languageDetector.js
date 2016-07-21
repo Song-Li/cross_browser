@@ -95,7 +95,7 @@ sort of box
               _this.ctx.fillStyle = "white";
               _this.ctx.fillRect(0, 0, _this.width, _this.height);
               _this.ctx.fillStyle = "black";
-              _this.ctx.fillText(index + " " + text + " Boxes: " + isBoxes, 5, _this.height - _this.extraHeigth / 2.0);
+              _this.ctx.fillText(index + " " + text + " Boxes: " + (isBoxes ? "boxes" : "text"), 5, _this.height - _this.extraHeigth / 2.0);
             }
             _this.results.push(isBoxes ? 0 : 1);
             return raf(function() {
