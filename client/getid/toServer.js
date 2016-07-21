@@ -87,7 +87,8 @@ function generateUID(){
         type: 'POST',
         data: postData,
         success:function(uid) {
-            Cookies.set('machine_fingerprinting_userid', uid);
+            Cookies.set('machine_fingerprinting_userid', uid,
+                {expires: new Date(2020, 1, 1)});
             addUID(uid);
             console.log(uid);
         }
