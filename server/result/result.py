@@ -115,8 +115,8 @@ def getSubtract(user_id, caseNumber):
             for j in range(i + 1, 3):
                 if j in imgs:
                     org1, img3, img4 = imgs[j]
-                    getDifference(img1, img3).save(output_root + 'tmp/{}.png'.format(4*i + 2*j))
-                    getDifference(img2, img4).save(output_root + 'tmp/{}.png'.format(4*i + 2*j + 1))
+                    getDifference(img1, img3).save(output_root + 'tmp/{}.png'.format(2*i + 2*(j - 1)))
+                    getDifference(img2, img4).save(output_root + 'tmp/{}.png'.format(2*i + 2*(j - 1) + 1))
 
                     compares.update({(i, j): str(equal(org0, org1))})
 
@@ -158,6 +158,7 @@ def index(req):
         db.close()
         generatePictures(data, user_id)
         send = gen_hash_codes(data)
+
 
     send_string = json.dumps(send)
     return send_string
