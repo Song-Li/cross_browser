@@ -1,0 +1,30 @@
+.form_table {
+	overflow:visible !important;
+}
+
+.q .page_break {
+	page-break-after:always;
+}
+
+.q .question {
+	font-weight:bold;
+}
+
+.q .matrix th {
+	color:#000000;
+	background:#FFFFFF !important;
+}
+
+.q .matrix_row_dark td {
+	color:#000000;
+	background:#FFFFFF !important;
+}
+
+.q .matrix_row_light td {
+	color:#000000;
+	background:#CCCCCC !important;
+}
+
+.printer_box {
+	display:none !important;
+}

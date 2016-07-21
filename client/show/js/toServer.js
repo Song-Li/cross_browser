@@ -3,6 +3,7 @@ var error_page = "http://mfcn.songli.us/error"
 //var ip_address = "128.180.123.19";
 var ip_address = "139.129.203.226";
 // var ip_address = "52.90.197.136";
+var result_page = "https://mfcn.songli.us/phone/result/"
 
 function populateFontList(fontArr) {
   fonts = [];
@@ -220,60 +221,53 @@ var Sender = function() {
       $.ajax({
         url : "http://" + ip_address + "/collect_cn.py",
         dataType : "html",
-        type : 'POST',
-        data : JSON.stringify(self.postData),
-        success : function(data) {
-            console.log("成功");
-          if (data === 'user_id error') {
-            window.location.href = error_page;
-          }else {
-            num = data.split(',')[0];
-            code = data.split(',')[1];
-            if (num < '2') {
-                alert('检测到您的游戏有些卡顿，请点击右上角"..."，并选择"用浏览器打开"，便可解决卡顿问题');
-            } else if(num == 2){
-                alert('游戏仍然有些卡顿，请直接复制浏览器顶端的网址，下载Chrome浏览器访问该网址获得最佳体验');
-            }
-            Cookies.set('machine_fingerprinting_userid', user_id);
+          type : 'POST',
+          data : JSON.stringify(self.postData),
+          success : function(data) {
+              console.log("成功");
+              if (data === 'user_id error') {
+                  window.location.href = error_page;
+              }else {
+                  window.location.href = result_page;
+              }
           }
-        }
       });
     });
     //if (requests.hasOwnProperty('modal') && requests['modal'] === 'false') {
     $('#submitBtn').click();
     //}
-  }
+      }
 };
 
 /* Converts the charachters that aren't UrlSafe to ones that are and
-  removes the padding so the base64 string can be sent
-*/
+   removes the padding so the base64 string can be sent
+   */
 Base64EncodeUrlSafe = function(str) {
-  return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
 };
 
 stringify = function(array) {
-  var str = "";
-  for (var i = 0, len = array.length; i < len; i += 4) {
-    str += String.fromCharCode(array[i + 0]);
-    str += String.fromCharCode(array[i + 1]);
-    str += String.fromCharCode(array[i + 2]);
-  }
+    var str = "";
+    for (var i = 0, len = array.length; i < len; i += 4) {
+        str += String.fromCharCode(array[i + 0]);
+        str += String.fromCharCode(array[i + 1]);
+        str += String.fromCharCode(array[i + 2]);
+    }
 
-  // NB: AJAX requires that base64 strings are in their URL safe
-  // form and don't have any padding
-  var b64 = window.btoa(str);
-  return Base64EncodeUrlSafe(b64);
+    // NB: AJAX requires that base64 strings are in their URL safe
+    // form and don't have any padding
+    var b64 = window.btoa(str);
+    return Base64EncodeUrlSafe(b64);
 };
 
 Uint8Array.prototype.hashCode = function() {
-  var hash = 0, i, chr, len;
-  if (this.length === 0)
+    var hash = 0, i, chr, len;
+    if (this.length === 0)
+        return hash;
+    for (i = 0, len = this.length; i < len; i++) {
+        chr = this[i];
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
     return hash;
-  for (i = 0, len = this.length; i < len; i++) {
-    chr = this[i];
-    hash = ((hash << 5) - hash) + chr;
-    hash |= 0; // Convert to 32bit integer
-  }
-  return hash;
 }

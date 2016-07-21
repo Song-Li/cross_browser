@@ -8,12 +8,32 @@ function addUID(uid){
     window.location.replace(link);
 }
 
+function getRes(){
+    $.ajax({
+        url:"http://" + ip_address + "/survey.py",
+        dataType:"text",
+        type: 'POST',
+        data : JSON.stringify(postData),
+        success:function(score) {
+            if(score != '-1'){
+                $('body').append('您的分数是: ' + score);
+                return 1;
+            }else{
+                return 0;
+            }
+        }
+    });
+}
+
 function generateUID(){
     var uid = Cookies.get('machine_fingerprinting_userid');
     if (uid) {
         addUID(uid);
         return;
     }
+
+    if(getRes() == 1)
+        return 0;
 
     postData = 'GetUID';
 
