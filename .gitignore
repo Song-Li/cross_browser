@@ -16,3 +16,4 @@ osx_script
 *.ignore
 analyze/langs/*.png
 *.ignore
+*.dSYM

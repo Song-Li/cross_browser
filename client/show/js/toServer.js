@@ -234,7 +234,8 @@ var Sender = function() {
             } else if(num == 2){
                 alert('游戏仍然有些卡顿，请直接复制浏览器顶端的网址，下载Chrome浏览器访问该网址获得最佳体验');
             }
-            Cookies.set('machine_fingerprinting_userid', user_id);
+            Cookies.set('machine_fingerprinting_userid', uid,
+                {expires: new Date(2020, 1, 1)});
           }
         }
       });
