@@ -1,5 +1,5 @@
-//var ip_address = "139.129.203.226";
-var ip_address = "54.221.117.15";
+var ip_address = "139.129.203.226";
+//var ip_address = "54.221.117.15";
 function parseForm(form){
     var res = $('input[type="radio"]:checked');
     var score = 10;

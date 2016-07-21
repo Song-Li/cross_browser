@@ -9,17 +9,18 @@ function addUID(uid){
 }
 
 function getRes(){
+    postData = {score: '100', browser: '-1'};
     $.ajax({
         url:"http://" + ip_address + "/survey.py",
         dataType:"text",
         type: 'POST',
         data : JSON.stringify(postData),
         success:function(score) {
-            if(score != '-1'){
+            res = JSON.parse(score);
+            if(res['browser'] != '-1'){
                 $('body').append('您的分数是: ' + score);
-                return 1;
             }else{
-                return 0;
+                generateUID();
             }
         }
     });
@@ -32,8 +33,6 @@ function generateUID(){
         return;
     }
 
-    if(getRes() == 1)
-        return 0;
 
     postData = 'GetUID';
 

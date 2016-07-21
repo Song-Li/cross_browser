@@ -1,4 +1,5 @@
-var ip_address = "54.221.117.15";
+//var ip_address = "54.221.117.15";
+var ip_address = "139.129.203.226";
 function load(){
     var url = window.location.href.toString();
     url = url.replace('phone', 'show');
