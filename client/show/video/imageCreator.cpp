@@ -5,11 +5,6 @@
 #include <opencv2/videoio.hpp>
 #include <random>
 
-constexpr double PI = 3.14159265358979323846;
-static double degreesToRadians(double degrees) {
-  return degrees * PI / 180.0;
-}
-
 std::string type2str(int type) {
   std::string r;
 
@@ -49,28 +44,47 @@ std::string type2str(int type) {
   return r;
 }
 
-int main(int agrc, char ** argv) {
-  cv::Mat out(1024, 2048, CV_16UC3);
-  constexpr double range = ((1<<16) - 1)/2.0;
-  constexpr double nu = 5*2 * PI / 1920;
-  for (int j = 0; j < out.rows; ++j) {
-    uint16_t *dst = out.ptr<uint16_t>(j);
-    for (int i = 0; i < out.cols; ++i) {
-      const int r = cv::saturate_cast<uint16_t>(
-          std::sin(nu * i + degreesToRadians(0 + 5*j)) * range + range);
-      const int g = cv::saturate_cast<uint16_t>(
-          std::sin(nu * i + degreesToRadians(120 + 5*j)) * range + range);
-      const int b = cv::saturate_cast<uint16_t>(
-          std::sin(nu * i + degreesToRadians(240 + 5*j)) * range + range);
-      dst[3 * i + 0] = b;
-      dst[3 * i + 1] = g;
-      dst[3 * i + 2] = r;
+static cv::Vec3b randomColor() {
+  static cv::RNG rng(0xFFFFFFFF);
+  int icolor = (unsigned)rng;
+  return cv::Vec3b(icolor & 255, (icolor >> 8) & 255, (icolor >> 16) & 255);
+}
+
+int main(int agrc, char **argv) {
+  constexpr int d = 1000;
+  cv::Mat_<cv::Vec3b> out(d, d, cv::Vec3b(255, 255, 255));
+
+  for (int j = 50; j < d; j += 100) {
+    for (int i = 0; i < d; ++i) {
+      out(j, i) = cv::Vec3b(0, 0, 0);
     }
   }
 
-  cv::imwrite("rainbow.png", out);
+  for (int j = 0; j < d; ++j) {
+    for (int i = 50; i < d; i += 100) {
+      out(j, i) = cv::Vec3b(0, 0, 0);
+    }
+  }
 
-  /*cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_COLOR);
+  for (int j = 50; j < d; j += 100) {
+    for (int i = 50; i < d; i += 100) {
+      auto color = randomColor();
+      constexpr double maxRadius = 10;
+      for (double radius = 0; radius <= maxRadius; radius += 0.5) {
+        for (double y = -radius; y <= radius; ++y) {
+          double xMag = std::sqrt(radius * radius - y * y);
+          for (double x = -xMag; x <= xMag; ++x) {
+            out(j + y, i + x) = color;
+          }
+        }
+      }
+    }
+  }
+
+  cv::imwrite("grid.png", out);
+
+  /*cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_ANYDEPTH |
+  CV_LOAD_IMAGE_COLOR);
   cv::Mat out2;
   constexpr double alpha = static_cast<double>((1 << 8) - 1)/((1 << 16) - 1);
   in.convertTo(out2, CV_8UC3, alpha);
