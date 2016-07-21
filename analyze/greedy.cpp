@@ -32,10 +32,8 @@ struct ResultTable {
   struct element {
     double cb, unique;
   };
-  element **data = nullptr;
-  size_t mask;
 
-  ResultTable() {}
+  ResultTable() : data{nullptr} {}
   ResultTable(const int numBrowsers) : numBrowsers{numBrowsers} {
     createData();
   }
@@ -52,46 +50,34 @@ struct ResultTable {
     return std::make_shared<ResultTable>(std::forward<Targs &>(args)...);
   };
 
+  element &operator()(int j, int i) { return data[j * numBrowsers + i]; };
+
+  element &at(int j, int i) { return operator()(j, i); };
+
+  const element &operator()(int j, int i) const {
+    return data[j * numBrowsers + i];
+  };
+
+  const element &at(int j, int i) const { return operator()(j, i); };
+
   static inline Ptr Create() { return std::make_shared<ResultTable>(); };
 
   ~ResultTable() { deleteData(); }
 
-  void writeToFile(std::ofstream &out) {
-    out.write(reinterpret_cast<const char *>(&mask), sizeof(mask));
-    out.write(reinterpret_cast<const char *>(&numBrowsers),
-              sizeof(numBrowsers));
-    for (int i = 0; i < numBrowsers; ++i)
-      for (int j = 0; j < numBrowsers; ++j)
-        out.write(reinterpret_cast<const char *>(data[i] + j), sizeof(element));
-  }
-
-  void loadFromFile(std::ifstream &in) {
-    in.read(reinterpret_cast<char *>(&mask), sizeof(mask));
-    in.read(reinterpret_cast<char *>(&numBrowsers), sizeof(numBrowsers));
-    createData();
-    for (int i = 0; i < numBrowsers; ++i)
-      for (int j = 0; j < numBrowsers; ++j)
-        in.read(reinterpret_cast<char *>(data[i] + j), sizeof(element));
-  }
   friend std::ostream &operator<<(std::ostream &out, const ResultTable &p);
+  element *data;
 
 private:
+  size_t mask;
   int numBrowsers;
   void deleteData() {
     if (data != nullptr) {
-      for (int i = 0; i < numBrowsers; ++i)
-        delete[] data[i];
-
       delete[] data;
       data = nullptr;
     }
   }
 
-  void createData() {
-    data = new element *[numBrowsers];
-    for (int i = 0; i < numBrowsers; ++i)
-      data[i] = new element[numBrowsers]();
-  }
+  void createData() { data = new element[numBrowsers * numBrowsers]; }
 };
 
 std::ostream &operator<<(std::ostream &out, const ResultTable &p) {
@@ -103,9 +89,9 @@ std::ostream &operator<<(std::ostream &out, const ResultTable &p) {
     std::cout << std::setw(width) << i;
     for (int j = 0; j < p.numBrowsers; ++j) {
       std::ostringstream oss;
-      if (p.data[i][j].cb != -1)
-        oss << static_cast<int>(p.data[i][j].cb * 100) << "% "
-            << static_cast<int>(p.data[i][j].unique * 100) << "%";
+      if (p(j, i).cb != -1)
+        oss << static_cast<int>(p(j, i).cb * 100) << "% "
+            << static_cast<int>(p(j, i).unique * 100) << "%";
       std::cout << std::setw(width) << oss.str();
     }
     std::cout << std::endl;
@@ -115,11 +101,11 @@ std::ostream &operator<<(std::ostream &out, const ResultTable &p) {
 
 typedef std::shared_ptr<std::map<std::string, DataPoint::Ptr>> Test;
 
-constexpr int cutoff = 26;
+constexpr int cutoff = 27;
 
-ResultTable::Ptr analyze(const std::vector<Test> &data,
-                         const std::set<std::string> &browsers,
-                         const size_t mask);
+std::tuple<float, float, float, float, int>
+analyze(const std::vector<Test> &data, const std::set<std::string> &browsers,
+        const size_t mask);
 
 #pragma omp declare reduction(                                                 \
     merge : std::list <                                                        \
@@ -175,33 +161,47 @@ int main(int argc, char **argv) {
     }
   }
   constexpr size_t numIt = 1 << cutoff;
-  constexpr size_t chunkSize = 1 << 23;
-  std::list<ResultTable::Ptr> results;
-  std::ifstream binIn ("results.dat", std::ios::in | std::ios::binary);
+
+  std::list<std::tuple<float, float, float, float, int>> results;
+  std::ifstream binIn("results.dat", std::ios::in | std::ios::binary);
   if (binIn.is_open()) {
     size_t num;
     binIn.read(reinterpret_cast<char *>(&num), sizeof(num));
     std::cout << num << std::endl;
-    results.resize(num, ResultTable::Create());
-    for (auto & res : results)
-      res->loadFromFile(binIn);
-
-    for (auto & res : results)
-      std::cout << *res << std::endl;
+    for (int i = 0; i < num; ++i) {
+      float a[4];
+      int e;
+      in.read(reinterpret_cast<char *>(a), sizeof(a));
+      in.read(reinterpret_cast<char *>(&e), sizeof(e));
+      results.emplace_back(a[0], a[1], a[2], a[3], e);
+    }
   } else {
-    for (size_t i = 1; i < numIt; i += chunkSize) {
-      const int stop = std::min(i + chunkSize, numIt);
-      #pragma omp parallel for reduction(merge : results)
-          for (size_t mask = i; mask < stop; ++mask)
-            results.emplace_back(analyze(data, browsers, mask));
+    constexpr size_t numIt = 1 << cutoff;
 
-          std::ofstream out("results_" + std::to_string(i) + ".dat", std::ios::out | std::ios::binary);
-          size_t num = results.size();
-          out.write(reinterpret_cast<const char *>(&num), sizeof(num));
-          for (auto &res : results)
-            res->writeToFile(out);
-        out.close();
-        results.clear();
+#pragma omp parallel
+    {
+      std::list<std::tuple<float, float, float, float, int>> privateResults;
+#pragma omp for nowait
+      for (size_t mask = 1; mask < numIt; ++mask)
+        privateResults.emplace_back(analyze(data, browsers, mask));
+
+#pragma omp for schedule(static) ordered
+      for (int i = 0; i < omp_get_num_threads(); ++i) {
+#pragma omp ordered
+        results.insert(results.end(), privateResults.begin(),
+                       privateResults.end());
+      }
+    }
+
+    std::ofstream out ("results.dat", std::ios::out | std::ios::binary);
+    size_t num = results.size();
+    out.write(reinterpret_cast<const char *>(&num), sizeof(num));
+    for (auto & res : results) {
+      float a[4];
+      int e;
+      std::tie(a[0], a[1], a[2], a[3], e) = res;
+      out.write(reinterpret_cast<const char *>(a), sizeof(a));
+      out.write(reinterpret_cast<const char *>(&e), sizeof(e));
     }
   }
 }
@@ -229,13 +229,47 @@ std::vector<int> genCode(const std::vector<int> &ids, const int mask) {
   return code;
 }
 
-ResultTable::Ptr analyze(const std::vector<Test> &data,
-                         const std::set<std::string> &browsers,
-                         const size_t mask) {
-  int i = 0;
+template <class It, class UnaryFunc, class UnaryPredicate>
+std::tuple<double, double> aveAndStdev(It first, It last, UnaryFunc selector,
+                                       UnaryPredicate filter) {
+  double average = 0;
+  int count = 0;
+  std::for_each(first, last, [&](auto &e) {
+    if (filter(e)) {
+      average += selector(e);
+      ++count;
+    }
+  });
+  average /= count;
+
+  double sigma = 0;
+  std::for_each(first, last, [&](auto &e) {
+    if (filter(e)) {
+      const double value = selector(e);
+      sigma += (value - average) * (value - average);
+    }
+  });
+  sigma /= count - 1;
+  sigma = std::sqrt(sigma);
+  return std::make_tuple(average, sigma);
+}
+
+template <class It, class UnaryFunc>
+std::tuple<double, double> aveAndStdev(It first, It last, UnaryFunc selector) {
+  return aveAndStdev(first, last, selector, [](auto &e) { return true; });
+}
+
+template <class It> std::tuple<double, double> aveAndStdev(It first, It last) {
+  return aveAndStdev(first, last, [](auto &e) { return e; });
+}
+
+std::tuple<float, float, float, float, int>
+analyze(const std::vector<Test> &data, const std::set<std::string> &browsers,
+        const size_t mask) {
+  int j = 0;
   auto res = ResultTable::Create(browsers.size(), mask);
   for (auto &b1 : browsers) {
-    int j = 0;
+    int i = 0;
     for (auto &b2 : browsers) {
       std::unordered_set<std::vector<int>> unique_codes;
       double count = 0;
@@ -257,16 +291,34 @@ ResultTable::Ptr analyze(const std::vector<Test> &data,
       }
 
       if (count) {
-        res->data[i][j].cb = crossBrowser / count;
-        res->data[i][j].unique = unique_codes.size() / crossBrowser;
+        res->at(j, i).cb = crossBrowser / count;
+        res->at(j, i).unique = unique_codes.size() / crossBrowser;
       } else {
-        res->data[i][j].cb = -1;
-        res->data[i][j].unique = -1;
+        res->at(j, i).cb = -1;
+        res->at(j, i).unique = -1;
       }
-
-      ++j;
+      ++i;
     }
-    ++i;
+    ++j;
   }
-  return res;
+
+  int count = 0;
+  double avecb, stdcb;
+  std::tie(avecb, stdcb) =
+      aveAndStdev(res->data, res->data + (browsers.size() * browsers.size()),
+                  [](auto &e) { return e.cb; },
+                  [&count](auto &e) {
+                    if (e.cb != -1) {
+                      ++count;
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  });
+  double aveu, stdu;
+  std::tie(aveu, stdu) = aveAndStdev(
+      res->data, res->data + (browsers.size() * browsers.size()),
+      [](auto &e) { return e.unique; }, [](auto &e) { return e.unique != -1; });
+
+  return std::make_tuple(avecb, stdcb, aveu, stdu, count);
 }
