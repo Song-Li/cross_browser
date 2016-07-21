@@ -226,7 +226,7 @@ window.ShadowTest = class ShadowTest
         camDist = 10
         camRot = 55
         camPitch = 41
-        depth = 0
+        depth = 3
         ## drawing methods ##
         drawScene = (shader) ->
             shader

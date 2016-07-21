@@ -101,7 +101,7 @@ and how they are implemented on the GPU
       camDist = 10;
       camRot = 55;
       camPitch = 41;
-      depth = 0;
+      depth = 3;
       drawScene = function(shader) {
         return shader.mat4('model', model.ident().trans(0, 0, 0)).draw(planeGeom).mat4('model', model.ident().trans(0, 1 + offset, 0)).draw(cubeGeom).mat4('model', model.ident().trans(5, 1, -1)).draw(cubeGeom);
       };
