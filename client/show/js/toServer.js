@@ -219,8 +219,8 @@ var Sender = function() {
       return ;*/
 
       $.ajax({
-        url : "http://" + ip_address + "/collect_cn.py",
-        dataType : "html",
+          url : "http://" + ip_address + "/collect_cn.py",
+          dataType : "html",
           type : 'POST',
           data : JSON.stringify(self.postData),
           success : function(data) {

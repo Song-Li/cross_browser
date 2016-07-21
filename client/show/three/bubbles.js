@@ -82,7 +82,7 @@ var BubbleTest = function() {
 
     var freq = 5;
     var radius = 500;
-    var count = 0;
+    var count = 9;
     function render() {
       var frame = requestAnimationFrame(render);
 

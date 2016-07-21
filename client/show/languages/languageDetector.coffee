@@ -76,7 +76,7 @@ root.LanguageDector = class LanguageDector
     @fontSize = 30
     @extraHeigth = 100
     @height = @fontSize + @extraHeigth
-    @width = 500
+    @width = 350
     @canvas = $("<canvas height='#{@height}' width='#{@width}'/>").appendTo $('#test_canvases')
     @ctx = @canvas[0].getContext '2d'
 
@@ -127,7 +127,7 @@ root.LanguageDector = class LanguageDector
           @ctx.fillStyle = "white"
           @ctx.fillRect 0, 0, @width, @height
           @ctx.fillStyle = "black"
-          @ctx.fillText "#{index} #{text} Boxes: #{isBoxes}", 5,  @height - @extraHeigth/2.0
+          @ctx.fillText "#{index} #{text} #{if isBoxes then "boxes" else "text"}", 5,  @height - @extraHeigth/2.0
         @results.push(if isBoxes then 0 else 1)
 
         raf =>

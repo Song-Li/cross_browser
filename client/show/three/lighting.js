@@ -1,8 +1,10 @@
 /***
 * This test uses multiple moving lights of different colors that illuminate
-* a sceen of 5000 metalic rings.  The color and texture of the rings is
+* a scene of 5000 metalic rings.  The color and texture of the rings is
 * calculated by the GPU as opposed to loading in a image.  We run this test
-* twice, once with anti-aliasing and once without it
+* twice, once with anti-aliasing and once without it.  A seeded random
+* number generator is used to generate the position and rotation of each
+* ring (the seed makes this a stable process)
 ***/
 
 var LightingTest = function() {
@@ -38,7 +40,7 @@ var LightingTest = function() {
     renderer.gammaOutput = true;
 
     var freq = 0.035;
-    var level = 45;
+    var level = 49;
     var distance = 75;
     var frame;
     function animate() {
