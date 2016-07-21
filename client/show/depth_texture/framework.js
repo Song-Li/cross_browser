@@ -1267,8 +1267,8 @@
 
     WebGLFramework.prototype.adjustSize = function() {
       var canvasHeight, canvasWidth;
-      canvasWidth = this.canvas.offsetWidth || 2;
-      canvasHeight = this.canvas.offsetHeight || 2;
+      canvasWidth = this.canvas.width;
+      canvasHeight = this.canvas.height;
       if (this.width !== canvasWidth || this.height !== canvasHeight) {
         this.canvas.width = canvasWidth;
         this.canvas.height = canvasHeight;
