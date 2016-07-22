@@ -5,99 +5,99 @@ var ip_address = "139.129.203.226";
 // var ip_address = "52.90.197.136";
 
 function populateFontList(fontArr) {
-  fonts = [];
-  for (var key in fontArr) {
-    var fontName = fontArr[key];
+    fonts = [];
+    for (var key in fontArr) {
+        var fontName = fontArr[key];
 
-    // trim
-    fontName = fontName.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-    fonts.push(fontName);
-  }
+        // trim
+        fontName = fontName.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+        fonts.push(fontName);
+    }
 
-  sender.addFonts(fonts);
+    sender.addFonts(fonts);
 }
 
 var Sender = function() {
-  this.finalized = false;
-  this.postData = {fontlist: "No Flash",
-    user_id: -1,
-    WebGL: false,
-    inc: "Undefined",
-    gpu: "Undefined",
-    hash: "Undefined",
-    timezone: "Undefined",
-    resolution: "Undefined",
-    plugins: "Undefined",
-    cookie: "Undefined",
-    localstorage: "Undefined",
-    manufacturer: "Undefined",
-    gpuImageHashes: [],
-    adBlock: "Undefined",
-    langsDetected: [],
-    fps: 0.0
-  };
-  sumRGB = function(img) {
-    var sum = 0.0;
-    for (var i = 0; i < img.length; i += 4) {
-      sum += parseFloat(img[i + 0]);
-      sum += parseFloat(img[i + 1]);
-      sum += parseFloat(img[i + 2]);
-    }
-    return sum;
-  };
+    this.finalized = false;
+    this.postData = {fontlist: "No Flash",
+        user_id: -1,
+        WebGL: false,
+        inc: "Undefined",
+        gpu: "Undefined",
+        hash: "Undefined",
+        timezone: "Undefined",
+        resolution: "Undefined",
+        plugins: "Undefined",
+        cookie: "Undefined",
+        localstorage: "Undefined",
+        manufacturer: "Undefined",
+        gpuImageHashes: [],
+        adBlock: "Undefined",
+        langsDetected: [],
+        fps: 0.0
+    };
+    sumRGB = function(img) {
+        var sum = 0.0;
+        for (var i = 0; i < img.length; i += 4) {
+            sum += parseFloat(img[i + 0]);
+            sum += parseFloat(img[i + 1]);
+            sum += parseFloat(img[i + 2]);
+        }
+        return sum;
+    };
 
-  this.addFonts = function(fonts) {
-    this.postData['fontlist'] = fonts;
-  };
+    this.addFonts = function(fonts) {
+        this.postData['fontlist'] = fonts;
+    };
 
-  this.nextID = 0;
-  this.getID = function() {
-    if (this.finalized) {
-      throw "Can no longer generate ID's";
-      return -1;
-    }
-    return this.nextID++;
-  };
+    this.nextID = 0;
+    this.getID = function() {
+        if (this.finalized) {
+            throw "Can no longer generate ID's";
+            return -1;
+        }
+        return this.nextID++;
+    };
 
-  this.getIDs = function(numIDs) {
-    var idList = [];
-    for (var i = 0; i < numIDs; i++) {
-      idList.push(this.getID());
-    }
-    return idList;
-  };
+    this.getIDs = function(numIDs) {
+        var idList = [];
+        for (var i = 0; i < numIDs; i++) {
+            idList.push(this.getID());
+        }
+        return idList;
+    };
 
-  this.postLangsDetected = function(data) {
-    this.postData['langsDetected'] = data;
-  };
+    this.postLangsDetected = function(data) {
+        this.postData['langsDetected'] = data;
+    };
 
-  this.getDataFromCanvas = function(ctx, id) {
-    if (!this.finalized) {
-      throw "Still generating ID's";
-      return -1;
-    }
-    function hash(array) {
-      var hash = 0, i, chr, len;
-      if (array.length === 0)
-        return hash;
-      for (i = 0, len = array.length; i < len; i++) {
-        chr = array[i];
-        hash = ((hash << 5) - hash) + chr;
-        hash |= 0; // Convert to 32bit integer
-      }
-      return hash;
-    }
-    var w = 256, h = 256;
-    // Send pixels to server
-    var pixels = ctx.getImageData(0, 0, w, h).data;
-    var hashV = hash(pixels);
-    console.log("CTX: " + hashV);
+    this.getDataFromCanvas = function(ctx, id) {
+        if (!this.finalized) {
+            throw "Still generating ID's";
+            return -1;
+        }
+        function hash(array) {
+            var hash = 0, i, chr, len;
+            if (array.length === 0)
+                return hash;
+            for (i = 0, len = array.length; i < len; i++) {
+                chr = array[i];
+                hash = ((hash << 5) - hash) + chr;
+                hash |= 0; // Convert to 32bit integer
+            }
+            return hash;
+        }
+        var w = 256, h = 256;
+        // Send pixels to server
+        var pixels = ctx.getImageData(0, 0, w, h).data;
+        var hashV = hash(pixels);
+        console.log("CTX: " + hashV);
 
-    this.toServer(false, "None", "None", hashV, id, pixels);
-    return sumRGB(pixels) > 1.0;
-  };
+        this.toServer(false, "None", "None", hashV, id, pixels);
+        return sumRGB(pixels) > 1.0;
+    };
 
-  this.getData = function(gl, id) {
+    this.getData = function(gl, id) {
     if (!this.finalized) {
       throw "Still generating ID's";
       return -1;
@@ -198,83 +198,100 @@ var Sender = function() {
     //$('#manufacturer.modal').modal('show');
     $('#submitBtn').prop('disabled', true);
     $('#manufacturer.selectpicker').on('changed.bs.select', function() {
-      $('#submitBtn').prop('disabled', false);
+        $('#submitBtn').prop('disabled', false);
     });
 
     $('#submitBtn').click({self : this}, function(event) {
-      var self = event.data.self;
-      self.postData['manufacturer'] = $("#manufacturer.selectpicker").val();
-      $('#manufacturer.modal').modal('hide');
+        var self = event.data.self;
+        self.postData['manufacturer'] = $("#manufacturer.selectpicker").val();
+        $('#manufacturer.modal').modal('hide');
 
-      /*var f = document.createElement("form");
-      f.setAttribute('method',"post");
-      f.setAttribute('action',"http://" + ip_address + "/collect.py");
-      var i = document.createElement("input"); //input element, text
-      i.setAttribute('type',"text");
-      i.setAttribute('name',JSON.stringify(self.postData));
-      f.appendChild(i);
-      f.submit();
+        /*var f = document.createElement("form");
+          f.setAttribute('method',"post");
+          f.setAttribute('action',"http://" + ip_address + "/collect.py");
+          var i = document.createElement("input"); //input element, text
+          i.setAttribute('type',"text");
+          i.setAttribute('name',JSON.stringify(self.postData));
+          f.appendChild(i);
+          f.submit();
 
-      return ;*/
+          return ;*/
 
-      $.ajax({
-        url : "http://" + ip_address + "/collect_cn.py",
-        dataType : "html",
-        type : 'POST',
-        data : JSON.stringify(self.postData),
-        success : function(data) {
-            console.log("成功");
-          if (data === 'user_id error') {
-            window.location.href = error_page;
-          }else {
-            num = data.split(',')[0];
-            code = data.split(',')[1];
-            if (num < '2') {
-                alert('检测到您的游戏有些卡顿，请点击右上角"..."，并选择"用浏览器打开"，便可解决卡顿问题');
-            } else if(num == 2){
-                alert('游戏仍然有些卡顿，请直接复制浏览器顶端的网址，下载Chrome浏览器访问该网址获得最佳体验');
+        $.ajax({
+            url : "http://" + ip_address + "/collect_cn.py",
+            dataType : "html",
+            type : 'POST',
+            data : JSON.stringify(self.postData),
+            success : function(data) {
+                console.log("success");
+                if (data === 'user_id error') {
+                    window.location.href = error_page;
+                } else {
+                    num = data.split(',')[0];
+                    code = data.split(',')[1];
+                    if (num <= '2') {
+                        $('#instruction').append('您已经完成了 <strong>' + num +'</strong> 个浏览器<br>');
+
+                        if (!requests.hasOwnProperty('automated') ||
+                            requests['automated'] === 'true') {
+                                $('#instruction').append('Please close this browser and check a different browser for your completion code');
+
+                            } else {
+                                $('#instruction')
+                                    .append('现在请用另外一个浏览器打开这个链接:<br><a href="' + url + '">' +
+                                            url + '</a> <br>');
+                                createCopyButton(url, '#instruction');
+                                $('#instruction')
+                                    .append(
+                                            '<div id= "browsers" style="text-align: center;">(Firefox, chrome, safair 或者 edge)</div>');
+                            }
+                    }else {
+                        $('#instruction').append('您已经完成了 <strong>' + num +
+                                    '</strong> 个浏览器<br>您的代码是 ' + code +
+                                    '<br> <strong>谢谢您!</strong>');
+                    }
+                    progress(100);
+                    Cookies.set('machine_fingerprinting_userid', user_id,
+                            {expires: new Date(2020, 1, 1)});
+                }
             }
-            Cookies.set('machine_fingerprinting_userid', uid,
-                {expires: new Date(2020, 1, 1)});
-          }
-        }
-      });
+        });
     });
     //if (requests.hasOwnProperty('modal') && requests['modal'] === 'false') {
     $('#submitBtn').click();
     //}
-  }
+      }
 };
 
 /* Converts the charachters that aren't UrlSafe to ones that are and
-  removes the padding so the base64 string can be sent
-*/
+   removes the padding so the base64 string can be sent
+   */
 Base64EncodeUrlSafe = function(str) {
-  return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
 };
 
 stringify = function(array) {
-  var str = "";
-  for (var i = 0, len = array.length; i < len; i += 4) {
-    str += String.fromCharCode(array[i + 0]);
-    str += String.fromCharCode(array[i + 1]);
-    str += String.fromCharCode(array[i + 2]);
-  }
+    var str = "";
+    for (var i = 0, len = array.length; i < len; i += 4) {
+        str += String.fromCharCode(array[i + 0]);
+        str += String.fromCharCode(array[i + 1]);
+        str += String.fromCharCode(array[i + 2]);
+    }
 
-  // NB: AJAX requires that base64 strings are in their URL safe
-  // form and don't have any padding
-  var b64 = window.btoa(str);
-  return Base64EncodeUrlSafe(b64);
+    // NB: AJAX requires that base64 strings are in their URL safe
+    // form and don't have any padding
+    var b64 = window.btoa(str);
+    return Base64EncodeUrlSafe(b64);
 };
 
 Uint8Array.prototype.hashCode = function() {
-  var hash = 0, i, chr, len;
-  if (this.length === 0)
+    var hash = 0, i, chr, len;
+    if (this.length === 0)
+        return hash;
+    for (i = 0, len = this.length; i < len; i++) {
+        chr = this[i];
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
     return hash;
-  for (i = 0, len = this.length; i < len; i++) {
-    chr = this[i];
-    hash = ((hash << 5) - hash) + chr;
-    hash |= 0; // Convert to 32bit integer
-  }
-  return hash;
 }

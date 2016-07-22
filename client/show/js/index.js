@@ -5,7 +5,6 @@ function progress(value) {
 
     if(value == 100){
         $('progress').addClass("hidden");
-        $('#hint98').addClass("hidden");
         $('#instruction').addClass("appear");
         return ;
     }
@@ -15,9 +14,6 @@ function progress(value) {
     // update background
     $('progress').prop('style', 'background-position: 0 '+ pos + 'em;');
 
-    if(value == 98) {
-        $('#hint98').addClass("appear");
-    }
 
     // show/hide progress
     /*
