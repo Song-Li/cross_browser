@@ -23,7 +23,8 @@ open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
 db_name = "cross_browser"
 table_name = "round_2_data"
-extra_selector = "and agent like '%NT%' and gpu!='SwiftShader'"
+#extra_selector = "and agent like '%NT%' and gpu!='SwiftShader'"
+extra_selector = "and gpu!='SwiftShader'"
 
 def update_table(db):
     cursor = db.cursor()
@@ -195,8 +196,8 @@ def getRes(b1, b2, cursor, quiet):
             s2 += ("{}" * len(extras_2)).format(*extras_2)
 
         uid_stability.update({uid: []})
+        print uid
         for i in range(len(hashes_1)):
-
             if i not in hash_all:
                 hash_all.update({i: []})
             if i not in hash_all_unique:
@@ -207,7 +208,7 @@ def getRes(b1, b2, cursor, quiet):
             hash1_val = hashes_1[i]
             hash2_val = hashes_2[i]
 
-            if i <= 2 and i != 23 and i != 24 and i != 19:
+            if i <= 26 and i != 23 and i != 24 and i != 19 and i != 20:
                 s1 += hash1_val
                 s2 += hash2_val
 
@@ -265,11 +266,11 @@ def index():
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     cursor = db.cursor()
 
-    # update_table(db)
-    # update_browser(db)
-    # update_hashes(db)
-    # update_langs(db)
-    # return
+    #update_table(db)
+    #update_browser(db)
+    #update_hashes(db)
+    #update_langs(db)
+    #return
 
     if False:
         getRes("Edge", "Firefox", cursor, False)
