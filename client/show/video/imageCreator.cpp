@@ -53,14 +53,14 @@ static cv::Vec3b randomColor() {
 int main(int agrc, char **argv) {
   constexpr int AAFactor = 16;
   constexpr int numRows = 10;
-  constexpr int d = 1000;
+  constexpr int d = 2000;
   cv::Mat_<cv::Vec3b> out(AAFactor*d, AAFactor*d, cv::Vec3b(255, 255, 255));
   constexpr int distBetweenRows = d*AAFactor/numRows;
 
   for (int j = distBetweenRows/2; j < out.rows; j += distBetweenRows) {
     for (int i = distBetweenRows/2; i < out.cols; i += distBetweenRows) {
       auto color = randomColor();
-      constexpr double maxRadius = 20*AAFactor;
+      constexpr double maxRadius = d/50*AAFactor;
       for (double radius = 0; radius <= maxRadius; radius += 0.5) {
         for (double y = -radius; y <= radius; ++y) {
           double xMag = std::sqrt(radius * radius - y * y);
@@ -72,8 +72,9 @@ int main(int agrc, char **argv) {
     }
   }
 
-  cv::Mat_<cv::Vec3b> AA;
-  cv::resize(out, AA, cv::Size(d, d));
+  cv::Mat_<cv::Vec3b> tmp, AA;
+  cv::resize(out, tmp, cv::Size(d, d));
+  cv::blur(tmp, AA, cv::Size(3,3));
 
   for (int j = distBetweenRows/2/AAFactor; j < AA.rows; j += distBetweenRows/AAFactor) {
     for (int i = 0; i < AA.cols; ++i) {

@@ -1,8 +1,14 @@
 /***
 * This test plays video in preferably a webm format and draws it to a
-* canvas using a 2d context or a webgl context.  This is testing how
+* canvas using a 2d context and a webgl context.  This is testing how
 * the decompression of the video container is implemented.  This is more
-* than likely something that is controlled by a browser
+* than likely something that is controlled by a browser.
+* There are 3 videos that can be played depending on what the browser supports:
+* webm video created from .png using ffmpeg:
+*   ffmpeg -loop 1 -i rainbow.png -c:v libvpx -vframes 10 -r 30 -pix_fmt yuv422p -crf 4 rainbow.webm
+* high quality mp4 created from .png using ffmpeg:
+*   ffmpeg -loop 1 -i rainbow.png -c:v libx264 -vframes 10 -r 30 -pix_fmt yuv420p -crf 4 rainbow.mp4
+* standard mp4 created using iMovie exported to high quality
 ***/
 
 
