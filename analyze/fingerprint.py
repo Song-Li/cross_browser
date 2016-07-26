@@ -21,13 +21,10 @@ class Fingerprint_Base:
     return hash(self.fp)
 
   def __str__(self):
-    __str = ""
     if isinstance(self.fp, list):
-      return ", ".join("{}".format(x) for x in self.fp)
+      return ", ".join(str(x) for x in self.fp)
     else:
-      __str = str(self.fp)
-
-    return __str
+      return str(self.fp)
 
   def __format__(self, format_spec):
     return format(str(self), format_spec)
@@ -77,6 +74,7 @@ class Lang_Fingerprint(Fingerprint_Base):
 class Video_Fingerprint(Fingerprint_Base):
   # Data is array of video hash codes
   def __init__(self, data):
+    self.valid = (data[0] != 'No video')
     self.ctx = Set()
     self.gl = Set()
     for i, h in enumerate(data):
@@ -86,10 +84,16 @@ class Video_Fingerprint(Fingerprint_Base):
         self.gl.add(h)
 
   def __eq__(self, other):
-    return len(self.ctx & other.ctx) != 0 and len(self.gl & other.gl) != 0
+    if not self.valid or not other.valid:
+      return True
+    else:
+      return len(self.ctx & other.ctx) != 0 and len(self.gl & other.gl) != 0
 
   def __hash__(self):
-    return hash(1.6180339887498948482*1e10)
+    if self.valid:
+      return hash(1.6180339887498948482*1e10)
+    else:
+      return hash(1.6180339887498948482*1e15)
 
   def __str__(self):
     return "{} {}".format(self.ctx, self.gl)
@@ -146,6 +150,11 @@ class Fingerprint(Fingerprint_Base):
       elif attr == 'fonts':
         self.fp.append(
           Font_Fingerprint(list(data), self.fp_type)
+        )
+      elif attr == 'video':
+        hashes = data.split("&")
+        self.fp.append(
+          Video_Fingerprint(hashes)
         )
       else:
         self.fp.append(
