@@ -32,7 +32,7 @@ var LightingTest = function() {
 
     renderer.setClearColor(scene.fog.color);
     renderer.setPixelRatio(1);
-    renderer.setSize(256, 256);
+    renderer.setSize(canvas.width, canvas.height);
 
     renderer.gammaInput = true;
     renderer.gammaOutput = true;

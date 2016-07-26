@@ -108,8 +108,8 @@ class Loader
     else
       user_id = parseInt(requests['user_id'])
 
-    window.url = @url
-    window.user_id = user_id
+    root.url = @url
+    root.user_id = user_id
 
   parseURL: ->
     @url = document.URL
@@ -122,7 +122,7 @@ class Loader
         seq = c.split('=')
         @requests[seq[0]] = seq[1]
 
-    window.requests = @requests
+    root.requests = @requests
 
   assetLoaded: ->
     @numLoaded++
@@ -228,9 +228,10 @@ class Loader
       if @numComplete is @numberOfTests
         sender.sendData()
 
+    d = 256
     class Tester
       constructor: (@testList, dest) ->
-        @canvas = $('<canvas width="256" height="256" />').appendTo(dest)[0]
+        @canvas = $("<canvas width='#{d}' height='#{d}'/>").appendTo(dest)[0]
         @numTestsComplete = 0
         testDone = () =>
           @numTestsComplete++
@@ -240,8 +241,11 @@ class Loader
 
         @testList[0].begin @canvas, testDone
 
+    canvasContainer = $('#test_canvases')
+    $("<canvas id='can_aa' width='#{d}' height='#{d}'/>").appendTo canvasContainer
+
     # Tests begin in HERE
-    new Tester @testList, $('#test_canvases')
+    new Tester @testList, canvasContainer
     for test in @asyncTests
       test.begin postProgress
 

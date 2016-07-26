@@ -123,6 +123,19 @@ imageCreator/fast:
 	$(MAKE) -f CMakeFiles/imageCreator.dir/build.make CMakeFiles/imageCreator.dir/build
 .PHONY : imageCreator/fast
 
+#=============================================================================
+# Target rules for targets named testFrames
+
+# Build rule for target.
+testFrames: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 testFrames
+.PHONY : testFrames
+
+# fast build rule for target.
+testFrames/fast:
+	$(MAKE) -f CMakeFiles/testFrames.dir/build.make CMakeFiles/testFrames.dir/build
+.PHONY : testFrames/fast
+
 imageCreator.o: imageCreator.cpp.o
 
 .PHONY : imageCreator.o
@@ -150,6 +163,33 @@ imageCreator.cpp.s:
 	$(MAKE) -f CMakeFiles/imageCreator.dir/build.make CMakeFiles/imageCreator.dir/imageCreator.cpp.s
 .PHONY : imageCreator.cpp.s
 
+testFrames.o: testFrames.cpp.o
+
+.PHONY : testFrames.o
+
+# target to build an object file
+testFrames.cpp.o:
+	$(MAKE) -f CMakeFiles/testFrames.dir/build.make CMakeFiles/testFrames.dir/testFrames.cpp.o
+.PHONY : testFrames.cpp.o
+
+testFrames.i: testFrames.cpp.i
+
+.PHONY : testFrames.i
+
+# target to preprocess a source file
+testFrames.cpp.i:
+	$(MAKE) -f CMakeFiles/testFrames.dir/build.make CMakeFiles/testFrames.dir/testFrames.cpp.i
+.PHONY : testFrames.cpp.i
+
+testFrames.s: testFrames.cpp.s
+
+.PHONY : testFrames.s
+
+# target to generate assembly for a file
+testFrames.cpp.s:
+	$(MAKE) -f CMakeFiles/testFrames.dir/build.make CMakeFiles/testFrames.dir/testFrames.cpp.s
+.PHONY : testFrames.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -159,9 +199,13 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... imageCreator"
+	@echo "... testFrames"
 	@echo "... imageCreator.o"
 	@echo "... imageCreator.i"
 	@echo "... imageCreator.s"
+	@echo "... testFrames.o"
+	@echo "... testFrames.i"
+	@echo "... testFrames.s"
 .PHONY : help
 
 
