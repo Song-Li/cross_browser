@@ -244,7 +244,7 @@ var ClippingTest = function() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.renderSingleSided = false;
     renderer.setPixelRatio(1);
-    renderer.setSize(256, 256);
+    renderer.setSize(canvas.width, canvas.height);
     // Clipping setup:
     globalClippingPlanes = createPlanes(GlobalClippingPlanes.length);
     renderer.clippingPlanes = globalClippingPlanes;

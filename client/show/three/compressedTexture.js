@@ -143,7 +143,7 @@ This makes use of a variety of different webgl compressed texture extensions
         }, false);
         this.renderer.setClearColor('#050505');
         this.renderer.setPixelRatio(1);
-        this.renderer.setSize(256, 256);
+        this.renderer.setSize(canvas.width, canvas.height);
         this.counter = 0;
         animate = (function(_this) {
           return function() {
@@ -261,7 +261,7 @@ This makes use of a variety of different webgl compressed texture extensions
         }, false);
         this.renderer.setClearColor('#050505');
         this.renderer.setPixelRatio(1);
-        this.renderer.setSize(256, 256);
+        this.renderer.setSize(canvas.width, canvas.height);
         this.counter = 0;
         animate = (function(_this) {
           return function() {

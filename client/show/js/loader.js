@@ -119,8 +119,8 @@
       } else {
         user_id = parseInt(requests['user_id']);
       }
-      window.url = this.url;
-      return window.user_id = user_id;
+      root.url = this.url;
+      return root.user_id = user_id;
     };
 
     Loader.prototype.parseURL = function() {
@@ -138,7 +138,7 @@
           this.requests[seq[0]] = seq[1];
         }
       }
-      return window.requests = this.requests;
+      return root.requests = this.requests;
     };
 
     Loader.prototype.assetLoaded = function() {
@@ -193,7 +193,7 @@
     };
 
     Loader.prototype.beginTests = function() {
-      var Tester, i, index, j, k, l, len, maxFirst, postProgress, ref, ref1, ref2, ref3, ref4, ref5, sender, test, vert;
+      var Tester, canvasContainer, d, i, index, j, k, l, len, maxFirst, postProgress, ref, ref1, ref2, ref3, ref4, ref5, sender, test, vert;
       this.susanVertices = this.susanModel.meshes[0].vertices;
       this.susanIndices = [].concat.apply([], this.susanModel.meshes[0].faces);
       this.susanTexCoords = this.susanModel.meshes[0].texturecoords[0];
@@ -272,11 +272,12 @@
           }
         };
       })(this);
+      d = 256;
       Tester = (function() {
         function Tester(testList, dest) {
           var testDone;
           this.testList = testList;
-          this.canvas = $('<canvas width="256" height="256" />').appendTo(dest)[0];
+          this.canvas = $("<canvas width='" + d + "' height='" + d + "'/>").appendTo(dest)[0];
           this.numTestsComplete = 0;
           testDone = (function(_this) {
             return function() {
@@ -293,7 +294,9 @@
         return Tester;
 
       })();
-      new Tester(this.testList, $('#test_canvases'));
+      canvasContainer = $('#test_canvases');
+      $("<canvas id='can_aa' width='" + d + "' height='" + d + "'/>").appendTo(canvasContainer);
+      new Tester(this.testList, canvasContainer);
       ref5 = this.asyncTests;
       for (l = 0, len = ref5.length; l < len; l++) {
         test = ref5[l];

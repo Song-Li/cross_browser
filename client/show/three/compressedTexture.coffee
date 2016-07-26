@@ -117,7 +117,7 @@ root.CompressedTextureTest = class CompressedTextureTest
       , false)
       @renderer.setClearColor '#050505'
       @renderer.setPixelRatio 1
-      @renderer.setSize 256, 256
+      @renderer.setSize canvas.width, canvas.height
 
       @counter = 0
       animate = () =>
@@ -219,7 +219,7 @@ root.CompressedTextureTest = class CompressedTextureTest
       , false)
       @renderer.setClearColor '#050505'
       @renderer.setPixelRatio 1
-      @renderer.setSize 256, 256
+      @renderer.setSize canvas.width, canvas.height
 
       @counter = 0
       animate = () =>

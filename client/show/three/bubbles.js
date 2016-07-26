@@ -78,7 +78,7 @@ var BubbleTest = function() {
     renderer =
         new THREE.WebGLRenderer({context : getGL(canvas), canvas : canvas}, false);
     renderer.setPixelRatio(1);
-    renderer.setSize(256, 256);
+    renderer.setSize(canvas.width, canvas.height);
 
     var freq = 5;
     var radius = 500;

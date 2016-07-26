@@ -16,6 +16,7 @@ from hashlib import md5 as hasher
 
 global inited
 inited = 0
+
 global root
 root = '/home/site/data/'
 

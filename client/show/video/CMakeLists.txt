@@ -18,6 +18,7 @@ target_link_libraries( testFrames ${OpenCV_LIBS}
                       ${Boost_FILESYSTEM_LIBRARIES})
 
 project( imageCreator )
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14 -g -O3")
 find_package(OpenCV REQUIRED)
 file(GLOB src
      "imageCreator.cpp")
