@@ -17,28 +17,6 @@ function populateFontList(fontArr) {
 }
 
 var Sender = function() {
-<<<<<<< HEAD
-  this.finalized = false;
-  this.postData = {
-    fontlist: "No Flash",
-    user_id: -1,
-    WebGL: false,
-    inc: "Undefined",
-    gpu: "Undefined",
-    hash: "Undefined",
-    timezone: "Undefined",
-    resolution: "Undefined",
-    plugins: "Undefined",
-    cookie: "Undefined",
-    localstorage: "Undefined",
-    manufacturer: "Undefined",
-    gpuImgs: [],
-    adBlock: "Undefined",
-    langsDetected: [],
-    fps: 0.0,
-    video: []
-  };
-=======
     this.finalized = false;
     this.postData = {fontlist: "No Flash",
         user_id: -1,
@@ -54,7 +32,7 @@ var Sender = function() {
         manufacturer: "Undefined",
         gpuImageHashes: [],
         adBlock: "Undefined",
-        canvas_data: "Undefined", 
+        canvas_test: "Undefined", 
         langsDetected: [],
         fps: 0.0
     };
@@ -80,7 +58,6 @@ var Sender = function() {
         }
         return this.nextID++;
     };
->>>>>>> 42e410b... added canvas test
 
   function hashRGB(array) {
     var hash = 0, i, chr, len, j;
