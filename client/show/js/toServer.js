@@ -30,11 +30,12 @@ var Sender = function() {
         cookie: "Undefined",
         localstorage: "Undefined",
         manufacturer: "Undefined",
-        gpuImageHashes: [],
+        gpuImgs: [],
         adBlock: "Undefined",
         canvas_test: "Undefined", 
         langsDetected: [],
-        fps: 0.0
+        fps: 0.0,
+        video: []
     };
     sumRGB = function(img) {
         var sum = 0.0;
