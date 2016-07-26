@@ -17,6 +17,7 @@ function populateFontList(fontArr) {
 }
 
 var Sender = function() {
+<<<<<<< HEAD
   this.finalized = false;
   this.postData = {
     fontlist: "No Flash",
@@ -37,6 +38,49 @@ var Sender = function() {
     fps: 0.0,
     video: []
   };
+=======
+    this.finalized = false;
+    this.postData = {fontlist: "No Flash",
+        user_id: -1,
+        WebGL: false,
+        inc: "Undefined",
+        gpu: "Undefined",
+        hash: "Undefined",
+        timezone: "Undefined",
+        resolution: "Undefined",
+        plugins: "Undefined",
+        cookie: "Undefined",
+        localstorage: "Undefined",
+        manufacturer: "Undefined",
+        gpuImageHashes: [],
+        adBlock: "Undefined",
+        canvas_data: "Undefined", 
+        langsDetected: [],
+        fps: 0.0
+    };
+    sumRGB = function(img) {
+        var sum = 0.0;
+        for (var i = 0; i < img.length; i += 4) {
+            sum += parseFloat(img[i + 0]);
+            sum += parseFloat(img[i + 1]);
+            sum += parseFloat(img[i + 2]);
+        }
+        return sum;
+    };
+
+    this.addFonts = function(fonts) {
+        this.postData['fontlist'] = fonts;
+    };
+
+    this.nextID = 0;
+    this.getID = function() {
+        if (this.finalized) {
+            throw "Can no longer generate ID's";
+            return -1;
+        }
+        return this.nextID++;
+    };
+>>>>>>> 42e410b... added canvas test
 
   function hashRGB(array) {
     var hash = 0, i, chr, len, j;
@@ -219,6 +263,8 @@ var Sender = function() {
     console.log(this.postData['adBlock'])
 
     console.log("Sent " + this.postData['gpuImgs'].length + " images");
+    this.postData['manufacturer'] = "Undefined";
+    this.postData['canvas_data'] = CanvasTest();
 
     console.log(plgs);
 

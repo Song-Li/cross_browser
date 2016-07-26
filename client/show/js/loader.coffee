@@ -212,6 +212,7 @@ class Loader
     @testList.push new BubbleTest()
     @testList.push new CompressedTextureTest()
     @testList.push new ShadowTest()
+    @testList.push new CanvasTest()
 
     @asyncTests = []
     if not mobileAndTabletCheck()
