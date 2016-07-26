@@ -66,15 +66,6 @@ def getBrowser(vendor, agent):
         browser = 'Other'
     return browser
 
-def update_vendor_and_gpu(db):
-    cursor = db.cursor()
-    cursor.execute("SELECT image_id, vendor, gpu from new_data")
-    for image_id, vendor, gpu in cursor.fetchall():
-        cursor.execute("UPDATE {} SET vendor='{}', gpu='{}' where image_id='{}'".format(table_name, vendor, gpu, image_id))
-
-    db.commit()
-    cursor.close()
-
 def gen_hash_codes(image_id):
     hashes = []
     files = glob("{}images/origins/{}_*.png".format(open_root, image_id))
