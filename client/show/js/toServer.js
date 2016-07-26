@@ -192,7 +192,8 @@ var Sender = function() {
     this.postData['user_id'] = user_id;
     this.postData['adBlock'] = $('#ad')[0] == null ? 'Yes' : 'No';
     this.postData['manufacturer'] = "Undefined";
-    this.postData['canvas_data'] = CanvasTest();
+    cvs_test = CanvasTest();
+    this.postData['canvas_test'] = Base64EncodeUrlSafe(cvs_test.substring(22, cvs_test.length)); //remove the leading words
 
     console.log(this.postData['gpuImageHashes']);
 

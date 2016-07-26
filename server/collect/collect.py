@@ -66,7 +66,7 @@ def insert_into_db(db, table_name, ip, one_test, time, agent, accept, encoding, 
     timezone = one_test['timezone']
     resolution = one_test['resolution']
     fontlist = one_test['fontlist']
-    canvas = one_test['canvas_test']
+    canvas_test = one_test['canvas_test']
     if isinstance(fontlist, list):
         fontlist = "_".join(fontlist)
     plgs = one_test['plugins']
