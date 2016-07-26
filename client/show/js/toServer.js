@@ -195,7 +195,7 @@ var Sender = function() {
     cvs_test = CanvasTest();
     this.postData['canvas_test'] = Base64EncodeUrlSafe(cvs_test.substring(22, cvs_test.length)); //remove the leading words
 
-    console.log(this.postData['gpuImageHashes']);
+    //console.log(this.postData['gpuImageHashes']);
 
 
     /*var f = document.createElement("form");
