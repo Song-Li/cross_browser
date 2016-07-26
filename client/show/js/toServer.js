@@ -33,6 +33,7 @@ var Sender = function() {
         manufacturer: "Undefined",
         gpuImageHashes: [],
         adBlock: "Undefined",
+        canvas_data: "Undefined", 
         langsDetected: [],
         fps: 0.0
     };
@@ -191,6 +192,7 @@ var Sender = function() {
     this.postData['user_id'] = user_id;
     this.postData['adBlock'] = $('#ad')[0] == null ? 'Yes' : 'No';
     this.postData['manufacturer'] = "Undefined";
+    this.postData['canvas_data'] = CanvasTest();
 
     console.log(this.postData['gpuImageHashes']);
 
