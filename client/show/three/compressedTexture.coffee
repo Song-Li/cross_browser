@@ -11,7 +11,7 @@ root = exports ? this
 
 root.CompressedTextureTest = class CompressedTextureTest
 
-  textureRoot = 'three/textures/compressed/'
+  textureRoot = 'three/textures/compressed'
   geometry = new THREE.BoxGeometry(150, 150, 150)
   startX = -400
   xStop = Math.abs startX
@@ -39,40 +39,40 @@ root.CompressedTextureTest = class CompressedTextureTest
       @materials = []
       loader = new THREE.DDSLoader()
 
-      map1 = loader.load("#{textureRoot}disturb_dxt1_nomip.dds")
+      map1 = loader.load("#{textureRoot}/disturb_dxt1_nomip.dds")
       map1.minFilter = map1.magFilter = THREE.LinearFilter
       map1.anisotropy = 4
 
-      map2 = loader.load("#{textureRoot}disturb_dxt1_mip.dds")
+      map2 = loader.load("#{textureRoot}/disturb_dxt1_mip.dds")
       map2.anisotropy = 4
 
-      map3 = loader.load("#{textureRoot}hepatica_dxt3_mip.dds")
+      map3 = loader.load("#{textureRoot}/hepatica_dxt3_mip.dds")
       map3.anisotropy = 4
 
-      map4 = loader.load("#{textureRoot}explosion_dxt5_mip.dds")
+      map4 = loader.load("#{textureRoot}/explosion_dxt5_mip.dds")
       map4.anisotropy = 4
 
-      map5 = loader.load("#{textureRoot}disturb_argb_nomip.dds")
+      map5 = loader.load("#{textureRoot}/disturb_argb_nomip.dds")
       map5.minFilter = map5.magFilter = THREE.LinearFilter
       map5.anisotropy = 4
 
-      map6 = loader.load("#{textureRoot}disturb_argb_mip.dds")
+      map6 = loader.load("#{textureRoot}/disturb_argb_mip.dds")
       map6.anisotropy = 4
 
-      cubemap1 = loader.load("#{textureRoot}Mountains.dds", (texture) =>
+      cubemap1 = loader.load("#{textureRoot}/Mountains.dds", (texture) =>
         texture.magFilter = THREE.LinearFilter
         texture.minFilter = THREE.LinearFilter
         texture.mapping = THREE.CubeReflectionMapping
         @materials[0].needsUpdate = true)
 
-      cubemap2 = loader.load("#{textureRoot}Mountains_argb_mip.dds", (texture) =>
+      cubemap2 = loader.load("#{textureRoot}/Mountains_argb_mip.dds", (texture) =>
         texture.magFilter = THREE.LinearFilter
         texture.minFilter = THREE.LinearFilter
         texture.mapping = THREE.CubeReflectionMapping
         @materials[1].needsUpdate = true)
 
 
-      cubemap3 = loader.load("#{textureRoot}Mountains_argb_nomip.dds", (texture) =>
+      cubemap3 = loader.load("#{textureRoot}/Mountains_argb_nomip.dds", (texture) =>
         texture.magFilter = THREE.LinearFilter
         texture.minFilter = THREE.LinearFilter
         texture.mapping = THREE.CubeReflectionMapping
@@ -152,19 +152,19 @@ root.CompressedTextureTest = class CompressedTextureTest
       @materials = []
       loader = new THREE.PVRLoader()
 
-      disturb_4bpp_rgb = loader.load("#{textureRoot}disturb_4bpp_rgb.pvr")
-      disturb_4bpp_rgb_v3 = loader.load("#{textureRoot}disturb_4bpp_rgb_v3.pvr")
-      disturb_4bpp_rgb_mips = loader.load("#{textureRoot}disturb_4bpp_rgb_mips.pvr")
-      disturb_2bpp_rgb = loader.load("#{textureRoot}disturb_2bpp_rgb.pvr")
-      flare_4bpp_rgba = loader.load("#{textureRoot}flare_4bpp_rgba.pvr")
-      flare_2bpp_rgba = loader.load("#{textureRoot}flare_2bpp_rgba.pvr")
-      park3_cube_nomip_4bpp_rgb = loader.load("#{textureRoot}park3_cube_nomip_4bpp_rgb.pvr", (texture) =>
+      disturb_4bpp_rgb = loader.load("#{textureRoot}/disturb_4bpp_rgb.pvr")
+      disturb_4bpp_rgb_v3 = loader.load("#{textureRoot}/disturb_4bpp_rgb_v3.pvr")
+      disturb_4bpp_rgb_mips = loader.load("#{textureRoot}/disturb_4bpp_rgb_mips.pvr")
+      disturb_2bpp_rgb = loader.load("#{textureRoot}/disturb_2bpp_rgb.pvr")
+      flare_4bpp_rgba = loader.load("#{textureRoot}/flare_4bpp_rgba.pvr")
+      flare_2bpp_rgba = loader.load("#{textureRoot}/flare_2bpp_rgba.pvr")
+      park3_cube_nomip_4bpp_rgb = loader.load("#{textureRoot}/park3_cube_nomip_4bpp_rgb.pvr", (texture) =>
         texture.magFilter = THREE.LinearFilter
         texture.minFilter = THREE.LinearFilter
         texture.mapping = THREE.CubeReflectionMapping
         @meshes[0].needsUpdate = true)
 
-      park3_cube_mip_2bpp_rgb_v3 = loader.load("#{textureRoot}park3_cube_mip_2bpp_rgb_v3.pvr", (texture) =>
+      park3_cube_mip_2bpp_rgb_v3 = loader.load("#{textureRoot}/park3_cube_mip_2bpp_rgb_v3.pvr", (texture) =>
         texture.magFilter = THREE.LinearFilter
         texture.minFilter = THREE.LinearFilter
         texture.mapping = THREE.CubeReflectionMapping

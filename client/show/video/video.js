@@ -91,6 +91,47 @@ var VideoCollector =
                       .appendTo($('#test_canvases'))[0];
   this.ctx = ctxCanvas.getContext('2d');
   this.startGL();
+
+  this.collector = function() {
+    if (++this.count % 3 == 2) {
+      if (this.collected[0] < numFrames) {
+        var status = sender.getDataFromCanvas(this.ctx, this.IDs[this.ctxID]);
+        if (status) {
+          this.ctxHashes.add(status);
+          if (this.ctxHashes.length > this.collected[0]) {
+            ++this.collected[0]
+            this.ctxID += 2;
+          }
+        }
+        if (this.count > 24) {
+          ++this.collected[0]
+          this.ctxID += 2;
+        }
+      }
+
+      if (this.collected[1] < numFrames) {
+        var status = sender.getData(this.gl, this.IDs[this.glID]);
+        if (status) {
+          this.glHashes.add(status);
+          if (this.glHashes.length > this.collected[1]) {
+            ++this.collected[1]
+            this.glID += 2;
+          }
+        }
+        if (this.count > 24) {
+          ++this.collected[1]
+          this.glID += 2;
+        }
+      }
+      if (this.collected[1] == numFrames && this.collected[0] == numFrames) {
+        this.video[0].pause();
+        cancelAnimationFrame(this.frame);
+        this.cb();
+        ++this.collected[1];
+      }
+    }
+  }
+
   this.begin = function(cb) {
     this.cb = cb;
 
@@ -108,45 +149,10 @@ var VideoCollector =
     });
     this.video.prop('muted', true);
     this.count = 0, this.collected = [ 0, 0 ];
+
     this.video.on('timeupdate', {self : this}, function(event) {
       var self = event.data.self;
-      if (++self.count % 3 == 2) {
-        if (self.collected[0] < numFrames) {
-          var status = sender.getDataFromCanvas(self.ctx, self.IDs[self.ctxID]);
-          if (status) {
-            self.ctxHashes.add(status);
-            if (self.ctxHashes.length > self.collected[0]) {
-              ++self.collected[0]
-              self.ctxID += 2;
-            }
-          }
-          if (self.count > 24) {
-            ++self.collected[0]
-            self.ctxID += 2;
-          }
-        }
-
-        if (self.collected[1] < numFrames) {
-          var status = sender.getData(self.gl, self.IDs[self.glID]);
-          if (status) {
-            self.glHashes.add(status);
-            if (self.glHashes.length > self.collected[1]) {
-              ++self.collected[1]
-              self.glID += 2;
-            }
-          }
-          if (self.count > 24) {
-            ++self.collected[1]
-            self.glID += 2;
-          }
-        }
-        if (self.collected[1] == numFrames) {
-          this.pause();
-          cancelAnimationFrame(self.frame);
-          self.cb();
-          ++self.collected[1];
-        }
-      }
+      // self.collector();
 
       // $("#" + self.counterName).text(self.level);
     });
@@ -170,6 +176,7 @@ var VideoCollector =
 
       self.gl.bindBuffer(self.gl.ELEMENT_ARRAY_BUFFER, self.ix);
       self.gl.drawElements(self.gl.TRIANGLES, 6, self.gl.UNSIGNED_SHORT, 0);
+      self.collector();
     }
   }
 }
