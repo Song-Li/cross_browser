@@ -82,7 +82,7 @@ function generateUID(){
      *                                     */
 
     $.ajax({
-        url:"http://" + ip_address + "/getid.py",
+        url:"http://" + ip_address + "/getid_cn.py",
         dataType:"text",
         type: 'POST',
         data: postData,
