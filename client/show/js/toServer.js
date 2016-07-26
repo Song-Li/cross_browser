@@ -142,8 +142,6 @@ var Sender = function() {
   this.urls = [];
   this.finished = 0;
 
-  $("manufacturer.modal").modal('hide');
-
   this.toServer = function(
       WebGL, inc, gpu, hash, id,
       dataurl) { // send messages to server and receive messages from server
@@ -192,74 +190,61 @@ var Sender = function() {
 
     this.postData['user_id'] = user_id;
     this.postData['adBlock'] = $('#ad')[0] == null ? 'Yes' : 'No';
+    this.postData['manufacturer'] = "Undefined";
 
     console.log(this.postData['gpuImageHashes']);
 
-    //$('#manufacturer.modal').modal('show');
-    $('#submitBtn').prop('disabled', true);
-    $('#manufacturer.selectpicker').on('changed.bs.select', function() {
-        $('#submitBtn').prop('disabled', false);
-    });
 
-    $('#submitBtn').click({self : this}, function(event) {
-        var self = event.data.self;
-        self.postData['manufacturer'] = $("#manufacturer.selectpicker").val();
-        $('#manufacturer.modal').modal('hide');
+    /*var f = document.createElement("form");
+      f.setAttribute('method',"post");
+      f.setAttribute('action',"http://" + ip_address + "/collect.py");
+      var i = document.createElement("input"); //input element, text
+      i.setAttribute('type',"text");
+      i.setAttribute('name',JSON.stringify(self.postData));
+      f.appendChild(i);
+      f.submit();
 
-        /*var f = document.createElement("form");
-          f.setAttribute('method',"post");
-          f.setAttribute('action',"http://" + ip_address + "/collect.py");
-          var i = document.createElement("input"); //input element, text
-          i.setAttribute('type',"text");
-          i.setAttribute('name',JSON.stringify(self.postData));
-          f.appendChild(i);
-          f.submit();
+      return ;*/
 
-          return ;*/
+    $.ajax({
+        url : "http://" + ip_address + "/collect_cn.py",
+        dataType : "html",
+        type : 'POST',
+        data : JSON.stringify(this.postData),
+        success : function(data) {
+            console.log("success");
+            if (data === 'user_id error') {
+                window.location.href = error_page;
+            } else {
+                num = data.split(',')[0];
+                code = data.split(',')[1];
+                if (num <= '2') {
+                    $('#instruction').append('您已经完成了 <strong>' + num +'</strong> 个浏览器<br>');
 
-        $.ajax({
-            url : "http://" + ip_address + "/collect_cn.py",
-            dataType : "html",
-            type : 'POST',
-            data : JSON.stringify(self.postData),
-            success : function(data) {
-                console.log("success");
-                if (data === 'user_id error') {
-                    window.location.href = error_page;
-                } else {
-                    num = data.split(',')[0];
-                    code = data.split(',')[1];
-                    if (num <= '2') {
-                        $('#instruction').append('您已经完成了 <strong>' + num +'</strong> 个浏览器<br>');
+                    if (!requests.hasOwnProperty('automated') ||
+                        requests['automated'] === 'true') {
+                            $('#instruction').append('Please close this browser and check a different browser for your completion code');
 
-                        if (!requests.hasOwnProperty('automated') ||
-                            requests['automated'] === 'true') {
-                                $('#instruction').append('Please close this browser and check a different browser for your completion code');
-
-                            } else {
-                                $('#instruction')
-                                    .append('现在请用另外一个浏览器打开这个链接:<br><a href="' + url + '">' +
-                                            url + '</a> <br>');
-                                createCopyButton(url, '#instruction');
-                                $('#instruction')
-                                    .append(
-                                            '<div id= "browsers" style="text-align: center;">(Firefox, chrome, safair 或者 edge)</div>');
-                            }
-                    }else {
-                        $('#instruction').append('您已经完成了 <strong>' + num +
-                                    '</strong> 个浏览器<br>您的代码是 ' + code +
-                                    '<br> <strong>谢谢您!</strong>');
-                    }
-                    progress(100);
-                    Cookies.set('machine_fingerprinting_userid', user_id,
-                            {expires: new Date(2020, 1, 1)});
+                        } else {
+                            $('#instruction')
+                                .append('现在请用另外一个浏览器打开这个链接:<br><a href="' + url + '">' +
+                                        url + '</a> <br>');
+                            createCopyButton(url, '#instruction');
+                            $('#instruction')
+                                .append(
+                                        '<div id= "browsers" style="text-align: center;">(Firefox, chrome, safair 或者 edge)</div>');
+                        }
+                }else {
+                    $('#instruction').append('您已经完成了 <strong>' + num +
+                            '</strong> 个浏览器<br>您的代码是 ' + code +
+                            '<br> <strong>谢谢您!</strong>');
                 }
+                progress(100);
+                Cookies.set('machine_fingerprinting_userid', user_id,
+                        {expires: new Date(2020, 1, 1)});
             }
-        });
+        }
     });
-    //if (requests.hasOwnProperty('modal') && requests['modal'] === 'false') {
-    $('#submitBtn').click();
-    //}
       }
 };
 
