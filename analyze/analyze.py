@@ -490,14 +490,11 @@ def print_diff(new, base, browsers):
 def summarize_res(result_table):
     ave_cb, ave_u, sum_weights = 0.0, 0.0, 0.0
     for _, val in result_table.items():
-        try:
+        if val is not None:
             count, cb, u = val
-        except:
-            continue
-
-        sum_weights += float(count)
-        ave_cb += float(count)*float(cb.replace("%", ""))
-        ave_u += float(count)*float(u.replace("%", ""))
+            sum_weights += float(count)
+            ave_cb += float(count)*float(cb.replace("%", ""))
+            ave_u += float(count)*float(u.replace("%", ""))
 
     return ave_cb/sum_weights, ave_u/sum_weights
 
