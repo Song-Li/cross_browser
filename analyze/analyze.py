@@ -17,8 +17,8 @@ from langs.analyze_langs import LangAnalyzer
 from glob import glob
 from sets import Set
 import math
-from fingerprint import Fingerprint, Fingerprint_Type
-from enum import Enum
+from fingerprint import Fingerprint, Fingerprint_Type, Feature_Lists
+from table import Results_Table, Feature_Table, Diff_Table, Summary_Table
 
 browser_to_id = {'chrome': 0, 'firefox': 1, 'others': 2}
 standard_pics = []
@@ -27,20 +27,34 @@ output_root = open_root + "images/generated/"
 db_name = "cross_browser"
 table_name = "round_2_data"
 
-class Feature_Lists(Enum):
-    All="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, headerkeys, dnt, adBlock,language, hashes, langs, fonts".replace(" ", "").split(",")
-    Cross_Browser="hashes, langs, resolution, timezone, fonts".replace(" ", "").split(",")
-    Single_Browser="hashes, langs, resolution, timezone, fonts, accept, localstorage, fontlist, language".replace(" ", "").split(",")
-    Amiunique="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock".replace(" ", "").split(",")
-    CB_Amiunique="accept, timezone, resolution, localstorage, cookie".replace(" ", "").split(",")
-
 def update_table(db):
     cursor = db.cursor()
-    cursor.execute("SELECT image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock FROM new_data")
-    for image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock in cursor.fetchall():
+    cursor.execute("SELECT image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest FROM new_data")
+    for image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest in cursor.fetchall():
         cursor.execute("SELECT COUNT(*) FROM {} where image_id='{}'".format(table_name, image_id))
         if not cursor.fetchone()[0]:
-            cursor.execute("INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock))
+            cursor.execute("INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest))
+    db.commit()
+
+    cursor.execute("SELECT distinct(ip) from {}".format(table_name))
+    ips = [ip for ip, in cursor.fetchall()]
+    for ip in ips:
+        num = cursor.execute("SELECT distinct(user_id) from {} where ip='{}'".format(table_name, ip))
+        if num > 1:
+            uids = [uid for uid, in cursor.fetchall()]
+            uid_to_keep = 0
+            max_brow = 0
+            for uid in uids:
+               cursor.execute("SELECT COUNT(image_id)from {} where user_id='{}'".format(table_name, uid))
+               num_brow = cursor.fetchone()[0]
+               if num_brow > max_brow:
+                    uid_to_keep = uid
+                    max_brow = num_brow
+
+            for uid in uids:
+                if uid != uid_to_keep:
+                    cursor.execute("DELETE from {} where user_id='{}'".format(table_name, uid))
+    cursor.execute("DELETE from {} where ip like '128.180.%'".format(table_name))
     db.commit()
     cursor.close()
 
@@ -54,8 +68,11 @@ def getBrowser(vendor, agent):
         browser = 'ASW'
     elif agent.find('Firefox') != -1:
         browser = 'Firefox'
-    elif agent.find('Edge') != -1 or vendor.find('Microsoft') != -1:
-        browser = 'Edge'
+    elif vendor.find('Microsoft') != -1:
+        if agent.find('Edge') != -1:
+            browser = 'Edge'
+        else:
+            browser = "IE"
     elif agent.find('OPR') != -1:
         browser = 'OPR'
     elif agent.find('Chrome') != -1 or vendor.find('Google') != -1:
@@ -66,6 +83,22 @@ def getBrowser(vendor, agent):
         browser = 'Other'
     return browser
 
+def get_rgb(file):
+    img = Image.open(file)
+    return "".join('{}{}{}'.format(r, g, b) for r, g, b in img.getdata())
+
+def hash_pix(pixels):
+    m = hasher1()
+    n = hasher2()
+    m.update(pixels)
+    n.update(pixels)
+    b64m = encode(m.digest()).replace('=', '')
+    b64n = encode(n.digest()).replace('=', '')
+    return "{}{}".format(b64m, b64n)
+
+def hash_img(file):
+    return hash_pix(get_rgb(file))
+
 def gen_hash_codes(image_id):
     hashes = []
     files = glob("{}images/origins/{}_*.png".format(open_root, image_id))
@@ -73,19 +106,18 @@ def gen_hash_codes(image_id):
     files = sorted(files, key=lambda f: int(f.split("_")[1].split(".")[0]))
 
     for file in files:
-        img = Image.open(file)
-        m = hasher1()
-        n = hasher2()
-        pixels = ''
-        for r, g, b in img.getdata():
-            pixels += '{}{}{}'.format(r, g, b)
-
-        m.update(pixels)
-        n.update(pixels)
-        b64m = encode(m.digest()).replace('=', '')
-        b64n = encode(n.digest()).replace('=', '')
-        hashes.append(b64m + b64n)
+        hashes.append(hash_img(file))
     return hashes
+
+def gen_lang_hash(image_id):
+    hashes = []
+    files = glob("{}images/origins/{}_*.png".format(open_root, image_id))
+    files = [f for f in files if f.find("lang") != -1]
+    files = sorted(files, key=lambda f: int(f.split("_")[1].split(".")[0]))
+
+    pixels = "".join(get_rgb(file) for file in files)
+
+    return hash_pix(pixels)
 
 def update_hashes(db):
     cursor = db.cursor()
@@ -94,6 +126,12 @@ def update_hashes(db):
         print image_id
         hash_codes = gen_hash_codes(image_id)
         cursor.execute("UPDATE {} SET hashes='{}', video='{}' WHERE image_id='{}'".format(table_name, "&".join(hash_codes[:27]), "&".join(hash_codes[27:]), image_id))
+
+    cursor.execute("SELECT image_id FROM {} where lang_hash IS NULL".format(table_name))
+    for image_id, in cursor.fetchall():
+        print image_id
+        hash_code = gen_lang_hash(image_id)
+        cursor.execute("UPDATE {} SET lang_hash='{}' WHERE image_id='{}'".format(table_name, hash_code, image_id))
 
     db.commit()
     cursor.close()
@@ -199,77 +237,13 @@ def get_feature_entropy(cursor, feature):
     table.append([feature, entropy])
     return table
 
-def is_all_same(array):
-    first = array[0]
-    for e in array:
-        if e != first:
-            return False
-
-    return True
-
-def get_feature_res(cursor, feature, extra_selector=""):
-    cursor.execute("SELECT DISTINCT(user_id) from {}".format(table_name))
-
-    cb_total = 0.0
-    num_vals = 0.0
-    cb_count = 0.0
-    fp_to_count_cross = {}
-    fp_to_count_single = {}
-    data = cursor.fetchall()
-
-    for user_id, in data:
-        cb_prints = []
-        cursor.execute("SELECT image_id from {} where user_id='{}' {}".format(table_name, user_id, extra_selector))
-        ids = [x for x, in cursor.fetchall()]
-        for image_id in ids:
-            cb_prints.append(Fingerprint(cursor, image_id, table_name, Fingerprint_Type.CROSS, feature))
-            single_fp = Fingerprint(cursor, image_id, table_name, Fingerprint_Type.SINGLE, feature)
-            if single_fp in fp_to_count_single:
-                fp_to_count_single[single_fp] += 1
-            else:
-                fp_to_count_single.update(
-                    {
-                        single_fp: 1
-                    }
-                )
-
-        if len(ids) > 1:
-            cb_total += 1.0;
-            if is_all_same(cb_prints):
-                cb_count += 1.0
-                fp = cb_prints[0]
-                if fp in fp_to_count_cross:
-                    fp_to_count_cross[fp] += 1
-                else:
-                    fp_to_count_cross.update(
-                        {
-                            fp: 1
-                        }
-                    )
-
-    cb_distinct = float(len(fp_to_count_cross))
-    cb_unique = 0.0
-    for _, count in fp_to_count_cross.items():
-        if count == 1:
-            cb_unique += 1.0
-
-    single_distinct = float(len(fp_to_count_single))
-    single_unique = 0.0
-    for _, count in fp_to_count_single.items():
-        if count == 1:
-            single_unique += 1.0
-    cb_total = max(cb_total, 1.0)
-    single_distinct = max(single_distinct, 1.0)
-    cb_distinct = max(cb_distinct, 1.0)
-    frmt = "{:3.1f}%"
-    return frmt.format(single_unique/single_distinct*100), frmt.format(cb_count/cb_total*100), frmt.format(cb_unique/cb_distinct*100)
-
 
 mask = None
 def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_type=Fingerprint_Type.CROSS):
     if not quiet:
         print 'extra_selector="{}"'.format(extra_selector)
     global mask
+    global instability
     tuids = []
     uids = []
     cursor.execute("SELECT COUNT(DISTINCT(ip)) FROM {}".format(table_name))
@@ -304,10 +278,9 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
     hash_long = []
     fp_to_count = {}
     hash_all_unique = {}
-    stability = {}
-    diff = {}
     index = []
     uid_stability = {}
+    instability = {}
 
     for uid in uids:
         #cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b1, uid))
@@ -321,14 +294,11 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
         fp_2 = Fingerprint(cursor, image2_id, table_name, fp_type, attrs)
 
         try:
-            if quiet:
-                _, opps = None
-            cursor.execute("SELECT fonts FROM {} WHERE image_id='{}'".format(table_name, image1_id))
+            cursor.execute("SELECT hashes FROM {} WHERE image_id='{}'".format(table_name, image1_id))
+            hashes_1 = cursor.fetchone()[0].split("&")[:27]
 
-            hashes_1 = list(cursor.fetchone()[0])
-
-            cursor.execute("SELECT fonts FROM {} WHERE image_id='{}'".format(table_name, image2_id))
-            hashes_2 = list(cursor.fetchone()[0])
+            cursor.execute("SELECT hashes FROM {} WHERE image_id='{}'".format(table_name, image2_id))
+            hashes_2 = cursor.fetchone()[0].split("&")[:27]
 
             if mask is None:
                 mask = [1 for _ in range(len(hashes_1))]
@@ -344,8 +314,8 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
                         hash_all.update({i: []})
                     if i not in hash_all_unique:
                         hash_all_unique.update({i: Set()})
-                    if i not in diff:
-                        diff.update({i: 0.0})
+                    if i not in instability:
+                        instability.update({i: 0.0})
 
 
                     hash1_val = hashes_1[i]
@@ -359,7 +329,7 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
                         hash_all[i].append(hash1_val)
                         hash_all_unique[i].add(hash1_val)
                     else:
-                        diff[i] += 1.0/len(uids)
+                        instability[i] += 1.0/len(uids)
                         uid_stability[uid].append([hash1_val, hash2_val])
         except:
             pass
@@ -380,28 +350,25 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
         #else:
         #    print 'not same: ' + str(uid)
     #for i in range(case_number):
-    #    print i, diff[i]
+    #    print i, instability[i]
 
-    for i, d in diff.items():
-        if d > 0.0:
-            mask[i] = 0
+    for index, i in instability.items():
+        if i > 0.0:
+            mask[index] = 0
 
-    num_distinct = float(len(fp_to_count))
+    num_distinct = max(float(len(fp_to_count)), 1.0)
     num_unique = 0.0
     for _, count in fp_to_count.items():
         if count == 1:
             num_unique += 1.0
     num_cross_browser = float(len(hash_long))
-    num_uids = float(len(uids))
+    num_uids = max(float(len(uids)), 1.0)
 
     if not quiet:
-        for i, d in diff.items():
+        for i, d in instability.items():
             print "{}: instability: {}".format(
                 i, d
             )
-        for u, s in uid_stability.items():
-            print "{}: {}".format(u, s)
-
 
         print 'Cross_browser', num_cross_browser
         print 'Cross_browser rate', num_cross_browser/num_uids
@@ -412,100 +379,10 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
 
     return int(num_uids), "{:3.1f}%".format(num_cross_browser/num_uids*100), "{:3.1f}%".format(num_unique/num_distinct*100)
 
-def get_print_table(result_table, browsers):
-    table = []
-    table.append(["Browser"] + browsers)
-    for b1 in browsers:
-        disp = [b1]
-        for b2 in browsers:
-            try:
-                res = result_table[(b1, b2)]
-                disp.append(("{} " * len(res)).format(*res))
-            except:
-                disp.append("")
-
-        table.append(disp)
-
-    return table
-
-def print_table(table):
-    row_size = 15
-    for row in table:
-        row_format = ("{:<" + str(row_size) + "}") * (len(row))
-        print row_format.format(*row)
-
-def latex_table(table):
-    for i, row in enumerate(table):
-        if i is 0:
-            header = "\\begin{tabular}{|l||"
-            for _ in range(len(row)):
-                header += "l|"
-            header += "}\hline"
-            print header
-            print " & ".join(row), "\\\\ \hline \hline"
-        else:
-            print " & " * (len(row) - 1), "\\\\[-7pt]"
-            print " & ".join(row).replace('%', '\%'), "\\\\ \hline"
-
-    print "\\end{tabular}"
-    print "\\vspace{0.05in}\n"
-
-def print_diff(new, base, browsers):
-    table = []
-    table.append(["Browsers"] + browsers)
-    for b1 in browsers:
-        disp = [b1]
-        for b2 in browsers:
-            try:
-                b = base[(b1, b2)]
-                n = new[(b1, b2)]
-                out = ""
-                for i, e in enumerate(n):
-                    ef, bf = "", ""
-                    if isinstance(e, str):
-                        ef = float(e.replace("%", ""))
-                    else:
-                        ef = float(e)
-                    if isinstance(b[i], str):
-                        bf = float(b[i].replace("%", ""))
-                    else:
-                        bf = float(b[i])
-                    if ef == bf:
-                        out += "{} ".format(e)
-                    elif ef < bf:
-                        out += "\\textit{" + str(e) + "} "
-                    else:
-                        out += "\\textbf{" + str(e) + "} "
-
-                disp.append(out)
-            except:
-                disp.append("")
-
-        table.append(disp)
-
-    latex_table(table)
-    print "\n\\textbf{bold} denotes values that have increased\n"
-    print "\\textit{italics} denotes values that have decreased"
-
-def summarize_res(result_table):
-    ave_cb, ave_u, sum_weights = 0.0, 0.0, 0.0
-    for _, val in result_table.items():
-        if val is not None:
-            count, cb, u = val
-            sum_weights += float(count)
-            ave_cb += float(count)*float(cb.replace("%", ""))
-            ave_u += float(count)*float(u.replace("%", ""))
-
-    return ave_cb/sum_weights, ave_u/sum_weights
-
-def latex_summarize(result_table):
-    cb, u = summarize_res(result_table)
-    print "\nAverage cross browser: ${:3.2f}\%$\n".format(cb)
-    print "Average unique: ${:3.2f}\%$\n".format(u)
-    ident = cb*u/100.0
-    print "Average cross-browser unique: ${:3.2f}\% = {:3.2f}\%*{:3.2f}\%$\n".format(ident, cb, u)
-
+b_mask = {}
 def get_res_table(cursor, browsers, feat_list, cross_browser=True, extra_selector=""):
+    global b_mask
+    global mask
     result_table = {}
     if cross_browser:
         for i in range(len(browsers)):
@@ -516,6 +393,13 @@ def get_res_table(cursor, browsers, feat_list, cross_browser=True, extra_selecto
                         (b1, b2): getRes(b1, b2, cursor, True, feat_list, fp_type=Fingerprint_Type.CROSS, extra_selector=extra_selector)
                     }
                 )
+                if mask is not None:
+                    b_mask.update(
+                        {
+                            "{}{}".format(b1,b2): mask
+                        }
+                    )
+                    mask = None
         for i in range(len(browsers)):
             for j in range(0, i):
                 b1, b2 = browsers[i], browsers[j]
@@ -524,6 +408,14 @@ def get_res_table(cursor, browsers, feat_list, cross_browser=True, extra_selecto
                         (b1, b2): result_table[(b2, b1)]
                     }
                 )
+                try:
+                    b_mask.update(
+                        {
+                            "{}{}".format(b1, b2): b_mask["{}{}".format(b2, b1)]
+                        }
+                    )
+                except:
+                    pass
     else:
         for b in browsers:
             result_table.update(
@@ -544,63 +436,44 @@ def index():
     # update_langs(db)
     # return
 
-
-    table = get_gpu_entropy(cursor)
-    table += get_lang_entropy(cursor)
-    for feat in Feature_Lists.All:
-        table += get_feature_entropy(cursor, feat)
-    table += get_feature_entropy(cursor, "timezone, resolution, fontlist, adBlock, plugins, agent, headerKeys, cookie, accept, encoding, language, hashes, langs")
-    print_table(table)
-    return
-
-    # table = [["Feature", "Single-browser uniqueness", "Cross-browser stability", "Cross-browser uniqueness"]]
+    # table = get_gpu_entropy(cursor)
+    # table += get_lang_entropy(cursor)
     # for feat in Feature_Lists.All:
-    #     table += [[a for x in [feat], get_feature_res(cursor, feat) for a in x]]
+    #     table += get_feature_entropy(cursor, feat)
+    # table += get_feature_entropy(cursor, "timezone, resolution, fontlist, adBlock, plugins, agent, headerKeys, cookie, accept, encoding, language, hashes, langs")
     # print_table(table)
-    # latex_table(table)
     # return
 
-    cursor.execute('SELECT DISTINCT(browser) from {}'.format(table_name))
+    # table = Feature_Table()
+    # table.run(cursor, table_name)
+    # print table
+    # return
+
+    cursor.execute("SELECT DISTINCT(browser) from {}".format(table_name))
     browsers = [b for b, in cursor.fetchall()]
-    mode = 3
+    browsers = sorted(browsers, key=lambda b: -cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)))
+
+    # get_res_table(cursor, browsers, "langs", extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
+    # f = open("GPU_Mask.txt", "w")
+    # f.write(json.dumps(b_mask))
+    # f.close()
+    # return
+
+    mode = 4
     if mode == 0:
-        getRes("Firefox", "Chrome", cursor, False, "resolution", fp_type=Fingerprint_Type.CROSS)
+        getRes("Firefox", "Chrome", cursor, False, "langs", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
-        result_table = get_res_table(cursor, browsers, "hashes", cross_browser=False)
-
-        table = get_print_table(result_table, browsers)
-        print_table(table)
-        print summarize_res(result_table)
-
-        if LaTex:
-            latex_table(table)
-            latex_summarize(result_table)
+        table = Results_Table(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
+        table.run(cursor, table_name)
+        print "{}".format(table)
     elif mode == 2:
-        b = get_res_table(cursor, browsers, Feature_Lists.Amiunique, cross_browser=False)
-        n = get_res_table(cursor, browsers, Feature_Lists.Single_Browser, cross_browser=False)
-
-        print_table(get_print_table(b, browsers))
-        print_table(get_print_table(n, browsers))
-        print_diff(n, b, browsers)
-        latex_summarize(n)
+        table = Diff_Table(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser,  Feature_Lists.Amiunique, browsers)
+        table.run(cursor, table)
+        print "{}".format(table)
     else:
-        table = [["Type", "amiunique", "Our's"]]
-        row = ["Single"]
-        a, b = summarize_res(get_res_table(cursor, browsers, Feature_Lists.Amiunique, cross_browser=False))
-        row += ["{:3.2f}%".format(a*b/100.0)]
-        a, b = summarize_res(get_res_table(cursor, browsers, Feature_Lists.Single_Browser, cross_browser=False))
-        row += ["{:3.2f}%".format(a*b/100.0)]
-        table.append(row)
-
-        row = ["Cross Browser"]
-        a, b = summarize_res(get_res_table(cursor, browsers, Feature_Lists.CB_Amiunique, cross_browser=True))
-        row += ["{:3.2f}%".format(a*b/100.0)]
-        a, b = summarize_res(get_res_table(cursor, browsers, Feature_Lists.Cross_Browser, cross_browser=True))
-        row += ["{:3.2f}%".format(a*b/100.0)]
-        table.append(row)
-
-        latex_table(table)
-
+        table = Summary_Table(browsers)
+        table.run(cursor, table_name)
+        print "{}".format(table)
     db.commit()
     db.close()
 
