@@ -103,11 +103,19 @@ std::ostream &operator<<(std::ostream &out, const ResultTable &p) {
 
 typedef std::shared_ptr<std::map<std::string, DataPoint::Ptr>> Test;
 
+struct MaskScore {
+  size_t mask;
+  double score;
+  MaskScore(size_t mask, double score) : mask{mask}, score{score} {};
+};
+typedef std::map<std::pair<std::string, std::string>, MaskScore> Result;
+
 constexpr int cutoff = 27;
 
-std::tuple<float, float, float, float, int>
-analyze(const std::vector<Test> &data, const std::set<std::string> &browsers,
-        const size_t mask);
+Result analyze(const std::vector<Test> &data,
+               const std::set<std::string> &browsers, const size_t mask);
+
+void reduceMaps(const Result &candidate, Result &master);
 
 #pragma omp declare reduction(                                                 \
     merge : std::list <                                                        \
@@ -162,49 +170,40 @@ int main(int argc, char **argv) {
       }
     }
   }
-  constexpr size_t numIt = 1 << cutoff;
-
-  std::list<std::tuple<float, float, float, float, int>> results;
-  std::ifstream binIn("results.dat", std::ios::in | std::ios::binary);
-  if (binIn.is_open()) {
-    size_t num;
-    binIn.read(reinterpret_cast<char *>(&num), sizeof(num));
-    std::cout << num << std::endl;
-    for (int i = 0; i < num; ++i) {
-      float a[4];
-      int e;
-      in.read(reinterpret_cast<char *>(a), sizeof(a));
-      in.read(reinterpret_cast<char *>(&e), sizeof(e));
-      results.emplace_back(a[0], a[1], a[2], a[3], e);
-    }
-  } else {
-    constexpr size_t numIt = 1 << cutoff;
+  constexpr size_t start = (1 << cutoff) - 1;
+  constexpr size_t numIt = 1 << 15;
+  Result results;
 
 #pragma omp parallel
-    {
-      std::list<std::tuple<float, float, float, float, int>> privateResults;
+  {
+    Result privateResults;
 #pragma omp for nowait
-      for (size_t mask = 1; mask < numIt; ++mask)
-        privateResults.emplace_back(analyze(data, browsers, mask));
+    for (size_t mask = start; mask > start - numIt; --mask) {
+      auto res = analyze(data, browsers, mask);
+      reduceMaps(res, privateResults);
+    }
 
 #pragma omp for schedule(static) ordered
-      for (int i = 0; i < omp_get_num_threads(); ++i) {
+    for (int i = 0; i < omp_get_num_threads(); ++i) {
 #pragma omp ordered
-        results.insert(results.end(), privateResults.begin(),
-                       privateResults.end());
-      }
+      reduceMaps(privateResults, results);
     }
+  }
 
-    std::ofstream out ("results.dat", std::ios::out | std::ios::binary);
-    size_t num = results.size();
-    out.write(reinterpret_cast<const char *>(&num), sizeof(num));
-    for (auto & res : results) {
-      float a[4];
-      int e;
-      std::tie(a[0], a[1], a[2], a[3], e) = res;
-      out.write(reinterpret_cast<const char *>(a), sizeof(a));
-      out.write(reinterpret_cast<const char *>(&e), sizeof(e));
+  std::cout << "Results" << std::endl;
+  for (auto &res : results) {
+    auto &b1 = res.first.first;
+    auto &b2 = res.first.second;
+    auto &mask = res.second.mask;
+    auto &score = res.second.score;
+    std::cout << "(" << b1 << ", " << b2 << "): "
+              << "mask: [";
+    for (int i = 0; i < cutoff; ++i) {
+      if (i != 0)
+        std::cout << ", ";
+      std::cout << ((mask >> i) & 0x1);
     }
+    std::cout << "] score: " << score << std::endl;
   }
 }
 
@@ -231,70 +230,47 @@ std::vector<int> genCode(const std::vector<int> &ids, const int mask) {
   return code;
 }
 
-template <class It, class UnaryFunc, class UnaryPredicate>
-std::tuple<double, double> aveAndStdev(It first, It last, UnaryFunc selector,
-                                       UnaryPredicate filter) {
-  double average = 0;
-  int count = 0;
-  std::for_each(first, last, [&](auto &e) {
-    if (filter(e)) {
-      average += selector(e);
-      ++count;
-    }
-  });
-  average /= count;
-
-  double sigma = 0;
-  std::for_each(first, last, [&](auto &e) {
-    if (filter(e)) {
-      const double value = selector(e);
-      sigma += (value - average) * (value - average);
-    }
-  });
-  sigma /= count - 1;
-  sigma = std::sqrt(sigma);
-  return std::make_tuple(average, sigma);
-}
-
-template <class It, class UnaryFunc>
-std::tuple<double, double> aveAndStdev(It first, It last, UnaryFunc selector) {
-  return aveAndStdev(first, last, selector, [](auto &e) { return true; });
-}
-
-template <class It> std::tuple<double, double> aveAndStdev(It first, It last) {
-  return aveAndStdev(first, last, [](auto &e) { return e; });
-}
-
-std::tuple<float, float, float, float, int>
-analyze(const std::vector<Test> &data, const std::set<std::string> &browsers,
-        const size_t mask) {
+Result analyze(const std::vector<Test> &data,
+               const std::set<std::string> &browsers, const size_t mask) {
   int j = 0;
   auto res = ResultTable::Create(browsers.size(), mask);
   for (auto &b1 : browsers) {
     int i = 0;
     for (auto &b2 : browsers) {
-      std::unordered_set<std::vector<int>> unique_codes;
-      double count = 0;
+      double count = 0.0;
       double crossBrowser = 0.0;
-      for (auto &test : data) {
-        auto A = test->find(b1);
-        auto B = test->find(b2);
-        if (A == test->cend() || B == test->cend())
-          continue;
-        ++count;
-        auto codeA = genCode(A->second->ids, mask);
-        auto codeB = genCode(B->second->ids, mask);
+      std::unordered_map<std::vector<int>, double> codeToCount;
+      if (b1.compare(b2) != 0) {
+        for (auto &test : data) {
+          auto A = test->find(b1);
+          auto B = test->find(b2);
+          if (A == test->cend() || B == test->cend())
+            continue;
 
-        if (codeA == codeB) {
-          ++crossBrowser;
-          unique_codes.emplace(codeA);
-          unique_codes.emplace(codeB);
+          ++count;
+          auto codeA = genCode(A->second->ids, mask);
+          auto codeB = genCode(B->second->ids, mask);
+
+          if (codeA == codeB) {
+            ++crossBrowser;
+            auto it = codeToCount.find(codeA);
+            if (it == codeToCount.cend())
+              codeToCount.emplace(codeA, 1.0);
+            else
+              ++it->second;
+          }
         }
       }
 
-      if (count) {
+      if (count != 0.0) {
         res->at(j, i).cb = crossBrowser / count;
-        res->at(j, i).unique = unique_codes.size() / crossBrowser;
+        double numUnique = 0.0;
+        for (auto & p : codeToCount)
+          if (p.second == 1.0)
+            ++numUnique;
+
+        double numDistinct = std::max(1.0, static_cast<double>(codeToCount.size()));
+        res->at(j, i).unique = numUnique/numDistinct;
       } else {
         res->at(j, i).cb = -1;
         res->at(j, i).unique = -1;
@@ -304,23 +280,36 @@ analyze(const std::vector<Test> &data, const std::set<std::string> &browsers,
     ++j;
   }
 
-  int count = 0;
-  double avecb, stdcb;
-  std::tie(avecb, stdcb) =
-      aveAndStdev(res->data, res->data + (browsers.size() * browsers.size()),
-                  [](auto &e) { return e.cb; },
-                  [&count](auto &e) {
-                    if (e.cb != -1) {
-                      ++count;
-                      return true;
-                    } else {
-                      return false;
-                    }
-                  });
-  double aveu, stdu;
-  std::tie(aveu, stdu) = aveAndStdev(
-      res->data, res->data + (browsers.size() * browsers.size()),
-      [](auto &e) { return e.unique; }, [](auto &e) { return e.unique != -1; });
+  Result browsersToScore;
+  j = 0;
+  for (auto &b1 : browsers) {
+    int i = 0;
+    for (auto &b2 : browsers) {
+      if (b1.compare(b2) != 0 && res->at(j, i).cb != -1) {
+        browsersToScore.emplace(
+            std::make_pair(b1, b2),
+            MaskScore(mask, res->at(j, i).cb * res->at(j, i).unique));
+      }
+      ++i;
+    }
+    ++j;
+  }
+  return browsersToScore;
+}
 
-  return std::make_tuple(avecb, stdcb, aveu, stdu, count);
+void reduceMaps(const Result &candidate, Result &master) {
+  for (auto &pair : candidate) {
+    auto &browsers = pair.first;
+    double score = pair.second.score;
+    size_t mask = pair.second.mask;
+    auto it = master.find(browsers);
+    if (it == master.cend()) {
+      master.emplace(browsers, pair.second);
+    } else {
+      if (it->second.score <= score) {
+        it->second.mask = mask;
+        it->second.score = score;
+      }
+    }
+  }
 }
