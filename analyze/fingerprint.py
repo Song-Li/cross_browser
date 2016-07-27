@@ -124,7 +124,7 @@ class Fingerprint(Fingerprint_Base):
     self.fp = []
     self.cursor.execute("SELECT gpu, browser from {} where image_id='{}'".format(table_name, image_id))
     gpu, browser = cursor.fetchone()
-    self.software_render = gpu == "SwiftShader" or browser == "Edge"
+    self.software_render = gpu == "SwiftShader" or gpu == "Microsoft Basic Render Driver"
     if isinstance(to_add_attrs, list):
       for attr in to_add_attrs:
         self.__add_attr(attr)
