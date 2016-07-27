@@ -18,7 +18,8 @@ function populateFontList(fontArr) {
 
 var Sender = function() {
   this.finalized = false;
-  this.postData = {fontlist: "No Flash",
+  this.postData = {
+    fontlist: "No Flash",
     user_id: -1,
     WebGL: false,
     inc: "Undefined",
@@ -33,17 +34,33 @@ var Sender = function() {
     gpuImgs: [],
     adBlock: "Undefined",
     langsDetected: [],
-    fps: 0.0
-    };
-  sumRGB = function(img) {
-    var sum = 0.0;
-    for (var i = 0; i < img.length; i += 4) {
-      sum += parseFloat(img[i + 0]);
-      sum += parseFloat(img[i + 1]);
-      sum += parseFloat(img[i + 2]);
+    fps: 0.0,
+    video: []
+  };
+
+  function hashRGB(array) {
+    var hash = 0, i, chr, len, j;
+    if (array.length === 0)
+      return hash;
+    for (i = 0, len = array.length; i < len; i += 4) {
+      for (j = 0; j < 3; ++j) {
+        chr = array[i] | 0;
+        hash ^= (((hash << 5) - hash) + chr + 0x9e3779b9) | 0;
+        hash |= 0; // Convert to 32bit integer
+      }
+    }
+    return hash;
+  };
+
+  function sumRGB(array) {
+    var sum = 0;
+    for (var i = 0; i < array.length; i += 4) {
+      sum += array[i + 0];
+      sum += array[i + 1];
+      sum += array[i + 2];
     }
     return sum;
-  };
+  }
 
   this.addFonts = function(fonts) {
     this.postData['fontlist'] = fonts;
@@ -80,8 +97,8 @@ var Sender = function() {
       if (array.length === 0)
         return hash;
       for (i = 0, len = array.length; i < len; i++) {
-        chr = array[i];
-        hash = ((hash << 5) - hash) + chr;
+        chr = array[i] | 0;
+        hash ^= (((hash << 5) - hash) + chr + 0x9e3779b9) | 0;
         hash |= 0; // Convert to 32bit integer
       }
       return hash;
@@ -93,7 +110,11 @@ var Sender = function() {
     console.log("CTX: " + hashV);
 
     this.toServer(false, "None", "None", hashV, id, pixels);
-    return sumRGB(pixels) > 1.0;
+    if (sumRGB(pixels) > 1.0) {
+      return hashRGB(pixels);
+    } else {
+      return 0;
+    }
   };
 
   this.getData = function(gl, id) {
@@ -118,7 +139,11 @@ var Sender = function() {
     console.log("gl: " + hash);
 
     this.toServer(WebGL, ven, ren, hash, id, pixels);
-    return sumRGB(pixels) > 1.0;
+    if (sumRGB(pixels) > 1.0) {
+      return hashRGB(pixels);
+    } else {
+      return 0;
+    }
   };
 
   this._fps = null;
@@ -237,7 +262,8 @@ var Sender = function() {
                           '</strong> browsers<br>');
 
               if (!requests.hasOwnProperty('automated') ||
-                  requests['automated'] === 'true') {
+                  requests[
+                  'automated'] === 'true') {
                 $('#instruction')
                     .append(
                         'Please close this browser and check a different browser for your completion code');
@@ -269,7 +295,8 @@ var Sender = function() {
                           '<br> <strong>Thank you!</strong><br><div style="font-size:0.8em;">Just input this code back to Amazon mechanical turk, we will know you finished three browsers</div>');
             }
             progress(100);
-            Cookies.set('machine_fingerprinting_userid', user_id);
+            Cookies.set('machine_fingerprinting_userid', user_id,
+                {expires: new Date(2020, 1, 1)});
           }
         }
       });

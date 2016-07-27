@@ -287,7 +287,7 @@ int main(int argc, char **argv) {
       const double norm = cv::norm(ground, test, cv::NORM_L2);
       aveNorm += norm;
       frame++;
-      if (true) {
+      if (false) {
         if (!norm)
           continue;
         std::cout << norm << std::endl;

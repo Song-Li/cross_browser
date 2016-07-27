@@ -487,7 +487,7 @@ def get_print_table(result_table, browsers):
 def print_table(table):
     row_size = 15
     for row in table:
-        row_format = ("{:<" + str(row_size) + "}") * (len(row))
+        row_format = ("{:<15" + str(row_size) + "}") * (len(row))
         print row_format.format(*row)
 
 def latex_table(table):
