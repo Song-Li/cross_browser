@@ -6,6 +6,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <random>
 #include <set>
 #include <sstream>
 #include <string>
@@ -114,6 +115,8 @@ constexpr int cutoff = 27;
 
 Result analyze(const std::vector<Test> &data,
                const std::set<std::string> &browsers, const size_t mask);
+double analyze(const std::vector<Test> &data,
+               const std::set<std::string> &browsers, Result masks);
 
 void reduceMaps(const Result &candidate, Result &master);
 
@@ -170,23 +173,34 @@ int main(int argc, char **argv) {
       }
     }
   }
+  constexpr int numRounds = 4;
   constexpr size_t start = (1 << cutoff) - 1;
   constexpr size_t numIt = 1 << 15;
   Result results;
-
+  std::random_device rng;
+  std::mt19937_64 gen(rng());
+  std::uniform_int_distribution<> dist();
+  for (int i = 0; i < numRounds; ++i) {
+    std::vector<Test> trainingData, testData;
+    for (auto & d : data)
+      if (dist(gen) % 5 == 0)
+        testData.emplace_back(d);
+      else
+        trainingData.emplace_back(d);
 #pragma omp parallel
-  {
-    Result privateResults;
+    {
+      Result privateResults;
 #pragma omp for nowait
-    for (size_t mask = start; mask > start - numIt; --mask) {
-      auto res = analyze(data, browsers, mask);
-      reduceMaps(res, privateResults);
-    }
+      for (size_t mask = start; mask > start - numIt; --mask) {
+        auto res = analyze(data, browsers, mask);
+        reduceMaps(res, privateResults);
+      }
 
 #pragma omp for schedule(static) ordered
-    for (int i = 0; i < omp_get_num_threads(); ++i) {
+      for (int i = 0; i < omp_get_num_threads(); ++i) {
 #pragma omp ordered
-      reduceMaps(privateResults, results);
+        reduceMaps(privateResults, results);
+      }
     }
   }
 
@@ -265,12 +279,13 @@ Result analyze(const std::vector<Test> &data,
       if (count != 0.0) {
         res->at(j, i).cb = crossBrowser / count;
         double numUnique = 0.0;
-        for (auto & p : codeToCount)
+        for (auto &p : codeToCount)
           if (p.second == 1.0)
             ++numUnique;
 
-        double numDistinct = std::max(1.0, static_cast<double>(codeToCount.size()));
-        res->at(j, i).unique = numUnique/numDistinct;
+        double numDistinct =
+            std::max(1.0, static_cast<double>(codeToCount.size()));
+        res->at(j, i).unique = numUnique / numDistinct;
       } else {
         res->at(j, i).cb = -1;
         res->at(j, i).unique = -1;
@@ -288,13 +303,83 @@ Result analyze(const std::vector<Test> &data,
       if (b1.compare(b2) != 0 && res->at(j, i).cb != -1) {
         browsersToScore.emplace(
             std::make_pair(b1, b2),
-            MaskScore(mask, res->at(j, i).cb * res->at(j, i).unique));
+            MaskScore(mask,
+                      std::pow(res->at(j, i).cb, 1.5) * res->at(j, i).unique));
       }
       ++i;
     }
     ++j;
   }
   return browsersToScore;
+}
+
+double analyze(const std::vector<Test> &data,
+               const std::set<std::string> &browsers, Result masks) {
+  int j = 0;
+  auto res = ResultTable::Create(browsers.size(), 0);
+  for (auto &b1 : browsers) {
+    int i = 0;
+    for (auto &b2 : browsers) {
+      double count = 0.0;
+      double crossBrowser = 0.0;
+      std::unordered_map<std::vector<int>, double> codeToCount;
+      if (b1.compare(b2) != 0) {
+        for (auto &test : data) {
+          auto A = test->find(b1);
+          auto B = test->find(b2);
+          auto mask = masks.find(std::make_pair(b1, b2));
+          if (A == test->cend() || B == test->cend() || mask == masks.cend())
+            continue;
+
+          ++count;
+          auto codeA = genCode(A->second->ids, mask->second.mask);
+          auto codeB = genCode(B->second->ids, mask->second.mask);
+
+          if (codeA == codeB) {
+            ++crossBrowser;
+            auto it = codeToCount.find(codeA);
+            if (it == codeToCount.cend())
+              codeToCount.emplace(codeA, 1.0);
+            else
+              ++it->second;
+          }
+        }
+      }
+
+      if (count != 0.0) {
+        res->at(j, i).cb = crossBrowser / count;
+        double numUnique = 0.0;
+        for (auto &p : codeToCount)
+          if (p.second == 1.0)
+            ++numUnique;
+
+        double numDistinct =
+            std::max(1.0, static_cast<double>(codeToCount.size()));
+        res->at(j, i).unique = numUnique / numDistinct;
+      } else {
+        res->at(j, i).cb = -1;
+        res->at(j, i).unique = -1;
+      }
+      ++i;
+    }
+    ++j;
+  }
+
+  double score = 0;
+  double count = 0;
+  j = 0;
+  for (auto &b1 : browsers) {
+    int i = 0;
+    for (auto &b2 : browsers) {
+      if (b1.compare(b2) != 0 && res->at(j, i).cb != -1) {
+        score += std::pow(res->at(j, i).cb, 1.5) * res->at(j, i).unique;
+        ++count;
+      }
+      ++i;
+    }
+    ++j;
+  }
+  return score / count;
 }
 
 void reduceMaps(const Result &candidate, Result &master) {
