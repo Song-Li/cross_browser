@@ -226,6 +226,7 @@ class Loader
     postProgress = () =>
       progress(++@numComplete / @numberOfTests * 98.0)
       if @numComplete is @numberOfTests
+        if @requests['demo'] is "True" then $('body canvas').remove()
         sender.sendData()
 
     d = 256
@@ -237,7 +238,6 @@ class Loader
           @numTestsComplete++
           postProgress()
           if @numTestsComplete < @testList.length
-            console.log "#{@numTestsComplete}, #{@testList.length}"
             @testList[@numTestsComplete].begin @canvas, testDone
 
         @testList[0].begin @canvas, testDone

@@ -268,6 +268,9 @@
         return function() {
           progress(++_this.numComplete / _this.numberOfTests * 98.0);
           if (_this.numComplete === _this.numberOfTests) {
+            if (_this.requests['demo'] === "True") {
+              $('body canvas').remove();
+            }
             return sender.sendData();
           }
         };
@@ -284,7 +287,6 @@
               _this.numTestsComplete++;
               postProgress();
               if (_this.numTestsComplete < _this.testList.length) {
-                console.log(_this.numTestsComplete + ", " + _this.testList.length);
                 return _this.testList[_this.numTestsComplete].begin(_this.canvas, testDone);
               }
             };
