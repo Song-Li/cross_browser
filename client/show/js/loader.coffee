@@ -212,7 +212,6 @@ class Loader
     @testList.push new BubbleTest()
     @testList.push new CompressedTextureTest()
     @testList.push new ShadowTest()
-    @testList.push new CanvasTest()
 
     @asyncTests = []
     if not mobileAndTabletCheck()
@@ -238,11 +237,12 @@ class Loader
           @numTestsComplete++
           postProgress()
           if @numTestsComplete < @testList.length
+            console.log "#{@numTestsComplete}, #{@testList.length}"
             @testList[@numTestsComplete].begin @canvas, testDone
 
         @testList[0].begin @canvas, testDone
 
-    canvasContainer = $('#test_canvases')
+    canvasContainer = if @requests['demo'] is "True" then $('body') else $('#test_canvases')
     $("<canvas id='can_aa' width='#{d}' height='#{d}'/>").appendTo canvasContainer
 
     # Tests begin in HERE

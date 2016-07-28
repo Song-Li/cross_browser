@@ -284,6 +284,7 @@
               _this.numTestsComplete++;
               postProgress();
               if (_this.numTestsComplete < _this.testList.length) {
+                console.log(_this.numTestsComplete + ", " + _this.testList.length);
                 return _this.testList[_this.numTestsComplete].begin(_this.canvas, testDone);
               }
             };
@@ -294,7 +295,7 @@
         return Tester;
 
       })();
-      canvasContainer = $('#test_canvases');
+      canvasContainer = this.requests['demo'] === "True" ? $('body') : $('#test_canvases');
       $("<canvas id='can_aa' width='" + d + "' height='" + d + "'/>").appendTo(canvasContainer);
       new Tester(this.testList, canvasContainer);
       ref5 = this.asyncTests;

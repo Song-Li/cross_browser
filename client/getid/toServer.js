@@ -46,6 +46,9 @@ function createCopyButton(text, home) {
 
 function addUID(uid){
     var link = 'http://mf.songli.us/show/?user_id=' + uid + '&automated=false'
+    if (requests['demo'] === "True") {
+        link += "&demo=True"
+    }
     $('<a/>')
         .text(link)
         .attr('style', "padding-right: 10px;")
