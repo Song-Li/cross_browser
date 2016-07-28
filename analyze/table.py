@@ -19,6 +19,7 @@ class Table_Base():
     if self.summary is not None:
       if self.fp_type == Fingerprint_Type.CROSS:
         __str += "Summary: {:3.2f}%CB  {:3.2f}%U\n".format(self.summary[0]*100.0, self.summary[1]*100.0)
+        __str += "Average Identifable: {:3.2f}%U".format(self.summary[0]*self.summary[1]*100.0)
       else:
         __str += "Summary: {:3.2f}%U\n".format(self.summary*100.0)
     return __str
@@ -81,8 +82,8 @@ class Results_Table(Table_Base):
       cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b2, uid))
       image2_id = cursor.fetchone()[0]
 
-      fp_1 = Fingerprint(cursor, image1_id, table_name, Fingerprint_Type.CROSS, attrs)
-      fp_2 = Fingerprint(cursor, image2_id, table_name, Fingerprint_Type.CROSS, attrs)
+      fp_1 = Fingerprint(cursor, image1_id, table_name, Fingerprint_Type.CROSS, attrs, b2)
+      fp_2 = Fingerprint(cursor, image2_id, table_name, Fingerprint_Type.CROSS, attrs, b1)
 
       if fp_1 == fp_2:
         num_cross_browser += 1

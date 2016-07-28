@@ -290,8 +290,8 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
         cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b2, uid))
         image2_id = cursor.fetchone()[0]
 
-        fp_1 = Fingerprint(cursor, image1_id, table_name, fp_type, attrs)
-        fp_2 = Fingerprint(cursor, image2_id, table_name, fp_type, attrs)
+        fp_1 = Fingerprint(cursor, image1_id, table_name, fp_type, attrs, b2)
+        fp_2 = Fingerprint(cursor, image2_id, table_name, fp_type, attrs, b1)
 
         try:
             cursor.execute("SELECT hashes FROM {} WHERE image_id='{}'".format(table_name, image1_id))
@@ -353,7 +353,7 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
     #    print i, instability[i]
 
     for index, i in instability.items():
-        if i > 0.0:
+        if i > 0.07:
             mask[index] = 0
 
     num_distinct = max(float(len(fp_to_count)), 1.0)
@@ -453,15 +453,15 @@ def index():
     browsers = [b for b, in cursor.fetchall()]
     browsers = sorted(browsers, key=lambda b: -cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)))
 
-    # get_res_table(cursor, browsers, "langs", extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
+    # get_res_table(cursor, browsers, "gpu", extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
     # f = open("GPU_Mask.txt", "w")
     # f.write(json.dumps(b_mask))
     # f.close()
     # return
 
-    mode = 4
+    mode = 1
     if mode == 0:
-        getRes("Firefox", "Chrome", cursor, False, "langs", fp_type=Fingerprint_Type.CROSS)
+        getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
         table = Results_Table(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
         table.run(cursor, table_name)
