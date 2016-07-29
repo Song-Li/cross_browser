@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import json
-
+from PIL import Image
 # from scipy.ndimage import (label,find_objects)
 import MySQLdb
 from hashlib import sha512 as hasher1, sha256 as hasher2
@@ -287,10 +287,12 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
         fp_2 = Fingerprint(cursor, image2_id, table_name, fp_type, attrs, b1)
 
         try:
-            cursor.execute("SELECT hashes FROM {} WHERE image_id='{}'".format(table_name, image1_id))
+            # Feature to mask
+            feature = "hashes"
+            cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image1_id))
             hashes_1 = cursor.fetchone()[0].split("&")[:27]
 
-            cursor.execute("SELECT hashes FROM {} WHERE image_id='{}'".format(table_name, image2_id))
+            cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image2_id))
             hashes_2 = cursor.fetchone()[0].split("&")[:27]
 
             if mask is None:
