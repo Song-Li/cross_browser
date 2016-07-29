@@ -110,12 +110,13 @@ struct MaskScore {
   MaskScore(size_t mask, double score) : mask{mask}, score{score} {};
 };
 typedef std::map<std::pair<std::string, std::string>, MaskScore> Result;
+typedef std::map<std::pair<std::string, std::string>, std::list<MaskScore>> FinalResult;
 
 constexpr int cutoff = 27;
 
 Result analyze(const std::vector<Test> &data,
                const std::set<std::string> &browsers, const size_t mask);
-double analyze(const std::vector<Test> &data,
+Result analyze(const std::vector<Test> &data,
                const std::set<std::string> &browsers, Result masks);
 
 void reduceMaps(const Result &candidate, Result &master);
@@ -173,16 +174,18 @@ int main(int argc, char **argv) {
       }
     }
   }
-  constexpr int numRounds = 4;
+  constexpr int numRounds = 5;
   constexpr size_t start = (1 << cutoff) - 1;
   constexpr size_t numIt = 1 << 15;
-  Result results;
+  double score = 0;
+  FinalResult finalRes;
   std::random_device rng;
   std::mt19937_64 gen(rng());
-  std::uniform_int_distribution<> dist();
+  std::uniform_int_distribution<int> dist(0);
   for (int i = 0; i < numRounds; ++i) {
+    Result results;
     std::vector<Test> trainingData, testData;
-    for (auto & d : data)
+    for (auto &d : data)
       if (dist(gen) % 5 == 0)
         testData.emplace_back(d);
       else
@@ -191,8 +194,8 @@ int main(int argc, char **argv) {
     {
       Result privateResults;
 #pragma omp for nowait
-      for (size_t mask = start; mask > start - numIt; --mask) {
-        auto res = analyze(data, browsers, mask);
+      for (size_t mask = 1; mask < numIt; ++mask) {
+        auto res = analyze(trainingData, browsers, mask);
         reduceMaps(res, privateResults);
       }
 
@@ -202,6 +205,9 @@ int main(int argc, char **argv) {
         reduceMaps(privateResults, results);
       }
     }
+
+    auto res = analyze(data, browsers, results);
+    reduceMaps(res, results);
   }
 
   std::cout << "Results" << std::endl;
@@ -215,7 +221,7 @@ int main(int argc, char **argv) {
     for (int i = 0; i < cutoff; ++i) {
       if (i != 0)
         std::cout << ", ";
-      std::cout << ((mask >> i) & 0x1);
+      std::cout << (score != 0 ? ((mask >> i) & 0x1) : 0);
     }
     std::cout << "] score: " << score << std::endl;
   }
@@ -313,7 +319,7 @@ Result analyze(const std::vector<Test> &data,
   return browsersToScore;
 }
 
-double analyze(const std::vector<Test> &data,
+Result analyze(const std::vector<Test> &data,
                const std::set<std::string> &browsers, Result masks) {
   int j = 0;
   auto res = ResultTable::Create(browsers.size(), 0);
@@ -365,21 +371,31 @@ double analyze(const std::vector<Test> &data,
     ++j;
   }
 
-  double score = 0;
-  double count = 0;
+  Result browsersToScore;
   j = 0;
   for (auto &b1 : browsers) {
     int i = 0;
     for (auto &b2 : browsers) {
       if (b1.compare(b2) != 0 && res->at(j, i).cb != -1) {
-        score += std::pow(res->at(j, i).cb, 1.5) * res->at(j, i).unique;
-        ++count;
+        browsersToScore.emplace(
+            std::make_pair(b1, b2),
+            MaskScore(masks.find(std::make_pair(b1, b2))->second.mask,
+                      std::pow(res->at(j, i).cb, 1.5) * res->at(j, i).unique));
       }
       ++i;
     }
     ++j;
   }
-  return score / count;
+  return browsersToScore;
+}
+
+int scoreMask(size_t mask) {
+  int score = 0;
+  for (int i = 0; i < cutoff; ++i)
+    if ((mask >> i) & 0x1)
+      ++score;
+
+  return score;
 }
 
 void reduceMaps(const Result &candidate, Result &master) {
@@ -391,10 +407,11 @@ void reduceMaps(const Result &candidate, Result &master) {
     if (it == master.cend()) {
       master.emplace(browsers, pair.second);
     } else {
-      if (it->second.score <= score) {
-        it->second.mask = mask;
-        it->second.score = score;
-      }
+      if (it->second.score == score) {
+        if (scoreMask(it->second.mask) < scoreMask(mask))
+          it->second.mask = mask;
+      } else if (it->second.score < score)
+        it->second = pair.second;
     }
   }
 }
