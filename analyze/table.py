@@ -3,24 +3,31 @@
 from fingerprint import Fingerprint_Type, Fingerprint, Feature_Lists
 from enum import Enum
 
+
 class Table_Base():
   def __init__(self):
     self.print_table = None
     self.summary = None
+    self.print_summary = None
+    self.latex_summary = None
 
   def run(self, cursor, table_name, extra_selector=""):
-    raise RuntimeError("Method not implemeneted")
+    pass
+
+  def __print_summary(self):
+    pass
+
+  def __latex_summary(self):
+    pass
 
   def __str__(self):
     __str = ""
     for row in self.print_table:
       __str += ("{:<20}"*len(row)).format(*row) + "\n"
 
-    if self.summary is not None:
-      if self.fp_type == Fingerprint_Type.CROSS:
-        __str += "Summary: {:3.2f}%CB  {:3.2f}%U\n".format(self.summary[0]*100.0, self.summary[1]*100.0)
-      else:
-        __str += "Summary: {:3.2f}%U\n".format(self.summary*100.0)
+    if self.print_summary is not None:
+      __str += self.print_summary
+
     return __str
 
   def __latex_helper(self):
@@ -39,24 +46,23 @@ class Table_Base():
 
     latex += "\\end{tabular}\n"
     latex += "\\vspace{0.05in}\n\n"
-    if self.summary is not None:
-      if self.fp_type == Fingerprint_Type.CROSS:
-        latex += "Summary: ${:3.2f}$\%CB  ${:3.2f}$\%U\n".format(self.summary[0]*100.0, self.summary[1]*100.0)
-        latex += "Average Identifable: ${:3.2f}$\%\n".format(self.summary[0]*self.summary[1]*100)
-      else:
-        latex += "Summary: ${}$\%U\n".format(self.summary*100)
+
+    if self.latex_summary is not None:
+      latex += self.latex_summary
+
     return latex
 
   def __format__(self, code):
     if code == "latex":
       return self.__latex_helper()
     else:
-      return self.__str__()
+      return format(str(self), code)
 
-class Results_Table(Table_Base):
-  def __init__(self, fp_type, feat_list, browsers):
+
+class Cross_Table(Table_Base):
+  def __init__(self, feat_list, browsers):
     Table_Base.__init__(self)
-    self.fp_type, self.feat_list, self.browsers = fp_type, feat_list, browsers
+    self.feat_list, self.browsers = feat_list, browsers
 
   def __cross_helper(self, b1, b2, cursor, table_name, attrs, extra_selector):
     cursor.execute("SELECT user_id FROM {} WHERE browser='{}' {}".format(table_name, b1, extra_selector))
@@ -77,12 +83,12 @@ class Results_Table(Table_Base):
     for uid in uids:
       cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b1, uid))
       image1_id = cursor.fetchone()[0]
-      #cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b2, uid))
+
       cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b2, uid))
       image2_id = cursor.fetchone()[0]
 
-      fp_1 = Fingerprint(cursor, image1_id, table_name, Fingerprint_Type.CROSS, attrs)
-      fp_2 = Fingerprint(cursor, image2_id, table_name, Fingerprint_Type.CROSS, attrs)
+      fp_1 = Fingerprint(cursor, image1_id, table_name, Fingerprint_Type.CROSS, attrs, b2)
+      fp_2 = Fingerprint(cursor, image2_id, table_name, Fingerprint_Type.CROSS, attrs, b1)
 
       if fp_1 == fp_2:
         num_cross_browser += 1
@@ -104,6 +110,73 @@ class Results_Table(Table_Base):
     num_uids = max(float(len(uids)), 1.0)
 
     return int(num_uids), num_cross_browser/num_uids, num_unique/num_distinct
+
+  def __print_summary(self):
+    __str = ""
+
+    if self.summary is not None:
+      __str += "Summary: {:3.2f}%CB  {:3.2f}%Uni\n".format(self.summary[0]*100.0, self.summary[1]*100.0)
+      __str += "Average Identifable: {:3.2f}%Iden".format(self.summary[0]*self.summary[1]*100.0)
+
+    return __str
+
+  def __latex_summary(self):
+    latex = "\LARGE\n"
+    if self.summary is not None:
+      latex += "Summary: ${:3.2f}$\%CB  ${:3.2f}$\%Uni\n\n".format(self.summary[0]*100.0, self.summary[1]*100.0)
+      latex += "Average Identifable: ${:3.2f}$\%Iden\n\n".format(self.summary[0]*self.summary[1]*100)
+    return latex
+
+  def run(self, cursor, table_name, extra_selector=""):
+    self.res_table = {}
+    for i in range(len(self.browsers)):
+      for j in range(i + 1, len(self.browsers)):
+        b1, b2 = self.browsers[i], self.browsers[j]
+        self.res_table.update(
+          {
+            (b1, b2): self.__cross_helper(b1, b2, cursor, table_name, self.feat_list, extra_selector)
+          }
+        )
+
+    for i in range(len(self.browsers)):
+      for j in range(0, i):
+        b1, b2 = self.browsers[i], self.browsers[j]
+        self.res_table.update(
+          {
+            (b1, b2): self.res_table[(b2, b1)]
+          }
+        )
+    self.print_table = []
+    self.print_table.append(["Browser"] + self.browsers)
+    for b1 in self.browsers:
+      row = [b1]
+      for b2 in self.browsers:
+        try:
+          _, cb, u = self.res_table[(b1, b2)]
+          row.append("{:3.1f}%CB  {:3.1f}%Uni".format(cb*100.0, u*100.0))
+        except:
+          row.append("")
+      self.print_table.append(row)
+
+    ave_cb, ave_u, sum_weights = 0.0, 0.0, 0.0
+    for _, val in self.res_table.items():
+      try:
+        count, cb, u = val
+      except:
+        continue
+
+      sum_weights += float(count)
+      ave_cb += float(cb)*float(count)
+      ave_u += float(u)*float(count)
+
+    self.summary = ave_cb/sum_weights, ave_u/sum_weights
+    self.print_summary = self.__print_summary()
+    self.latex_summary = self.__latex_summary()
+
+class Single_Table(Table_Base):
+  def __init__(self, feat_list, browsers):
+    Table_Base.__init__(self)
+    self.feat_list, self.browsers = feat_list, browsers
 
   def __single_helper(self, b, cursor, table_name, attrs, extra_selector):
     cursor.execute("SELECT image_id FROM {} WHERE browser='{}' {}".format(table_name, b, extra_selector))
@@ -133,174 +206,116 @@ class Results_Table(Table_Base):
 
     return int(num_uids), num_unique/num_distinct
 
+  def __print_summary(self):
+    __str = ""
+    if self.summary is not None:
+      __str += "Summary: {:3.2f}%Iden\n".format(self.summary*100.0)
+    return __str
+
+  def __latex_summary(self):
+    latex = "\LARGE\n"
+    if self.summary is not None:
+      latex += "Average Identifable: ${:3.2f}$\%Iden\n".format(self.summary*100)
+    return latex
+
   def run(self, cursor, table_name, extra_selector=""):
     self.res_table = {}
-    if self.fp_type == Fingerprint_Type.CROSS:
-      for i in range(len(self.browsers)):
-        for j in range(i + 1, len(self.browsers)):
-          b1, b2 = self.browsers[i], self.browsers[j]
-          self.res_table.update(
-            {
-              (b1, b2): self.__cross_helper(b1, b2, cursor, table_name, self.feat_list, extra_selector)
-            }
-          )
+    for b in self.browsers:
+      self.res_table.update(
+        {
+          b : self.__single_helper(b, cursor, table_name, self.feat_list, extra_selector)
+        }
+      )
 
-      for i in range(len(self.browsers)):
-        for j in range(0, i):
-          b1, b2 = self.browsers[i], self.browsers[j]
-          self.res_table.update(
-            {
-              (b1, b2): self.res_table[(b2, b1)]
-            }
-          )
-      self.print_table = []
-      self.print_table.append(["Browser"] + self.browsers)
-      for b1 in self.browsers:
-        row = [b1]
-        for b2 in self.browsers:
-          try:
-            _, cb, u = self.res_table[(b1, b2)]
-            row.append("{:3.1f}%CB  {:3.1f}%U".format(cb*100.0, u*100.0))
-          except:
-            row.append("")
-        self.print_table.append(row)
+    self.print_table = []
+    self.print_table.append(["Browser"] + self.browsers)
+    row = ["Single"]
+    for b in self.browsers:
+      try:
+        _, u = self.res_table[b]
+        row.append("{:3.1f}%Iden".format(u*100.0))
+      except:
+        row.append("")
+    self.print_table.append(row)
 
-      ave_cb, ave_u, sum_weights = 0.0, 0.0, 0.0
-      for _, val in self.res_table.items():
-        try:
-          count, cb, u = val
-        except:
-          continue
+    ave_u, sum_weights = 0.0, 0.0
+    for _, val in self.res_table.items():
+      try:
+        count, u = val
+      except:
+        continue
 
-        sum_weights += float(count)
-        ave_cb += float(cb)*float(count)
-        ave_u += float(u)*float(count)
+      sum_weights += count
+      ave_u += u*count
 
-      self.summary = ave_cb/sum_weights, ave_u/sum_weights
+    self.summary = ave_u/sum_weights
+    self.print_summary = self.__print_summary()
+    self.latex_summary = self.__latex_summary()
+
+class Results_Table():
+  def factory(fp_type, feat_list, browsers):
+    if fp_type == Fingerprint_Type.CROSS:
+      return Cross_Table(feat_list, browsers)
+    elif fp_type == Fingerprint_Type.SINGLE:
+      return Single_Table(feat_list, browsers)
     else:
-      for b in self.browsers:
-        self.res_table.update(
-          {
-            b : self.__single_helper(b, cursor, table_name, self.feat_list, extra_selector)
-          }
-        )
-
-      self.print_table = []
-      self.print_table.append(["Browser"] + self.browsers)
-      row = [""]
-      for b in self.browsers:
-        try:
-          _, u = self.res_table[b]
-          row.append("{:3.1f} %U".format(u*100.0))
-        except:
-          row.append("")
-      self.print_table.append(row)
-
-      ave_u, sum_weights = 0.0, 0.0
-      for _, val in self.res_table.items():
-        try:
-          count, u = val
-        except:
-          continue
-
-        sum_weights += count
-        ave_u += u*count
-
-      self.summary = ave_u/sum_weights
+      RuntimeError("Type not supported!")
+  factory = staticmethod(factory)
 
 
 class Feature_Table(Table_Base):
-  def __init__(self):
+  def __init__(self, browsers):
     Table_Base.__init__(self)
-
-
-  def __is_all_same(self, array):
-    first = array[0]
-    for e in array:
-      if e != first:
-        return False
-
-    return True
+    self.browsers = browsers
 
   def __helper(self, cursor, table_name, feature, extra_selector=""):
-    cursor.execute("SELECT DISTINCT(user_id) from {}".format(table_name))
+    cb = Results_Table.factory(Fingerprint_Type.CROSS, feature, self.browsers)
+    cb.run(cursor, table_name)
+    s = Results_Table.factory(Fingerprint_Type.SINGLE, feature, self.browsers)
+    s.run(cursor, table_name)
 
-    cb_total = 0.0
-    num_vals = 0.0
-    cb_count = 0.0
-    fp_to_count_cross = {}
-    fp_to_count_single = {}
-    data = cursor.fetchall()
-
-    for user_id, in data:
-      cb_prints = []
-      cursor.execute("SELECT image_id from {} where user_id='{}' {}".format(table_name, user_id, extra_selector))
-      ids = [x for x, in cursor.fetchall()]
-      for image_id in ids:
-        cb_prints.append(Fingerprint(cursor, image_id, table_name, Fingerprint_Type.CROSS, feature))
-        single_fp = Fingerprint(cursor, image_id, table_name, Fingerprint_Type.SINGLE, feature)
-        if single_fp in fp_to_count_single:
-          fp_to_count_single[single_fp] += 1
-        else:
-          fp_to_count_single.update(
-            {
-              single_fp: 1
-            }
-          )
-
-      if len(ids) > 1:
-        cb_total += 1.0;
-        if self.__is_all_same(cb_prints):
-          cb_count += 1.0
-          fp = cb_prints[0]
-          if fp in fp_to_count_cross:
-            fp_to_count_cross[fp] += 1
-          else:
-            fp_to_count_cross.update(
-              {
-                fp: 1
-              }
-            )
-
-    cb_distinct = float(len(fp_to_count_cross))
-    cb_unique = 0.0
-    for _, count in fp_to_count_cross.items():
-      if count == 1:
-        cb_unique += 1.0
-
-    single_distinct = float(len(fp_to_count_single))
-    single_unique = 0.0
-    for _, count in fp_to_count_single.items():
-      if count == 1:
-        single_unique += 1.0
-    cb_total = max(cb_total, 1.0)
-    single_distinct = max(single_distinct, 1.0)
-    cb_distinct = max(cb_distinct, 1.0)
-
-    return single_unique/single_distinct, cb_count/cb_total, cb_unique/cb_distinct
+    return (s.summary,) + cb.summary
 
   def run(self, cursor, table_name, extra_selector=""):
     self.res_table = []
     for feat in Feature_Lists.All:
       self.res_table.append(self.__helper(cursor, table_name, feat, extra_selector))
 
-    self.print_table = [["Feature", "Single-browser uniqueness", "Cross-browser stability", "Cross-browser uniqueness"]]
+    self.print_table = [["Feature", "Single-browser", "Cross-browser"]]
     for i in range(len(self.res_table)):
       feat = Feature_Lists.All[i]
       su, cb, cbu = self.res_table[i]
-      self.print_table.append([feat, "{:3.1f}%U".format(su*100), "{:3.1f}%CB".format(cb*100),"{:3.1f}%U".format(cbu*100)])
+      self.print_table.append([Feature_Lists.Mapped_All[i], "{:3.1f}%Iden".format(su*100), "{:3.1f}%Iden={:3.1f}%CB*{:3.1f}%Uni".format(cb*cbu*100.0,cb*100,cbu*100)])
 
-class Diff_Table(Table_Base):
-  VAL = Enum("VAL", "EQ LT GT")
-  def __init__(self, fp_type, feat_list_A,  feat_list_B, browsers):
+
+
+class VAL(Enum):
+  EQ = 0
+  LT = 1
+  GT = 2
+
+
+class Cross_Diff_Table(Table_Base):
+  def __init__(self, feat_list_A, feat_list_B, browsers):
     Table_Base.__init__(self)
-    self.fp_type, self.feat_list_A, self. feat_list_B, self.browsers = fp_type, feat_list_A,  feat_list_B, browsers
+    self.feat_list_A, self. feat_list_B, self.browsers = feat_list_A,  feat_list_B, browsers
+
+  def __type_helper(self, a, b):
+    t = None
+    if a == b:
+      t = VAL.EQ
+    elif a < b:
+      t = VAL.LT
+    else:
+      t = VAL.GT
+
+    return a, t
 
   def run(self, cursor, table_name, extra_selector=""):
-    self.table_A = Results_Table(self.fp_type, self.feat_list_A, self.browsers)
+    self.table_A = Results_Table.factory(Fingerprint_Type.CROSS, self.feat_list_A, self.browsers)
     self.table_A.run(cursor, table_name, extra_selector)
 
-    table_B = Results_Table(self.fp_type, self.feat_list_B, self.browsers)
+    table_B = Results_Table.factory(Fingerprint_Type.CROSS, self.feat_list_B, self.browsers)
     table_B.run(cursor, table_name, extra_selector)
 
     self.res_table = {}
@@ -309,24 +324,32 @@ class Diff_Table(Table_Base):
         B = table_B.res_table[key]
         e = []
         for i in range(len(A)):
-          t = None
-          if A[i] == B[i]:
-            t = VAL.EQ
-          elif A[i] < B[i]:
-            t = VAL.LT
-          else:
-            t = VAL.GT
-          e.append(A[i], t)
+          e.append(self.__type_helper(A[i], B[i]))
 
+        self.res_table.update(
+          {
+            key : e
+          }
+        )
 
-    self.summary = self.table_A.summary
+    acb, au = self.table_A.summary
+    bcb, bu = table_B.summary
+    ai = acb*au
+    bi = bcb*bu
+    cb_out = self.__frmt_helper("{:3.2f}%CB".format(acb*100.0), self.__type_helper(acb, bcb))
+    u_out = self.__frmt_helper("{:3.2f}%Uni".format(au*100.0), self.__type_helper(au, bu))
+    i_out = self.__frmt_helper("{:3.2f}%Iden".format(ai*100.0), self.__type_helper(ai, bi))
+
+    self.frmt_summary = ["Summary: {} {}".format(cb_out, u_out)]
+    self.frmt_summary.append("Average Identifiable: {}".format(i_out))
 
 
   def __str__(self):
+    self.summary = self.table_A.summary
     self.print_table = self.table_A.print_table
     return Table_Base.__str__(self)
 
-  def __frmt_helper(_, val, t):
+  def __frmt_helper(self, val, t):
     if t == VAL.EQ:
       return val
     elif t == VAL.LT:
@@ -337,28 +360,136 @@ class Diff_Table(Table_Base):
   def __latex_helper(self):
     self.print_table = []
     self.print_table.append(["Browser"] + self.browsers)
-    if self.fp_type is Fingerprint_Type.CROSS:
-      for b1 in self.browsers:
-        row = [b1]
-        for b2 in self.browsers:
-          try:
+
+    for b1 in self.browsers:
+      row = [b1]
+      for b2 in self.browsers:
+        if (b1, b2) in self.res_table:
             _, cb, u = self.res_table[(b1, b2)]
             val, t = cb
-            out = self.__frmt_helper("{}%CB".format(val), t)
+            out = self.__frmt_helper("{:3.1f}%CB".format(val*100), t) + " "
             val, t = u
-            out += self.__frmt_helper("{}%CB".format(val), t)
+            out += self.__frmt_helper("{:3.1f}%Uni".format(val*100), t)
             row.append(out)
-          except:
-            row.append("")
-        self.print_table.append(row)
+        else:
+          row.append("")
+      self.print_table.append(row)
 
   def __format__(self, code):
     if code == "latex":
       self.__latex_helper()
-      return Table_Base.__format__(self, code)
-    else:
-      return self.__str__()
+      self.summary = None
+      __str = Table_Base.__format__(self, code)
 
+      __str += "\n\LARGE\n"
+      for e in self.frmt_summary:
+        __str += "{}\n\n".format(e.replace("%", "\%"))
+
+      __str += "{\color{red} red} values have increased\n\n"
+      __str += "{\color {blue} blue} values have decreased\n\n"
+      return __str
+    else:
+      return format(str(self), code)
+
+
+class Single_Diff_Table(Table_Base):
+  def __init__(self, feat_list_A,  feat_list_B, browsers):
+    Table_Base.__init__(self)
+    self.feat_list_A, self. feat_list_B, self.browsers = feat_list_A,  feat_list_B, browsers
+
+
+  def __type_helper(self, a, b):
+    t = None
+    if a == b:
+      t = VAL.EQ
+    elif a < b:
+      t = VAL.LT
+    else:
+      t = VAL.GT
+
+    return a, t
+
+  def run(self, cursor, table_name, extra_selector=""):
+    self.table_A = Results_Table.factory(Fingerprint_Type.SINGLE, self.feat_list_A, self.browsers)
+    self.table_A.run(cursor, table_name, extra_selector)
+
+    table_B = Results_Table.factory(Fingerprint_Type.SINGLE, self.feat_list_B, self.browsers)
+    table_B.run(cursor, table_name, extra_selector)
+
+    self.res_table = {}
+    for key, A in self.table_A.res_table.items():
+      if A is not None:
+        B = table_B.res_table[key]
+        e = []
+        for i in range(len(A)):
+          e.append(self.__type_helper(A[i], B[i]))
+
+        self.res_table.update(
+          {
+            key : e
+          }
+        )
+
+    au = self.table_A.summary
+    bu = table_B.summary
+    i_out = self.__frmt_helper("{:3.2f}%Iden".format(au*100.0), self.__type_helper(au, bu))
+    self.frmt_summary = ["Average Identifiable: {}".format(i_out)]
+
+
+  def __str__(self):
+    self.summary = self.table_A.summary
+    self.print_table = self.table_A.print_table
+    return Table_Base.__str__(self)
+
+  def __frmt_helper(self, val, t):
+    if t == VAL.EQ:
+      return val
+    elif t == VAL.LT:
+      return "{\\color{blue} " + str(val) + "$\\downarrow$}"
+    else:
+      return "{\\color{red} " + str(val) + "$\\uparrow$}"
+
+  def __latex_helper(self):
+    self.print_table = []
+    self.print_table.append(["Browser"] + self.browsers)
+    row = ["Single"]
+    for b in self.browsers:
+      if b in self.res_table:
+        _, u = self.res_table[b]
+        val, t = u
+        out = self.__frmt_helper("{:3.1f}%Iden".format(val*100), t)
+        row.append(out)
+      else:
+        row.append("")
+
+    self.print_table.append(row)
+
+
+  def __format__(self, code):
+    if code == "latex":
+      self.__latex_helper()
+      self.summary = None
+      __str = Table_Base.__format__(self, code)
+      __str += "\n\LARGE\n"
+      for e in self.frmt_summary:
+        __str += "{}\n\n".format(e.replace("%", "\%"))
+
+      __str += "{\color{red} red} values have increased\n\n"
+      __str += "{\color {blue} blue} values have decreased\n\n"
+      return __str
+    else:
+      return format(str(self), code)
+
+
+class Diff_Table():
+  def factory(fp_type, feat_list_A,  feat_list_B, browsers):
+    if fp_type == Fingerprint_Type.CROSS:
+      return Cross_Diff_Table(feat_list_A, feat_list_B, browsers)
+    elif fp_type == Fingerprint_Type.SINGLE:
+      return Single_Diff_Table(feat_list_A, feat_list_B, browsers)
+    else:
+      RuntimeError("Type not supported!")
+  factory = staticmethod(factory)
 
 class Summary_Table(Table_Base):
   def __init__(self, browsers):
@@ -371,28 +502,28 @@ class Summary_Table(Table_Base):
     self.print_table.append(["Type", "amiunique.org", "Our's"])
     row = ["Cross Browser"]
 
-    ami = Results_Table(Fingerprint_Type.CROSS, Feature_Lists.CB_Amiunique, self.browsers)
+    ami = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.CB_Amiunique, self.browsers)
     ami.run(cursor, table_name)
 
-    ours = Results_Table(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, self.browsers)
+    ours = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, self.browsers)
     ours.run(cursor, table_name)
 
     summary = ami.summary
-    row.append("{:3.2f}%U".format(summary[0]*summary[1]*100.0))
+    row.append("{:3.2f}%Iden".format(summary[0]*summary[1]*100.0))
     summary = ours.summary
-    row.append("{:3.2f}%U".format(summary[0]*summary[1]*100.0))
+    row.append("{:3.2f}%Iden".format(summary[0]*summary[1]*100.0))
     self.print_table.append(row)
 
     row = ["Single Browser"]
 
-    ami = Results_Table(Fingerprint_Type.SINGLE, Feature_Lists.Amiunique, self.browsers)
+    ami = Results_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Amiunique, self.browsers)
     ami.run(cursor, table_name)
 
-    ours = Results_Table(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, self.browsers)
+    ours = Results_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, self.browsers)
     ours.run(cursor, table_name)
 
     summary = ami.summary
-    row.append("{:3.2f}%U".format(summary*100.0))
+    row.append("{:3.2f}%Iden".format(summary*100.0))
     summary = ours.summary
-    row.append("{:3.2f}%U".format(summary*100.0))
+    row.append("{:3.2f}%Iden".format(summary*100.0))
     self.print_table.append(row)
