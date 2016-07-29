@@ -250,11 +250,11 @@ var ClippingTest = function() {
     renderer.clippingPlanes = globalClippingPlanes;
     renderer.localClippingEnabled = true;
 
-    var level = 0;
+    var level = 49;
     var transform = new THREE.Matrix4(), tmpMatrix = new THREE.Matrix4();
-    var times = [];
+
     function animate() {
-      times.push(performance.now());
+
       var time = level++ * 0.05;
 
       var frame = requestAnimationFrame(animate);
@@ -287,7 +287,7 @@ var ClippingTest = function() {
       renderer.render(scene, camera);
       if (level == 50) {
         cancelAnimationFrame(frame);
-        sender.calcFPS(times);
+
         sender.getData(renderer.getContext(), ID);
         cb();
       }

@@ -256,6 +256,7 @@
       this.testList.push(new BubbleTest());
       this.testList.push(new CompressedTextureTest());
       this.testList.push(new ShadowTest());
+      this.testList.push(new FPSTest());
       this.asyncTests = [];
       if (!mobileAndTabletCheck()) {
         this.asyncTests.push(new VideoTest());
