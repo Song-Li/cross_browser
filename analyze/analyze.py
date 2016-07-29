@@ -1,14 +1,7 @@
 #!/usr/bin/env python
 
-import BaseHTTPServer
-import os.path
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
-import urllib
 import json
-import linecache
-from PIL import Image, ImageChops, ImageFilter
-import numpy as np
+
 # from scipy.ndimage import (label,find_objects)
 import MySQLdb
 from hashlib import sha512 as hasher1, sha256 as hasher2
@@ -123,13 +116,13 @@ def update_hashes(db):
     cursor = db.cursor()
     cursor.execute("SELECT image_id FROM {} where hashes IS NULL or video is NULL".format(table_name))
     for image_id, in cursor.fetchall():
-        print image_id
+        print(image_id)
         hash_codes = gen_hash_codes(image_id)
         cursor.execute("UPDATE {} SET hashes='{}', video='{}' WHERE image_id='{}'".format(table_name, "&".join(hash_codes[:27]), "&".join(hash_codes[27:]), image_id))
 
     cursor.execute("SELECT image_id FROM {} where lang_hash IS NULL".format(table_name))
     for image_id, in cursor.fetchall():
-        print image_id
+        print(image_id)
         hash_code = gen_lang_hash(image_id)
         cursor.execute("UPDATE {} SET lang_hash='{}' WHERE image_id='{}'".format(table_name, hash_code, image_id))
 
@@ -241,17 +234,17 @@ def get_feature_entropy(cursor, feature):
 mask = None
 def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_type=Fingerprint_Type.CROSS):
     if not quiet:
-        print 'extra_selector="{}"'.format(extra_selector)
+        print('extra_selector="{}"'.format(extra_selector))
     global mask
     global instability
     tuids = []
     uids = []
     cursor.execute("SELECT COUNT(DISTINCT(ip)) FROM {}".format(table_name))
     if not quiet:
-        print 'ip', cursor.fetchone()[0]
+        print('ip', cursor.fetchone()[0])
     cursor.execute("SELECT COUNT(DISTINCT(user_id)) FROM {}".format(table_name))
     if not quiet:
-        print 'user', cursor.fetchone()[0]
+        print('user', cursor.fetchone()[0])
 
     #cursor.execute("SELECT user_id FROM {} WHERE browser='{}'".format(table_name, b1))
     cursor.execute("SELECT user_id FROM {} WHERE browser='{}' {}".format(table_name, b1, extra_selector))
@@ -259,7 +252,7 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
         tuids.append(uid)
 
     if not quiet:
-        print b1, len(tuids)
+        print(b1, len(tuids))
 
     for uid in tuids:
         #cursor.execute("SELECT user_id FROM {} WHERE user_id='{}' AND browser='{}'".format(table_name, uid, b2))
@@ -268,7 +261,7 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
             uids.append(uid)
 
     if not quiet:
-        print b1, 'and', b2 , len(uids)
+        print(b1, 'and', b2 , len(uids))
 
     if len(uids) is 0:
         return None
@@ -335,7 +328,7 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
             pass
         if fp_1 == fp_2:
             #else:
-            #    print 'found: ' + str(uid) + '%' + str(uids[hash_long.index(s1)])
+            #    print('found: ' + str(uid) + '%' + str(uids[hash_long.index(s1)]))
             hash_long.append(fp_1)
             index.append(uid)
             if fp_1 in fp_to_count:
@@ -348,9 +341,9 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
                 )
 
         #else:
-        #    print 'not same: ' + str(uid)
+        #    print('not same: ' + str(uid))
     #for i in range(case_number):
-    #    print i, instability[i]
+    #    print(i, instability[i])
 
     for index, i in instability.items():
         if i > 0.07:
@@ -366,16 +359,14 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
 
     if not quiet:
         for i, d in instability.items():
-            print "{}: instability: {}".format(
-                i, d
-            )
+            print("{}: instability: {}".format(i, d))
 
-        print 'Cross_browser', num_cross_browser
-        print 'Cross_browser rate', num_cross_browser/num_uids
+        print('Cross_browser', num_cross_browser)
+        print('Cross_browser rate', num_cross_browser/num_uids)
 
 
-        print 'Cross_browser unique', num_unique/num_distinct
-        print num_unique, num_distinct
+        print('Cross_browser unique', num_unique/num_distinct)
+        print(num_unique, num_distinct)
 
     return int(num_uids), "{:3.1f}%".format(num_cross_browser/num_uids*100), "{:3.1f}%".format(num_unique/num_distinct*100)
 
@@ -444,14 +435,17 @@ def index():
     # print_table(table)
     # return
 
-    # table = Feature_Table()
-    # table.run(cursor, table_name)
-    # print table
-    # return
+
 
     cursor.execute("SELECT DISTINCT(browser) from {}".format(table_name))
     browsers = [b for b, in cursor.fetchall()]
     browsers = sorted(browsers, key=lambda b: -cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)))
+    browsers = [b for b in browsers if cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)) > 20]
+
+    # table = Feature_Table(browsers)
+    # table.run(cursor, table_name)
+    # print("{:latex}".format(table))
+    # return
 
     # get_res_table(cursor, browsers, "gpu", extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
     # f = open("GPU_Mask.txt", "w")
@@ -459,21 +453,21 @@ def index():
     # f.close()
     # return
 
-    mode = 1
+    mode = 2
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
-        table = Results_Table(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
-        table.run(cursor, table_name)
-        print "{}".format(table)
+        table = Results_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Amiunique, browsers)
+        table.run(cursor, table_name, extra_selector="")
+        print("{:latex}".format(table))
     elif mode == 2:
-        table = Diff_Table(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser,  Feature_Lists.Amiunique, browsers)
-        table.run(cursor, table)
-        print "{}".format(table)
+        table = Diff_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, Feature_Lists.Amiunique, browsers)
+        table.run(cursor, table_name)
+        print("{:latex}".format(table))
     else:
         table = Summary_Table(browsers)
         table.run(cursor, table_name)
-        print "{}".format(table)
+        print("{:latex}".format(table))
     db.commit()
     db.close()
 

@@ -5,7 +5,8 @@ from sets import Set
 from json import loads
 
 class Feature_Lists(Enum):
-  All="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, headerkeys, dnt, adBlock,language, hashes, langs, fonts, gpu, vendor, lang_hash, canvastest, video".replace(" ", "").split(",")
+  Mapped_All="agent, timezone, resolution, fontlist (Flash), plugins, cookies enabled, localstorage enabled, acceptable formats, encoding, headerkeys, Do not track?, Ad Block Enabled, Canvas Rendering, Prefered Language, GPU Images, Writing Sysem Supported?, Fonts (javascript), Writitng System Display, Video".split(",")
+  All="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, headerkeys, dnt, adBlock, canvastest, language, hashes, langs, fonts, lang_hash, video".replace(" ", "").split(",")
   Cross_Browser="langs, timezone, fonts, hashes, accept".replace(" ", "").split(",")
   Single_Browser=All
   Amiunique="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest".replace(" ", "").split(",")
