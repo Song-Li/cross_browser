@@ -6,7 +6,7 @@
 
   root.FPSTest = FPSTest = (function() {
     function FPSTest() {
-      var FAR, _, c1, c2, c3, c4, c5, c6, decay, distance, dlight, groundMaterial, i, intensity, mesh, objectGeometry, objectMaterial, sphere, texture, textureLoader;
+      var FAR, _, c1, c2, c3, c4, c5, c6, decay, distance, dlight, groundMaterial, i, intensity, mesh, numRings, objectGeometry, objectMaterial, ref, sphere, texture, textureLoader;
       if (!Detector.webgl) {
         Detector.addGetWebGLMessage();
       }
@@ -36,7 +36,8 @@
       mesh.rotation.x = -Math.PI / 2;
       this.scene.add(mesh);
       objectGeometry = new THREE.TorusGeometry(1.5, 0.4, 8, 16);
-      for (_ = i = 0; i < 10000; _ = ++i) {
+      numRings = 10000;
+      for (_ = i = 0, ref = numRings; 0 <= ref ? i < ref : i > ref; _ = 0 <= ref ? ++i : --i) {
         mesh = new THREE.Mesh(objectGeometry, objectMaterial);
         mesh.position.x = 400 * (0.5 - Math.random());
         mesh.position.y = 50 * (0.5 - Math.random()) + 25;

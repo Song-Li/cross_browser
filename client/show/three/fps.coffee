@@ -6,12 +6,12 @@ root.FPSTest = class FPSTest
 
     FAR = 300
 
-    Math.seedrandom("Three.js FPSTest lighting renderer seed")
+    Math.seedrandom "Three.js FPSTest lighting renderer seed"
     # CAMERA
 
     @camera = new THREE.PerspectiveCamera(50, 256 / 256, 1, FAR)
     @camera.position.set(0, 15, 150)
-    @camera.lookAt(new THREE.Vector3())
+    @camera.lookAt new THREE.Vector3()
 
     # SCENE
 
@@ -22,17 +22,22 @@ root.FPSTest = class FPSTest
 
     textureLoader = new THREE.TextureLoader()
 
-    texture = textureLoader.load("./three/textures/color.png")
+    texture = textureLoader.load "./three/textures/color.png"
     texture.repeat.set(20, 10)
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping
     texture.format = THREE.RGBFormat
 
     # MATERIALS
 
-    groundMaterial =
-        new THREE.MeshPhongMaterial({color : 0xffffff, map : texture})
+    groundMaterial = new THREE.MeshPhongMaterial(
+      color : 0xffffff
+      map : texture
+    )
     objectMaterial = new THREE.MeshStandardMaterial(
-        {color : 0xffffff, roughness : 0.5, metalness : 1.0})
+      color : 0xffffff
+      roughness : 0.5
+      metalness : 1.0
+    )
 
     # GROUND
 
@@ -48,7 +53,9 @@ root.FPSTest = class FPSTest
     # objectGeometry = new THREE.SphereGeometry( 1.5, 16, 8 )
     objectGeometry = new THREE.TorusGeometry(1.5, 0.4, 8, 16)
 
-    for _ in [0...10000]
+    # Change this to make this test harder
+    numRings = 10000
+    for _ in [0...numRings]
 
       mesh = new THREE.Mesh(objectGeometry, objectMaterial)
 
@@ -80,51 +87,56 @@ root.FPSTest = class FPSTest
     sphere = new THREE.SphereGeometry(0.25, 16, 8)
 
     @light1 = new THREE.PointLight(c1, intensity, distance, decay)
-    @light1.add(
-        new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color : c1})))
+    @light1.add new THREE.Mesh(sphere, new THREE.MeshBasicMaterial
+      color : c1
+    )
     @scene.add(@light1)
 
     @light2 = new THREE.PointLight(c2, intensity, distance, decay)
-    @light2.add(
-        new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color : c2})))
+    @light2.add new THREE.Mesh(sphere, new THREE.MeshBasicMaterial
+      color : c2
+    )
     @scene.add(@light2)
 
     @light3 = new THREE.PointLight(c3, intensity, distance, decay)
-    @light3.add(
-        new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color : c3})))
+    @light3.add new THREE.Mesh(sphere, new THREE.MeshBasicMaterial
+      color : c3
+    )
     @scene.add(@light3)
 
     @light4 = new THREE.PointLight(c4, intensity, distance, decay)
-    @light4.add(
-        new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color : c4})))
+    @light4.add new THREE.Mesh(sphere, new THREE.MeshBasicMaterial
+      color : c4
+    )
     @scene.add(@light4)
 
     @light5 = new THREE.PointLight(c5, intensity, distance, decay)
-    @light5.add(
-        new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color : c5})))
+    @light5.add new THREE.Mesh(sphere, new THREE.MeshBasicMaterial
+      color : c5
+    )
     @scene.add(@light5)
 
     @light6 = new THREE.PointLight(c6, intensity, distance, decay)
-    @light6.add(
-        new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color : c6})))
+    @light6.add new THREE.Mesh(sphere, new THREE.MeshBasicMaterial
+      color : c6
+    )
     @scene.add(@light6)
 
     dlight = new THREE.DirectionalLight(0xffffff, 0.05)
     dlight.position.set(0.5, 1, 0).normalize()
-    @scene.add(dlight)
-
+    @scene.add dlight
 
   begin: (canvas, @cb) ->
     # RENDERER
 
 
-    gl = getGL(canvas)
+    gl = getGL canvas
 
 
     @renderer = new THREE.WebGLRenderer(
       context : gl
       canvas : canvas
-      , false)
+    , false)
 
     @renderer.setClearColor(@scene.fog.color)
     @renderer.setPixelRatio(1)
