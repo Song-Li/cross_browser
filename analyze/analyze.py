@@ -455,13 +455,14 @@ def index():
     # f.close()
     # return
 
-    mode = 2
+    mode = 1
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
-        table = Results_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Amiunique, browsers)
+        table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
         table.run(cursor, table_name, extra_selector="")
-        print("{:latex}".format(table))
+        #print("{:latex}".format(table))
+        print (table)
     elif mode == 2:
         table = Diff_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, Feature_Lists.Amiunique, browsers)
         table.run(cursor, table_name)
