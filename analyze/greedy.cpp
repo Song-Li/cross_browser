@@ -110,9 +110,11 @@ struct MaskScore {
   MaskScore(size_t mask, double score) : mask{mask}, score{score} {};
 };
 typedef std::map<std::pair<std::string, std::string>, MaskScore> Result;
-typedef std::map<std::pair<std::string, std::string>, std::list<MaskScore>> FinalResult;
+typedef std::map<std::pair<std::string, std::string>, std::vector<MaskScore>>
+    FinalResult;
 
 constexpr int cutoff = 27;
+constexpr size_t numToKeep = 20;
 
 Result analyze(const std::vector<Test> &data,
                const std::set<std::string> &browsers, const size_t mask);
@@ -175,15 +177,14 @@ int main(int argc, char **argv) {
     }
   }
   constexpr int numRounds = 5;
-  constexpr size_t start = (1 << cutoff) - 1;
-  constexpr size_t numIt = 1 << 15;
-  double score = 0;
-  FinalResult finalRes;
+
+  constexpr size_t numIt = 1 << cutoff;
+
+  FinalResult results;
   std::random_device rng;
   std::mt19937_64 gen(rng());
   std::uniform_int_distribution<int> dist(0);
   for (int i = 0; i < numRounds; ++i) {
-    Result results;
     std::vector<Test> trainingData, testData;
     for (auto &d : data)
       if (dist(gen) % 5 == 0)
@@ -202,28 +203,42 @@ int main(int argc, char **argv) {
 #pragma omp for schedule(static) ordered
       for (int i = 0; i < omp_get_num_threads(); ++i) {
 #pragma omp ordered
-        reduceMaps(privateResults, results);
+        {
+          for (auto &p : privateResults) {
+            auto it = results.find(p.first);
+            if (it == results.cend()) {
+              results.emplace(p.first, std::vector<MaskScore>({p.second}));
+            } else {
+              it->second.emplace_back(p.second);
+            }
+          }
+        }
       }
     }
-
-    auto res = analyze(data, browsers, results);
-    reduceMaps(res, results);
+    for (auto &p : results) {
+      std::sort(p.second.begin(), p.second.end(),
+                [](auto &a, auto &b) { return a.score > b.score; });
+      p.second.erase(p.second.begin() + std::min(p.second.size(), numToKeep),
+                     p.second.end());
+    }
   }
 
   std::cout << "Results" << std::endl;
   for (auto &res : results) {
     auto &b1 = res.first.first;
     auto &b2 = res.first.second;
-    auto &mask = res.second.mask;
-    auto &score = res.second.score;
-    std::cout << "(" << b1 << ", " << b2 << "): "
-              << "mask: [";
-    for (int i = 0; i < cutoff; ++i) {
-      if (i != 0)
-        std::cout << ", ";
-      std::cout << (score != 0 ? ((mask >> i) & 0x1) : 0);
+    for (auto &sm : res.second) {
+      auto &mask = sm.mask;
+      auto &score = sm.score;
+      std::cout << "(" << b1 << ", " << b2 << "): "
+                << "mask: [";
+      for (int i = 0; i < cutoff; ++i) {
+        if (i != 0)
+          std::cout << ", ";
+        std::cout << (score != 0 ? ((mask >> i) & 0x1) : 0);
+      }
+      std::cout << "] score: " << score << std::endl;
     }
-    std::cout << "] score: " << score << std::endl;
   }
 }
 
