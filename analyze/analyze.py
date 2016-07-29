@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import json
-
+from PIL import Image
 # from scipy.ndimage import (label,find_objects)
 import MySQLdb
 from hashlib import sha512 as hasher1, sha256 as hasher2
