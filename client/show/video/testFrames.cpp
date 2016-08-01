@@ -287,7 +287,7 @@ int main(int argc, char **argv) {
       const double norm = cv::norm(ground, test, cv::NORM_L2);
       aveNorm += norm;
       frame++;
-      if (false) {
+      if (true) {
         if (!norm)
           continue;
         std::cout << norm << std::endl;
@@ -306,6 +306,10 @@ int main(int argc, char **argv) {
         cv::imshow("Diff", diff);
         cvNamedWindow("Test", CV_WINDOW_NORMAL);
         cv::imshow("Test", test);
+
+        cv::imwrite("diff.png", diff);
+        cv::imwrite("ground.png", ground);
+        cv::imwrite("test.png", test);
         cv::waitKey(0);
       }
     }
