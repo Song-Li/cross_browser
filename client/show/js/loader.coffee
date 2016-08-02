@@ -197,7 +197,8 @@ class Loader
 
     @testList = []
     root.sender = sender = new Sender()
-    @testList.push new CubeTest()
+    @testList.push new CubeTest('normal')
+    @testList.push new CubeTest('aa')
     @testList.push new CameraTest()
     @testList.push new LineTest()
     @testList.push new TextureTest(@susanVertices, @susanIndices, @susanTexCoords, @texture)

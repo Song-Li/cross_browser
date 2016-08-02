@@ -11,10 +11,15 @@ var fragmentShaderText = [
   '  gl_FragColor = vec4(fragColor, 1.0);', '}'
 ].join('\n');
 
-var CubeTest = function() {
+var CubeTest = function(type) {
 	var ID = sender.getID();
   this.begin = function(canvas, cb, level) {
-    var gl = getGL(canvas);
+    var gl;
+    if (type == 'normal') gl = getGL(canvas);
+    else {
+        canvas = getCanvas("can_aa");
+        gl = getGLAA(canvas);
+    }
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

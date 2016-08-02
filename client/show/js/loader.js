@@ -241,7 +241,8 @@
       this.combinedNormals = this.susanNormals.concat(this.simpleNormals);
       this.testList = [];
       root.sender = sender = new Sender();
-      this.testList.push(new CubeTest());
+      this.testList.push(new CubeTest('normal'));
+      this.testList.push(new CubeTest('aa'));
       this.testList.push(new CameraTest());
       this.testList.push(new LineTest());
       this.testList.push(new TextureTest(this.susanVertices, this.susanIndices, this.susanTexCoords, this.texture));
