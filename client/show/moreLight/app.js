@@ -7,7 +7,7 @@ var MoreLightTest = function(vertices, indices, texCoords, normals, texture) {
   this.canvas = null;
   this.cb = null;
   this.level = null;
-  this.numChildren = 1;
+  this.numChildren = 3;
   this.children = [];
   this.IDs = sender.getIDs(this.numChildren);
 
@@ -32,7 +32,11 @@ var MoreLightTest = function(vertices, indices, texCoords, normals, texture) {
   var RunMoreLight = function(vertexShaderText, fragmentShaderText, ID,
                               parent) {
     this.begin = function(canvas) {
-      var gl = getGL(canvas);
+        var gl;
+        if(ID == 1){
+            canvas = getCanvas("can_aa");
+            gl = getGLAA(canvas);
+        }else gl = getGL(canvas);
       var WebGL = true;
 
       gl.clearColor(0.0, 0.0, 0.0, 0.0);
@@ -199,6 +203,11 @@ var MoreLightTest = function(vertices, indices, texCoords, normals, texture) {
       mat4.identity(identityMatrix);
       var angle = 0;
       var count = 49;
+      var end = 51;
+      if (ID == 2) {
+        count = 98;
+        end = 100;
+      }
       var ven, ren;
       var identityMatrix = new Float32Array(16);
       mat4.identity(identityMatrix);
@@ -217,7 +226,7 @@ var MoreLightTest = function(vertices, indices, texCoords, normals, texture) {
         gl.activeTexture(gl.TEXTURE0);
         gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
-        if (count == 50) {
+        if (count == end) {
           cancelAnimationFrame(frame);
           sender.getData(gl, parent.IDs[ID]);
           parent.childComplete();
@@ -244,6 +253,10 @@ var MoreLightTest = function(vertices, indices, texCoords, normals, texture) {
                 console.error(fsErr);
               } else {
                 self.children.push(new RunMoreLight(vsText, fsText, 0, self));
+                self.childLoaded();
+                self.children.push(new RunMoreLight(vsText, fsText, 1, self));
+                self.childLoaded();
+                self.children.push(new RunMoreLight(vsText, fsText, 2, self));
                 self.childLoaded();
               }
             }, self);

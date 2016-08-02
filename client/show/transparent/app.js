@@ -7,7 +7,7 @@ var TransparentTest = function (vertices, indices, texCoords, normals, texture) 
     this.canvas = null;
     this.cb = null;
     this.level = null;
-    this.numChildren = 11;
+    this.numChildren = 8;
     this.children = [];
     this.IDs = sender.getIDs(this.numChildren);
     this.numChildrenRun = 0;
@@ -256,19 +256,13 @@ var TransparentTest = function (vertices, indices, texCoords, normals, texture) 
                         self.childLoaded();
                         self.children.push(new RunTransparent(vsText, fsText, 11, 3, self));
                         self.childLoaded();
-                        self.children.push(new RunTransparent(vsText, fsText, 39, 4, self));
+                        self.children.push(new RunTransparent(vsText, fsText, 50, 4, self));
                         self.childLoaded();
-                        self.children.push(new RunTransparent(vsText, fsText, 40, 5, self));
+                        self.children.push(new RunTransparent(vsText, fsText, 79, 5, self));
                         self.childLoaded();
-                        self.children.push(new RunTransparent(vsText, fsText, 41, 6, self));
+                        self.children.push(new RunTransparent(vsText, fsText, 80, 6, self));
                         self.childLoaded();
-                        self.children.push(new RunTransparent(vsText, fsText, 79, 7, self));
-                        self.childLoaded();
-                        self.children.push(new RunTransparent(vsText, fsText, 80, 8, self));
-                        self.childLoaded();
-                        self.children.push(new RunTransparent(vsText, fsText, 81, 9, self));
-                        self.childLoaded();
-                        self.children.push(new RunTransparent(vsText, fsText, 81, 10, self));
+                        self.children.push(new RunTransparent(vsText, fsText, 81, 7, self));
                         self.childLoaded();
                     }
                 }, self);
