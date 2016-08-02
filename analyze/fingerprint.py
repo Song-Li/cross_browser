@@ -7,8 +7,8 @@ from json import loads
 class Feature_Lists(Enum):
   Mapped_All="agent, timezone, resolution, fontlist (Flash), plugins, cookies enabled, localstorage enabled, acceptable formats, encoding, headerkeys, Do not track?, Ad Block Enabled, Canvas Rendering, Prefered Language, GPU Images, Writing Sysem Supported?, Fonts (javascript), Writitng System Display, Video".split(",")
   All="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, headerkeys, dnt, adBlock, canvastest, language, hashes, langs, fonts, lang_hash, video".replace(" ", "").split(",")
-  #Cross_Browser="langs, timezone, fonts, hashes, accept".replace(" ", "").split(",")
-  Cross_Browser="hashes".replace(" ", "").split(",")
+  Cross_Browser="langs, timezone, fonts, hashes, accept".replace(" ", "").split(",")
+  #Cross_Browser="hashes".replace(" ", "").split(",")
   Single_Browser=All
   Amiunique="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest".replace(" ", "").split(",")
   CB_Amiunique="accept, timezone, resolution, localstorage, cookie".replace(" ", "").split(",")
@@ -57,13 +57,16 @@ class Fingerprint_Base:
 
 class GPU_Fingerprint(Fingerprint_Base):
   #Data is array of gpu hashes up to video
-  def __init__(self, data, fp_type, valid, browser, b2):
+  def __init__(self, data, fp_type, valid, browser, b2, masks=""):
     Fingerprint_Base.__init__(self)
     if fp_type == Fingerprint_Type.CROSS:
       self.valid = valid
       if valid:
         try:
-          mask = Masks.GPU["{}{}".format(browser, b2)]
+          if masks == "":
+            mask = Masks.GPU["{}{}".format(browser, b2)]
+          else:
+            mask = masks
         except:
           self.valid = False
           self.fp = None
@@ -159,8 +162,8 @@ class Feature_Fingerprint():
 
 class Fingerprint():
   # to_add_attrs a list or string
-  def __init__(self, cursor, image_id, table_name, fp_type, to_add_attrs, b2=None):
-    self.cursor, self.image_id, self.table_name, self.fp_type, self.b2 = cursor, image_id, table_name, fp_type, b2
+  def __init__(self, cursor, image_id, table_name, fp_type, to_add_attrs, b2=None, masks=""):
+    self.cursor, self.image_id, self.table_name, self.fp_type, self.b2,self.masks = cursor, image_id, table_name, fp_type, b2, masks
     if fp_type == Fingerprint_Type.CROSS:
       assert(b2 is not None)
 
@@ -189,7 +192,7 @@ class Fingerprint():
       elif attr == 'hashes':
         hashes = data.split("&")
         self.fp.append(
-          GPU_Fingerprint(hashes[:27], self.fp_type, not self.software_render, self.browser, self.b2)
+          GPU_Fingerprint(hashes[:27], self.fp_type, not self.software_render, self.browser, self.b2, masks=self.masks)
         )
       elif attr == 'fonts':
         self.fp.append(

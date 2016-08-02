@@ -23,7 +23,7 @@ class Table_Base():
   def __str__(self):
     __str = ""
     for row in self.print_table:
-      __str += ("{:<20}"*len(row)).format(*row) + "\n"
+      __str += ("{:<30}"*len(row)).format(*row) + "\n"
 
     if self.print_summary is not None:
       __str += self.print_summary
@@ -152,8 +152,8 @@ class Cross_Table(Table_Base):
       row = [b1]
       for b2 in self.browsers:
         try:
-          _, cb, u = self.res_table[(b1, b2)]
-          row.append("{:3.1f}%CB  {:3.1f}%Uni".format(cb*100.0, u*100.0))
+          num, cb, u = self.res_table[(b1, b2)]
+          row.append("{:3d} {:3.1f}%CB  {:3.1f}%Uni {:3.1f}".format(num, cb*100.0, u*100.0, cb*u*100.0))
         except:
           row.append("")
       self.print_table.append(row)

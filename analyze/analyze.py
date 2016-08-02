@@ -12,6 +12,7 @@ from sets import Set
 import math
 from fingerprint import Fingerprint, Fingerprint_Type, Feature_Lists
 from table import Results_Table, Feature_Table, Diff_Table, Summary_Table
+from generate_mask import Gen_Masks
 
 browser_to_id = {'chrome': 0, 'firefox': 1, 'others': 2}
 standard_pics = []
@@ -348,7 +349,7 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
     #    print(i, instability[i])
 
     for index, i in instability.items():
-        if i > 0.07:
+        if i > 0.09:
             mask[index] = 0
 
     num_distinct = max(float(len(fp_to_count)), 1.0)
@@ -449,28 +450,33 @@ def index():
     # print("{:latex}".format(table))
     # return
 
-    # get_res_table(cursor, browsers, "gpu", extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
-    # f = open("GPU_Mask.txt", "w")
-    # f.write(json.dumps(b_mask))
-    # f.close()
-    # return
+    #get_res_table(cursor, browsers, "gpu", extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
+    #f = open("GPU_Mask.txt", "w")
+    #f.write(json.dumps(b_mask))
+    #f.close()
+    #return
 
-    mode = 1
+    mode = 4
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
         table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
-        table.run(cursor, table_name, extra_selector="")
+        #table.run(cursor, table_name, extra_selector="")
+        table.run(cursor, table_name, extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
         #print("{:latex}".format(table))
         print (table)
     elif mode == 2:
         table = Diff_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, Feature_Lists.Amiunique, browsers)
         table.run(cursor, table_name)
         print("{:latex}".format(table))
-    else:
+    elif mode == 3:
         table = Summary_Table(browsers)
         table.run(cursor, table_name)
         print("{:latex}".format(table))
+    else:
+        gen_masks = Gen_Masks(browsers)
+        gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
+
     db.commit()
     db.close()
 
