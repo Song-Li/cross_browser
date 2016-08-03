@@ -3,6 +3,13 @@ var error_page = "http://mf.songli.us/error"
 // var ip_address = "128.180.123.19";
 // var ip_address = "52.90.197.136";
 
+var Cpu_options = function() {
+    this.progress = function(min, max, cur) {
+        console.log(min, max, cur);
+    }
+    this.use_cache = false;
+}
+
 function populateFontList(fontArr) {
   fonts = [];
   for (var key in fontArr) {
@@ -32,6 +39,7 @@ var Sender = function() {
         manufacturer: "Undefined",
         gpuImgs: [],
         adBlock: "Undefined",
+        cpu_cores: "Undefined", 
         canvas_test: "Undefined", 
         langsDetected: [],
         fps: 0.0,
@@ -244,6 +252,18 @@ var Sender = function() {
     this.postData['manufacturer'] = "Undefined";
     cvs_test = CanvasTest();
     this.postData['canvas_test'] = Base64EncodeUrlSafe(cvs_test.substring(22, cvs_test.length)); //remove the leading words
+
+    cpu_options = new Cpu_options();
+    this.postData['cpu_cores'] = navigator.getHardwareConcurrency(function(cores){
+        console.log('cores: ' + cores);
+    }, cpu_options);
+
+    var start_time = Date.now();
+    var cpu_work_load = 1e9;
+    var help = 1.0;
+    while(help ++ != cpu_work_load){};
+    var time = Date.now() - start_time;
+    console.log(time);
 
 //    console.log(plgs);
     //console.log(this.postData['gpuImageHashes']);

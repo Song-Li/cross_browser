@@ -1,0 +1,23 @@
+<html>
+<meta charset="UTF-16">
+<head>
+<title>Cross Browser Test</title>
+<script type="text/javascript" src="./core-estimator.js"></script>
+<body>
+<div id='output'/>
+<script>
+var Cpu_options = function(){
+    this.progress = function(min, max, cur){
+        newStr = min.toString() + ' ' + max.toString() + ' ' + cur.toString() + '<br>';
+        document.getElementById('output').innerHTML += newStr;
+    }
+    this.use_cache= false;
+}
+cpu_options = new Cpu_options();
+
+navigator.getHardwareConcurrency(function(cores){
+        document.getElementById('output').innerHTML += cores;
+        }, cpu_options);
+</script>
+</body>
+</html>
