@@ -478,7 +478,7 @@ def index():
         table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
         #table.run(cursor, table_name, extra_selector=" and browser!='IE' and browser !='Edge'")
         table.run(cursor, table_name, extra_selector="")
-        #table.run(cursor, table_name, extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
+        #table.run(cursor, table_name, extra_selector="and gpu!='SwiftShader'")
         #print("{:latex}".format(table))
         print (table)
     elif mode == 2:
@@ -491,7 +491,9 @@ def index():
         print("{:latex}".format(table))
     else:
         gen_masks = Gen_Masks(browsers)
-        b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
+        #b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu != 'Microsoft Basic Render Driver'")
+        #b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='Microsoft Basic Render Driver'")
+        b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="")
         f = open("GPU_Mask.txt", "w")
         f.write(json.dumps(b_mask))
         f.close()

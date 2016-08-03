@@ -108,6 +108,7 @@ class Cross_Table(Table_Base):
         num_unique += 1.0
 
     num_uids = max(float(len(uids)), 1.0)
+    num_cross_browser = max(num_cross_browser, 1.0)
 
     return int(num_uids), num_cross_browser/num_uids, num_unique/num_cross_browser
 
@@ -202,7 +203,7 @@ class Single_Table(Table_Base):
     for _, count in fp_to_count.items():
       if count == 1:
         num_unique += 1.0
-    num_uids = len(image_ids)
+    num_uids = max(len(image_ids), 1.0)
 
     return int(num_uids), num_unique/num_uids
 

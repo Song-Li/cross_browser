@@ -106,7 +106,7 @@ class Gen_Masks():
         for _, count in fp_to_count.items():
             if count == 1:
                 num_unique += 1.0
-        num_cross_browser = float(len(hash_long))
+        num_cross_browser = max(float(len(hash_long)), 1.0)
         num_uids = max(float(len(uids)), 1.0)
 
         if not quiet:
@@ -129,7 +129,7 @@ class Gen_Masks():
             for j in range(i + 1, len(self.browsers)):
                 max_number = -1
                 print self.browsers[i], self.browsers[j]
-                for r in range(25):
+                for r in range(50):
                     rate = 0.00 + float(r) / 100.0
                     b1, b2 = self.browsers[i], self.browsers[j]
                     res, mask = self.__getRes(b1, b2, cursor, True, rate, table_name, attrs=feat_list, extra_selector=extra_selector)
