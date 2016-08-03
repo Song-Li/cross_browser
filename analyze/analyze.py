@@ -491,7 +491,11 @@ def index():
         print("{:latex}".format(table))
     else:
         gen_masks = Gen_Masks(browsers)
-        gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
+        b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
+        f = open("GPU_Mask.txt", "w")
+        f.write(json.dumps(b_mask))
+        f.close()
+
 
     db.commit()
     db.close()

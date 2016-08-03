@@ -4,7 +4,7 @@ class Gen_Masks():
         self.browsers = browsers
 
     def run(self, cursor, feat_list, table_name, extra_selector=""):
-        masks = self.__get_mask(cursor, table_name, feat_list, extra_selector=extra_selector)
+        return self.__get_mask(cursor, table_name, feat_list, extra_selector=extra_selector)
 
     def __getRes(self, b1, b2, cursor, quiet, rate, table_name, attrs="", extra_selector=""):
         if not quiet:
@@ -120,16 +120,17 @@ class Gen_Masks():
             print('Cross_browser unique', num_unique/num_distinct)
             print(num_unique, num_distinct)
 
-        return num_cross_browser/num_uids*num_unique/num_distinct*100, mask
+        return num_cross_browser/num_uids*num_unique/num_cross_browser*100, mask
 
     def __get_mask(self, cursor, table_name, feat_list, extra_selector=""):
         masks = {}
         max_number = -1
         for i in range(len(self.browsers)):
             for j in range(i + 1, len(self.browsers)):
+                max_number = -1
                 print self.browsers[i], self.browsers[j]
-                for r in range(10):
-                    rate = 0.05 + float(r) / 100.0
+                for r in range(25):
+                    rate = 0.00 + float(r) / 100.0
                     b1, b2 = self.browsers[i], self.browsers[j]
                     res, mask = self.__getRes(b1, b2, cursor, True, rate, table_name, attrs=feat_list, extra_selector=extra_selector)
                     print rate, res, mask
