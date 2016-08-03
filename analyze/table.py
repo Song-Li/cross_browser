@@ -109,7 +109,7 @@ class Cross_Table(Table_Base):
 
     num_uids = max(float(len(uids)), 1.0)
 
-    return int(num_uids), num_cross_browser/num_uids, num_unique/num_distinct
+    return int(num_uids), num_cross_browser/num_uids, num_unique/num_cross_browser
 
   def __print_summary(self):
     __str = ""
@@ -204,7 +204,7 @@ class Single_Table(Table_Base):
         num_unique += 1.0
     num_uids = len(image_ids)
 
-    return int(num_uids), num_unique/num_distinct
+    return int(num_uids), num_unique/num_uids
 
   def __print_summary(self):
     __str = ""

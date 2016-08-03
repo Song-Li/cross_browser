@@ -21,6 +21,20 @@ output_root = open_root + "images/generated/"
 db_name = "cross_browser"
 table_name = "round_2_data"
 
+def update_resolution(db):
+    ratio = {}
+    cursor = db.cursor()
+    cursor.execute("SELECT resolution,image_id from {}".format(table_name))
+    for r,i in cursor.fetchall():
+        d = r.split('x')
+        ratio[i] = '{:.2f}'.format(float(d[0]) / float(d[1]))
+
+    for i in ratio:
+        cursor.execute("UPDATE {} SET ratio=".format(table_name) + str(ratio[i]) + " where image_id=" + str(i))
+
+    db.commit()
+
+
 def update_table(db):
     cursor = db.cursor()
     cursor.execute("SELECT image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest FROM new_data")
@@ -428,6 +442,7 @@ def index():
     # update_browser(db)
     # update_hashes(db)
     # update_langs(db)
+    # update_resolution(db)
     # return
 
     # table = get_gpu_entropy(cursor)
@@ -456,13 +471,14 @@ def index():
     #f.close()
     #return
 
-    mode = 4
+    mode = 1
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
         table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
-        #table.run(cursor, table_name, extra_selector="")
-        table.run(cursor, table_name, extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
+        #table.run(cursor, table_name, extra_selector=" and browser!='IE' and browser !='Edge'")
+        table.run(cursor, table_name, extra_selector="")
+        #table.run(cursor, table_name, extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
         #print("{:latex}".format(table))
         print (table)
     elif mode == 2:
