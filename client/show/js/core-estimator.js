@@ -20,7 +20,7 @@
 	// A workload of 0x2000000 with 15-20 samples should give you medium-high accuracy
 	// at 6-8x the default runtime. Not suggested in production webapps!
 
-	var dom_implemented = navigator.hardwareConcurrency;
+	var dom_implemented = 0;//navigator.hardwareConcurrency;
 	var doc = document;
 
 	// Get the path of the currently running script
@@ -34,7 +34,7 @@
 		var calls = [];
 
 		var on_message = function(event) {
-			var cores = navigator.hardwareConcurrency = event.data;
+			var cores = event.data;
 			var call;
 
 			navigator.getHardwareConcurrency = function(callback, options) {
@@ -98,7 +98,6 @@
 
 	// Set navigator.hardwareConcurrency to a sane value before getHardwareConcurrency is ever run
 	if (!dom_implemented) {
-		/** @expose */ navigator.hardwareConcurrency = 1;
 		if (typeof Worker === "undefined") {
 			// Web workers not supported, effectively single-core
 			dom_implemented = true;
@@ -116,14 +115,7 @@
 	navigator.getHardwareConcurrency = function(callback, options) {
 		options = options || {};
 		if (!('use_cache' in options)) {
-			options.use_cache = true;
-		}
-
-		// If we already have an answer, return early.
-		//if (dom_implemented || (options.use_cache && previously_run)) {
-		if ((options.use_cache && previously_run)) {
-			callback(navigator.hardwareConcurrency);
-			return;
+			options.use_cache = false;
 		}
 
 		doc.documentElement.style.cursor = "progress";
@@ -166,7 +158,6 @@
 
 			// We found an estimate
 			doc.documentElement.style.cursor = "";
-			//navigator.hardwareConcurrency = cores;
 			previously_run = true;
 			callback(cores);
 
