@@ -227,7 +227,7 @@ class Loader
     @numberOfTests = @testList.length + @asyncTests.length
     @numComplete = 0
     postProgress = () =>
-      progress(++@numComplete / @numberOfTests * 98.0)
+      progress(++@numComplete / @numberOfTests * 90.0)
       if @numComplete is @numberOfTests
         if @requests['demo'] is "True" then $('body canvas').remove()
         sender.sendData()

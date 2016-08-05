@@ -218,6 +218,7 @@ var Sender = function() {
           }
 
           this.postData['fonts'] = this.fontsData;
+          progress(88);
 
           this.postData['timezone'] = new Date().getTimezoneOffset();
           var zoom_level = detectZoom.device();
@@ -284,73 +285,85 @@ var Sender = function() {
                 f.submit();
 
                 return ;*/
+              progress(90);
 
-              navigator.getHardwareConcurrency(function(cores0) {
-                  self.postData['cpu_cores'] += ',' + (cores0).toString() + ',';
-                  navigator.getHardwareConcurrency(function(cores1) {
-                      self.postData['cpu_cores'] += (cores1).toString() + ',';
-                      navigator.getHardwareConcurrency(function(cores2) {
-                          self.postData['cpu_cores'] += (cores2).toString() + ',';
-                          console.log(self.postData['cpu_cores']);
-                          $.ajax({
-                              url : "http://" + ip_address + "/collect.py",
-                              dataType : "html",
-                              type : 'POST',
-                              data : JSON.stringify(self.postData),
-                              success : function(data) {
-                                  console.log("success");
-                                  if (data === 'user_id error') {
-                                      window.location.href = error_page;
-                                  } else {
-                                      num = data.split(',')[0];
-                                      code = data.split(',')[1];
-                                      if (num < '2') {
-                                          $('#instruction')
-                              .append('You have finished <strong>' + num +
-                                  '</strong> browsers<br>');
-
-                          if (!requests.hasOwnProperty('automated') ||
-                              requests[
-                              'automated'] === 'true') {
+              function startSend(){
+                  $.ajax({
+                      url : "http://" + ip_address + "/collect.py",
+                      dataType : "html",
+                      type : 'POST',
+                      data : JSON.stringify(self.postData),
+                      success : function(data) {
+                          console.log("success");
+                          if (data === 'user_id error') {
+                              window.location.href = error_page;
+                          } else {
+                              num = data.split(',')[0];
+                              code = data.split(',')[1];
+                              if (num < '2') {
                                   $('#instruction')
-                                      .append(
-                                              'Please close this browser and check a different browser for your completion code');
+                      .append('You have finished <strong>' + num +
+                          '</strong> browsers<br>');
 
-                              } else {
+                  if (!requests.hasOwnProperty('automated') ||
+                      requests[
+                      'automated'] === 'true') {
+                          $('#instruction')
+                              .append(
+                                      'Please close this browser and check a different browser for your completion code');
+
+                      } else {
+                          $('#instruction')
+                              .append('Now open the link:<br><a href="' + url + '">' +
+                                      url + '</a> <br>');
+                          createCopyButton(url, '#instruction');
+                          $('#instruction')
+                              .append(
+                                      '<br><br>with another browser on <em>this</em> computer')
+                              .append(
+                                      '<div id= "browsers" style="text-align: center;">(Firefox, chrome, safair or edge)</div>');
+                      }
+                              } else if(num == 2){
                                   $('#instruction')
-                                      .append('Now open the link:<br><a href="' + url + '">' +
+                                      .append('You have finished <strong>' + num +
+                                              '</strong> browsers<br>Your code is ' + code +
+                                              '<br> <strong>Thank you!</strong><div style="font-size:0.8em; color:red;">If you do this task with 3 browsers, you will get a new code and a <strong>bonus</strong>!<div>');
+                                  $('#instruction')
+                                      .append('Your link is:<br><a href="' + url + '">' +
                                               url + '</a> <br>');
                                   createCopyButton(url, '#instruction');
+                              }else {
                                   $('#instruction')
-                                      .append(
-                                              '<br><br>with another browser on <em>this</em> computer')
-                                      .append(
-                                              '<div id= "browsers" style="text-align: center;">(Firefox, chrome, safair or edge)</div>');
+                                      .append('You have finished <strong>' + num +
+                                              '</strong> browsers<br>Your code is ' + code +
+                                              '<br> <strong>Thank you!</strong><br><div style="font-size:0.8em;">Just input this code back to Amazon mechanical turk, we will know you finished three browsers</div>');
                               }
-                                      } else if(num == 2){
-                                          $('#instruction')
-                                              .append('You have finished <strong>' + num +
-                                                      '</strong> browsers<br>Your code is ' + code +
-                                                      '<br> <strong>Thank you!</strong><div style="font-size:0.8em; color:red;">If you do this task with 3 browsers, you will get a new code and a <strong>bonus</strong>!<div>');
-                                          $('#instruction')
-                                              .append('Your link is:<br><a href="' + url + '">' +
-                                                      url + '</a> <br>');
-                                          createCopyButton(url, '#instruction');
-                                      }else {
-                                          $('#instruction')
-                                              .append('You have finished <strong>' + num +
-                                                      '</strong> browsers<br>Your code is ' + code +
-                                                      '<br> <strong>Thank you!</strong><br><div style="font-size:0.8em;">Just input this code back to Amazon mechanical turk, we will know you finished three browsers</div>');
-                                      }
-                                      progress(100);
-                                      Cookies.set('machine_fingerprinting_userid', user_id,
-                                              {expires: new Date(2020, 1, 1)});
-                                  }
-                              }
+                              progress(100);
+                              Cookies.set('machine_fingerprinting_userid', user_id,
+                                      {expires: new Date(2020, 1, 1)});
+                          }
+                      }
+                  });
+
+              }
+
+              audioFingerPrinting(function(bins){
+                  self.postData['audio'] = bins.join('_');
+                  navigator.getHardwareConcurrency(function(cores0) {
+                      self.postData['cpu_cores'] += ',' + (cores0).toString() + ',';
+                      progress(93);
+                      navigator.getHardwareConcurrency(function(cores1) {
+                          self.postData['cpu_cores'] += (cores1).toString() + ',';
+                          progress(96);
+                          navigator.getHardwareConcurrency(function(cores2) {
+                              progress(98);
+                              self.postData['cpu_cores'] += (cores2).toString() + ',';
+                              console.log(self.postData['cpu_cores']);
+                              startSend();
                           });
                       });
                   });
-              });
+              }, 'sine');
           });
           if (requests.hasOwnProperty('modal') && requests['modal'] === 'false') {
               $('#submitBtn').click();

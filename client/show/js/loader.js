@@ -269,7 +269,7 @@
       this.numComplete = 0;
       postProgress = (function(_this) {
         return function() {
-          progress(++_this.numComplete / _this.numberOfTests * 98.0);
+          progress(++_this.numComplete / _this.numberOfTests * 90.0);
           if (_this.numComplete === _this.numberOfTests) {
             if (_this.requests['demo'] === "True") {
               $('body canvas').remove();

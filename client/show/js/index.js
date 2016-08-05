@@ -15,7 +15,7 @@ function progress(value) {
     // update background
     $('progress').prop('style', 'background-position: 0 '+ pos + 'em;');
 
-    if(value == 98) {
+    if(value == 90) {
         $('#hint98').addClass("appear");
     }
 
