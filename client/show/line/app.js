@@ -1,7 +1,12 @@
-var LineTest = function() {
+var LineTest = function(type) {
     var ID = sender.getID();
     this.begin = function(canvas, cb, level) {
         var gl = getGL(canvas);
+        if (type == 'normal') gl = getGL(canvas);
+        else {
+            canvas = getCanvas("can_aa");
+            gl = getGLAA(canvas);
+        }
 
         function getPoints(){
             var res = [];
