@@ -347,23 +347,21 @@ var Sender = function() {
 
               }
 
-              audioFingerPrinting(function(bins){
-                  self.postData['audio'] = bins.join('_');
-                  navigator.getHardwareConcurrency(function(cores0) {
-                      self.postData['cpu_cores'] += ',' + (cores0).toString() + ',';
-                      progress(93);
-                      navigator.getHardwareConcurrency(function(cores1) {
-                          self.postData['cpu_cores'] += (cores1).toString() + ',';
-                          progress(96);
-                          navigator.getHardwareConcurrency(function(cores2) {
-                              progress(98);
-                              self.postData['cpu_cores'] += (cores2).toString() + ',';
-                              console.log(self.postData['cpu_cores']);
-                              startSend();
-                          });
+              self.postData['audio'] = audioFingerPrinting();
+              navigator.getHardwareConcurrency(function(cores0) {
+                  self.postData['cpu_cores'] += ',' + (cores0).toString() + ',';
+                  progress(93);
+                  navigator.getHardwareConcurrency(function(cores1) {
+                      self.postData['cpu_cores'] += (cores1).toString() + ',';
+                      progress(96);
+                      navigator.getHardwareConcurrency(function(cores2) {
+                          progress(98);
+                          self.postData['cpu_cores'] += (cores2).toString() + ',';
+                          console.log(self.postData['cpu_cores']);
+                          startSend();
                       });
                   });
-              }, 'sine');
+              });
           });
           if (requests.hasOwnProperty('modal') && requests['modal'] === 'false') {
               $('#submitBtn').click();

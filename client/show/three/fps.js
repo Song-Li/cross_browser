@@ -97,6 +97,7 @@
       var animate, distance, freq, gl, level, render;
       this.cb = cb;
       gl = getGL(canvas);
+      progress(86);
       this.renderer = new THREE.WebGLRenderer({
         context: gl,
         canvas: canvas

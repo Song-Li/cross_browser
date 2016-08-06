@@ -131,6 +131,7 @@ root.FPSTest = class FPSTest
 
 
     gl = getGL canvas
+    progress 86
 
 
     @renderer = new THREE.WebGLRenderer(
