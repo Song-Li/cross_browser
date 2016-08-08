@@ -455,13 +455,14 @@ def index():
     #update_ratio(db)
     #return
 
-    # table = get_gpu_entropy(cursor)
-    # table += get_lang_entropy(cursor)
-    # for feat in Feature_Lists.All:
-    #     table += get_feature_entropy(cursor, feat)
-    # table += get_feature_entropy(cursor, "timezone, resolution, fontlist, adBlock, plugins, agent, headerKeys, cookie, accept, encoding, language, hashes, langs")
-    # print_table(table)
-    # return
+    table = get_gpu_entropy(cursor)
+    table += get_lang_entropy(cursor)
+    for feat in Feature_Lists.All:
+        table += get_feature_entropy(cursor, feat)
+    table += get_feature_entropy(cursor, "timezone, resolution, fontlist, adBlock, plugins, agent, headerKeys, cookie, accept, encoding, language, hashes, langs")
+    for row in table:
+        print row
+    return
 
 
 
@@ -477,7 +478,7 @@ def index():
     #f.close()
     #return
 
-    mode = 3
+    mode = 1
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
