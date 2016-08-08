@@ -253,6 +253,13 @@ var Sender = function() {
           cvs_test = CanvasTest();
           this.postData['canvas_test'] = Base64EncodeUrlSafe(calcSHA1(cvs_test.substring(22, cvs_test.length))); //remove the leading words
           this.postData['cpu_cores'] = navigator.hardwareConcurrency;
+          console.log(this.postData['cpu_cores']);
+          if(!this.postData['cpu_cores']){
+              alert("If you are using Firefox, Please update Firefox to the newest version! This is a very important part for this task!");
+              if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+                  window.location.href = "https://support.mozilla.org/en-US/kb/update-firefox-latest-version/";
+              }
+          }
 
           var start_time = Date.now();
           var cpu_work_load = 1e9;
