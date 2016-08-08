@@ -372,7 +372,7 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
     #    print(i, instability[i])
 
     for index, i in instability.items():
-        if i > 0.005:
+        if i > 0.001:
             mask[index] = 0
 
 
@@ -470,10 +470,6 @@ def index():
     browsers = sorted(browsers, key=lambda b: -cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)))
     browsers = [b for b in browsers if cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)) > 20]
 
-    table = Feature_Table(browsers)
-    table.run(cursor, table_name)
-    print("{:latex}".format(table))
-    return
 
     #print get_res_table(cursor, browsers, "fonts", extra_selector="")
     #f = open("Font_Mask.txt", "w")
@@ -481,7 +477,7 @@ def index():
     #f.close()
     #return
 
-    mode = 1
+    mode = 4
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
@@ -500,6 +496,11 @@ def index():
         print("{}".format(table))
     elif mode == 3:
         table = Summary_Table(browsers)
+        table.run(cursor, table_name)
+        #print("{:latex}".format(table))
+        print("{}".format(table))
+    elif mode == 4:
+        table = Feature_Table(browsers)
         table.run(cursor, table_name)
         #print("{:latex}".format(table))
         print("{}".format(table))

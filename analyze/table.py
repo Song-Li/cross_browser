@@ -286,8 +286,16 @@ class Feature_Table(Table_Base):
     for i in range(len(self.res_table)):
       feat = Feature_Lists.All[i]
       su, cb, cbu = self.res_table[i]
-      self.print_table.append([Feature_Lists.Mapped_All[i], "{:3.1f}%Iden".format(su*100), "{:3.1f}%Iden={:3.1f}%CB*{:3.1f}%Uni".format(cb*cbu*100.0,cb*100,cbu*100)])
+      self.print_table.append([Feature_Lists.Mapped_All[i], "{:3.1f}%Iden".format(su*100), "{:3.1f}%Iden,{:3.1f}%CB,{:3.1f}%Uni".format(cb*cbu*100.0,cb*100,cbu*100)])
 
+
+    ami_res = self.__helper(cursor, table_name, Feature_Lists.Amiunique, extra_selector)
+    su, cb, cbu = cross_res
+    self.print_table.append(["Amiunique", "{:3.1f}%Iden".format(su*100), "{:3.1f}%Iden,{:3.1f}%CB,{:3.1f}%Uni".format(cb*cbu*100.0,cb*100,cbu*100)])
+
+    cross_res = self.__helper(cursor, table_name, Feature_Lists.Cross_Browser, extra_selector)
+    su, cb, cbu = cross_res
+    self.print_table.append(["CBFeatures", "{:3.1f}%Iden".format(su*100), "{:3.1f}%Iden,{:3.1f}%CB,{:3.1f}%Uni".format(cb*cbu*100.0,cb*100,cbu*100)])
 
 
 class VAL(Enum):
