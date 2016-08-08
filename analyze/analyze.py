@@ -470,10 +470,10 @@ def index():
     browsers = sorted(browsers, key=lambda b: -cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)))
     browsers = [b for b in browsers if cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)) > 20]
 
-    # table = Feature_Table(browsers)
-    # table.run(cursor, table_name)
-    # print("{:latex}".format(table))
-    # return
+    table = Feature_Table(browsers)
+    table.run(cursor, table_name)
+    print("{:latex}".format(table))
+    return
 
     #print get_res_table(cursor, browsers, "fonts", extra_selector="")
     #f = open("Font_Mask.txt", "w")
