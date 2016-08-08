@@ -10,8 +10,8 @@ class Feature_Lists(Enum):
   Cross_Browser="ratio, langs, fonts, audio, timezone, accept, hashes".replace(" ", "").split(",")
   #Cross_Browser="fonts".replace(" ", "").split(",")
   Single_Browser=All
-  Amiunique="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest".replace(" ", "").split(",")
-  CB_Amiunique="accept, timezone, resolution, localstorage, cookie".replace(" ", "").split(",")
+  Amiunique="agent, timezone, resolution, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest".replace(" ", "").split(",")
+  CB_Amiunique="accept, timezone, ratio, localstorage".replace(" ", "").split(",")
 
 def read_file(name):
   with open(name, "r") as file:

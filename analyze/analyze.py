@@ -477,7 +477,7 @@ def index():
     #f.close()
     #return
 
-    mode = 4
+    mode = 3
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
@@ -502,8 +502,8 @@ def index():
     elif mode == 4:
         table = Feature_Table(browsers)
         table.run(cursor, table_name)
-        #print("{:latex}".format(table))
-        print("{}".format(table))
+        print("{:latex}".format(table))
+        #print("{}".format(table))
     else:
         gen_masks = Gen_Masks(browsers)
         #b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu != 'Microsoft Basic Render Driver'")

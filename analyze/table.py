@@ -36,10 +36,12 @@ class Table_Base():
       if i is 0:
         header = "\\begin{tabular}{|l||"
         for _ in range(len(row)):
-          header += "l|"
+          header += "c|"
+        header += "c|c|"
         header += "}\hline"
         latex += "{}\n".format(header)
         latex += "{} {}\n".format(" & ".join(row), "\\\\ \hline \hline")
+        latex += "& & Sum& Cross Browser Rate& Unique Rate \\\\ \hline"
       else:
         latex += "{} {}\n".format(" & " * (len(row) - 1), "\\\\[-7pt]")
         latex += "{} {}\n".format(" & ".join(row).replace('%', '\%'), "\\\\ \hline")
@@ -282,20 +284,19 @@ class Feature_Table(Table_Base):
     for feat in Feature_Lists.All:
       self.res_table.append(self.__helper(cursor, table_name, feat, extra_selector))
 
-    self.print_table = [["Feature", "Single-browser", "Cross-browser"]]
+    self.print_table = [["Feature", "Single-browser", "\multicolumn{3}{|c|}{Cross-browser}"]]
     for i in range(len(self.res_table)):
       feat = Feature_Lists.All[i]
       su, cb, cbu = self.res_table[i]
-      self.print_table.append([Feature_Lists.Mapped_All[i], "{:3.1f}%Iden".format(su*100), "{:3.1f}%Iden,{:3.1f}%CB,{:3.1f}%Uni".format(cb*cbu*100.0,cb*100,cbu*100)])
-
+      self.print_table.append([Feature_Lists.Mapped_All[i], "{:3.1f}%".format(su*100), "{:3.1f}%".format(cb*cbu*100.0),"{:3.1f}%".format(cb*100.0),"{:3.1f}%".format(cbu*100)])
 
     ami_res = self.__helper(cursor, table_name, Feature_Lists.Amiunique, extra_selector)
-    su, cb, cbu = cross_res
-    self.print_table.append(["Amiunique", "{:3.1f}%Iden".format(su*100), "{:3.1f}%Iden,{:3.1f}%CB,{:3.1f}%Uni".format(cb*cbu*100.0,cb*100,cbu*100)])
+    su, cb, cbu = ami_res
+    self.print_table.append(["Amiunique", "{:3.1f}%".format(su*100), "{:3.1f}%".format(cb*cbu*100.0),"{:3.1f}%".format(cb*100.0),"{:3.1f}%".format(cbu*100)])
 
     cross_res = self.__helper(cursor, table_name, Feature_Lists.Cross_Browser, extra_selector)
     su, cb, cbu = cross_res
-    self.print_table.append(["CBFeatures", "{:3.1f}%Iden".format(su*100), "{:3.1f}%Iden,{:3.1f}%CB,{:3.1f}%Uni".format(cb*cbu*100.0,cb*100,cbu*100)])
+    self.print_table.append(["CBFeatures", "{:3.1f}%".format(su*100), "{:3.1f}%".format(cb*cbu*100.0),"{:3.1f}%".format(cb*100.0),"{:3.1f}%".format(cbu*100)])
 
 
 class VAL(Enum):
