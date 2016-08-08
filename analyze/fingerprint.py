@@ -7,8 +7,8 @@ from json import loads
 class Feature_Lists(Enum):
   Mapped_All="agent, timezone, resolution, fontlist (Flash), plugins, cookies enabled, localstorage enabled, acceptable formats, encoding, headerkeys, Do not track?, Ad Block Enabled, Canvas Rendering, Prefered Language, GPU Images, Writing Sysem Supported?, Fonts (javascript), Writitng System Display, Video".split(",")
   All="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, headerkeys, dnt, adBlock, canvastest, language, hashes, langs, fonts, lang_hash, video".replace(" ", "").split(",")
-  Cross_Browser="ratio, langs, timezone, fonts, hashes, accept".replace(" ", "").split(",")
-  #Cross_Browser="hashes".replace(" ", "").split(",")
+  Cross_Browser="ratio, langs, fonts, audio, timezone, accept, hashes".replace(" ", "").split(",")
+  #Cross_Browser="fonts".replace(" ", "").split(",")
   Single_Browser=All
   Amiunique="agent, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest".replace(" ", "").split(",")
   CB_Amiunique="accept, timezone, resolution, localstorage, cookie".replace(" ", "").split(",")
@@ -18,9 +18,12 @@ def read_file(name):
     return file.read()
 
 class Masks(Enum):
-  GPU = loads(read_file("GPU_Mask.txt"))
-  Lang = loads(read_file("Lang_Mask.txt"))
-  Font = loads(read_file("Font_Mask.txt"))
+  try :
+    GPU = loads(read_file("GPU_Mask.txt"))
+    Lang = loads(read_file("Lang_Mask.txt"))
+    Font = loads(read_file("Font_Mask.txt"))
+  except:
+    pass
 
 class Fingerprint_Type(Enum):
   CROSS = 0
@@ -144,6 +147,25 @@ class Font_Fingerprint(Fingerprint_Base):
     else:
       self.fp = data
 
+class Core_Fingerprint():
+  def __init__(self, data):
+    self.fp = data
+
+  def __eq__(self, other):
+    return self.fp == other.fp
+
+  def __ne__(self, other):
+    return not self.__eq__(other)
+
+  def __hash__(self):
+    return hash(self.fp)
+
+  def __str__(self):
+    return str(self.fp)
+
+
+    
+
 class Feature_Fingerprint():
   def __init__(self, data):
     self.fp = data
@@ -203,6 +225,14 @@ class Fingerprint():
         self.fp.append(
           Video_Fingerprint(hashes)
         )
+      elif attr == 'audio':
+        if self.browser == 'IE' or self.b2 == 'IE':
+            self.fp.append('not supported')
+        else:
+          self.fp.append(
+            Feature_Fingerprint(data.split('_')[0])
+          )
+
       else:
         self.fp.append(
           Feature_Fingerprint(data)

@@ -4,28 +4,46 @@ import MySQLdb
 db = MySQLdb.connect("localhost", "erik", "erik", 'cross_browser')
 cursor = db.cursor()
 
-cursor.execute("select distinct(user_id) from new_data")
+cursor.execute("select distinct(ip) from round_3_data")
 
 uids = []
 resolution = []
 stupid = {}
 tmp = []
+sumUp = 0.0
+Font = loads(read_file("Font_Mask.txt"))
 
 for uid, in cursor.fetchall():
     uids.append(uid)
     tmp = []
+    browsers = []
     flag = 0
-    cursor.execute("select resolution,browser from new_data where user_id=" + str(uid))
-    for r,b in cursor.fetchall():
-        if len(tmp) != 0 and r not in tmp:
-            flag = 1
-        tmp.append(r)
-        if flag == 1:
-            stupid[uid] = tmp
+    f = 0
+    c = 0
+    res = ""
+    cursor.execute("select fonts,browser,platform from round_3_data where ip='" + str(uid) + "'")
+    for f,b,p in cursor.fetchall():
+        mask = Font["{}{}".format(browser, b2)]
+        for i, h in enumerate(f):
+            if mask[i]:
+            if len(tmp) != 0 and r not in tmp and b != 'IE':
+                flag = 1
+            tmp.append(r)
+            browsers.append(b)
+            if flag == 1:
+                stupid[uid] = tmp + browsers
+
+        #res += cpu + '_' + b + '_' + p + '\t'
+        #if b == 'Firefox':
+        #    f = float(cpu)
+        #elif b == 'Chrome':
+        #    c = float(cpu)
+    #if f != 0 and c != 0:
+    #    print str(int(f / 1000)) + '_' + str(int(c / 3000)) + '_' + b + '_' + p
+    #    sumUp = (sumUp + (f / c)) / 2
+
+#print sumUp
+
 
 for s in stupid:
-    div = ""
-    for d in stupid[s]:
-        t = d.split('x')
-        div += str('{:.2f}'.format(float(t[0]) / float(t[1]))) + ' '
-    print s, stupid[s], div
+    print s, stupid[s]

@@ -3,7 +3,7 @@
 import MySQLdb
 
 db_name = "cross_browser"
-table_name = "round_2_data"
+table_name = "round_3_data"
 
 db = MySQLdb.connect("localhost", "erik", "erik", db_name)
 cursor = db.cursor()

@@ -19,15 +19,15 @@ standard_pics = []
 open_root = "/home/site/data/"
 output_root = open_root + "images/generated/"
 db_name = "cross_browser"
-table_name = "round_2_data"
+table_name = "round_3_data"
 
-def update_resolution(db):
+def update_ratio(db):
     ratio = {}
     cursor = db.cursor()
     cursor.execute("SELECT resolution,image_id from {}".format(table_name))
     for r,i in cursor.fetchall():
-        d = r.split('x')
-        ratio[i] = '{:.2f}'.format(float(d[0]) / float(d[1]))
+        d = r.split('_')
+        ratio[i] = '{:.2f}'.format(float(d[3]) / float(d[4]))
 
     for i in ratio:
         cursor.execute("UPDATE {} SET ratio=".format(table_name) + str(ratio[i]) + " where image_id=" + str(i))
@@ -37,11 +37,11 @@ def update_resolution(db):
 
 def update_table(db):
     cursor = db.cursor()
-    cursor.execute("SELECT image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest FROM new_data")
-    for image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest in cursor.fetchall():
+    cursor.execute("SELECT image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest, cpucores, cpucal, audio FROM new_data")
+    for image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest, cpucores, cpucal, audio in cursor.fetchall():
         cursor.execute("SELECT COUNT(*) FROM {} where image_id='{}'".format(table_name, image_id))
         if not cursor.fetchone()[0]:
-            cursor.execute("INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest))
+            cursor.execute("INSERT INTO {} (image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest, cpucores, cpucal, audio) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(table_name, image_id, user_id, ip, vendor, gpu, agent, browser, fps, manufacturer, fonts, simple_hash, timezone, resolution, fontlist, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest, cpucores, cpucal, audio))
     db.commit()
 
     cursor.execute("SELECT distinct(ip) from {}".format(table_name))
@@ -65,6 +65,11 @@ def update_table(db):
     cursor.execute("DELETE from {} where ip like '128.180.%'".format(table_name))
     db.commit()
     cursor.close()
+
+def getPlatform(agent):
+    p = agent.split('(')
+    p = p[1].split(';')
+    return p[0].split(')')[0]
 
 def getBrowser(vendor, agent):
     browser = ''
@@ -162,7 +167,8 @@ def update_browser(db):
         cursor.execute("SELECT image_id, agent, vendor FROM {} WHERE user_id='{}'".format(table_name, uid))
         for image_id, agent, vendor in cursor.fetchall():
             browser = getBrowser(vendor, agent)
-            cursor.execute("UPDATE {} SET browser='{}' WHERE image_id='{}'".format(table_name, browser, image_id))
+            platform = getPlatform(agent)
+            cursor.execute("UPDATE {} SET browser='{}',platform='{}' WHERE image_id='{}'".format(table_name, browser, platform, image_id))
     db.commit()
     cursor.close()
 
@@ -251,6 +257,8 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
     if not quiet:
         print('extra_selector="{}"'.format(extra_selector))
     global mask
+    global b_mask
+    mask = None
     global instability
     tuids = []
     uids = []
@@ -303,15 +311,16 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
 
         try:
             # Feature to mask
-            feature = "hashes"
+            feature = "fonts"
             cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image1_id))
-            hashes_1 = cursor.fetchone()[0].split("&")[:27]
+            hashes_1 = cursor.fetchone()[0]#.split("&")[:27]
 
             cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image2_id))
-            hashes_2 = cursor.fetchone()[0].split("&")[:27]
+            hashes_2 = cursor.fetchone()[0]#.split("&")[:27]
 
             if mask is None:
                 mask = [1 for _ in range(len(hashes_1))]
+
 
             if len(hashes_1) == len(hashes_2):
                 s1 = ""
@@ -363,8 +372,9 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
     #    print(i, instability[i])
 
     for index, i in instability.items():
-        if i > 0.09:
+        if i > 0.005:
             mask[index] = 0
+
 
     num_distinct = max(float(len(fp_to_count)), 1.0)
     num_unique = 0.0
@@ -380,7 +390,6 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
 
         print('Cross_browser', num_cross_browser)
         print('Cross_browser rate', num_cross_browser/num_uids)
-
 
         print('Cross_browser unique', num_unique/num_distinct)
         print(num_unique, num_distinct)
@@ -437,13 +446,14 @@ def index():
     LaTex = True
     db = MySQLdb.connect("localhost", "erik", "erik", db_name)
     cursor = db.cursor()
+    global b_mask
 
-    # update_table(db)
-    # update_browser(db)
-    # update_hashes(db)
-    # update_langs(db)
-    # update_resolution(db)
-    # return
+    #update_table(db)
+    #update_browser(db)
+    #update_hashes(db)
+    #update_langs(db)
+    #update_ratio(db)
+    #return
 
     # table = get_gpu_entropy(cursor)
     # table += get_lang_entropy(cursor)
@@ -465,8 +475,8 @@ def index():
     # print("{:latex}".format(table))
     # return
 
-    #get_res_table(cursor, browsers, "gpu", extra_selector="and gpu!='SwiftShader' and gpu!='Microsoft Basic Render Driver'")
-    #f = open("GPU_Mask.txt", "w")
+    #print get_res_table(cursor, browsers, "fonts", extra_selector="")
+    #f = open("Font_Mask.txt", "w")
     #f.write(json.dumps(b_mask))
     #f.close()
     #return
@@ -477,23 +487,27 @@ def index():
     elif mode == 1:
         table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
         #table.run(cursor, table_name, extra_selector=" and browser!='IE' and browser !='Edge'")
-        table.run(cursor, table_name, extra_selector="")
+        #table.run(cursor, table_name, extra_selector="and platform like '%NT%'")
         #table.run(cursor, table_name, extra_selector="and gpu!='SwiftShader'")
+        #table.run(cursor, table_name, extra_selector="and platform like '%mac%'")
+        table.run(cursor, table_name, extra_selector="")
         #print("{:latex}".format(table))
         print (table)
     elif mode == 2:
         table = Diff_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, Feature_Lists.Amiunique, browsers)
         table.run(cursor, table_name)
-        print("{:latex}".format(table))
+        #print("{:latex}".format(table))
+        print("{}".format(table))
     elif mode == 3:
         table = Summary_Table(browsers)
         table.run(cursor, table_name)
-        print("{:latex}".format(table))
+        #print("{:latex}".format(table))
+        print("{}".format(table))
     else:
         gen_masks = Gen_Masks(browsers)
         #b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu != 'Microsoft Basic Render Driver'")
         #b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='Microsoft Basic Render Driver'")
-        b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="")
+        b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and platform like '%NT%'")
         f = open("GPU_Mask.txt", "w")
         f.write(json.dumps(b_mask))
         f.close()
