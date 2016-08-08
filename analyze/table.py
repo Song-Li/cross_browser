@@ -41,7 +41,6 @@ class Table_Base():
         header += "}\hline"
         latex += "{}\n".format(header)
         latex += "{} {}\n".format(" & ".join(row), "\\\\ \hline \hline")
-        latex += "& & Sum& Cross Browser Rate& Unique Rate \\\\ \hline"
       else:
         latex += "{} {}\n".format(" & " * (len(row) - 1), "\\\\[-7pt]")
         latex += "{} {}\n".format(" & ".join(row).replace('%', '\%'), "\\\\ \hline")
@@ -59,6 +58,61 @@ class Table_Base():
       return self.__latex_helper()
     else:
       return format(str(self), code)
+
+class Gpu_Table(Table_Base):
+  def __init__(self):
+    Table_Base.__init__(self)
+  
+  def run(self, cursor, b1, b2, table_name, extra_selector):
+    cursor.execute("SELECT user_id FROM {} WHERE browser='{}' {}".format(table_name, b1, extra_selector))
+    tuids = [uid for uid, in cursor.fetchall()]
+
+    uids = []
+    for uid in tuids:
+      cursor.execute("SELECT user_id FROM {} WHERE user_id='{}' AND browser='{}' {}".format(table_name, uid, b2, extra_selector))
+      for uid, in cursor.fetchall():
+        uids.append(uid)
+
+    if len(uids) is 0:
+        return None
+
+
+    num_cross_browser = [0 for i in range(32)]
+    all_hashes = [[] for i in range(32)]
+    unique = 0
+    num_img = 0
+    self.print_table = []
+    
+    for uid in uids:
+      cursor.execute("SELECT hashes FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b1, uid))
+      hashes1 = cursor.fetchone()[0].split('&')
+      num_img = len(hashes1)
+
+      cursor.execute("SELECT hashes FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b2, uid))
+      hashes2 = cursor.fetchone()[0].split('&')
+
+      for i in range(len(hashes1)):
+        if hashes1[i] == hashes2[i]:
+          num_cross_browser[i] += 1.0
+          all_hashes[i].append(hashes1[i])
+
+    self.print_table.append(["image ID", "CB Rate", "Unique Rate"])
+    for i in range(num_img):
+      unique = 0
+      row = []
+      for a in all_hashes[i]:
+        if all_hashes[i].count(a) == 1:
+          unique += 1.0
+      
+      num = max(num_cross_browser[i], 1.0)
+      uni = max(unique, 1.0)
+
+
+      row.append("image " + str(i))
+      row.append("{:3.2f}".format(num/len(uids) * 100))
+      row.append("{:3.2f}".format(unique/num * 100))
+
+      self.print_table.append(row)
 
 
 class Cross_Table(Table_Base):

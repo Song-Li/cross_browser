@@ -11,7 +11,7 @@ from glob import glob
 from sets import Set
 import math
 from fingerprint import Fingerprint, Fingerprint_Type, Feature_Lists
-from table import Results_Table, Feature_Table, Diff_Table, Summary_Table
+from table import Results_Table, Feature_Table, Diff_Table, Summary_Table, Gpu_Table
 from generate_mask import Gen_Masks
 
 browser_to_id = {'chrome': 0, 'firefox': 1, 'others': 2}
@@ -309,23 +309,26 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
         fp_1 = Fingerprint(cursor, image1_id, table_name, fp_type, attrs, b2)
         fp_2 = Fingerprint(cursor, image2_id, table_name, fp_type, attrs, b1)
 
+
         try:
             # Feature to mask
-            feature = "fonts"
+            feature = "gpu"
             cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image1_id))
-            hashes_1 = cursor.fetchone()[0]#.split("&")[:27]
+            hashes_1 = cursor.fetchone().split("&")
+            print len(hashes_1)
 
             cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image2_id))
-            hashes_2 = cursor.fetchone()[0]#.split("&")[:27]
+            hashes_2 = cursor.fetchone().split("&")
 
-            if mask is None:
-                mask = [1 for _ in range(len(hashes_1))]
+            #if mask is None:
+            mask = [1 for _ in range(len(hashes_1))]
 
 
             if len(hashes_1) == len(hashes_2):
                 s1 = ""
                 s2 = ""
 
+                print 'here'
                 uid_stability.update({uid: []})
                 for i in range(len(hashes_1)):
 
@@ -365,6 +368,8 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
                         fp_1: 1
                     }
                 )
+
+    print 'hashall:' + str(len(hash_all))
 
         #else:
         #    print('not same: ' + str(uid))
@@ -455,14 +460,14 @@ def index():
     #update_ratio(db)
     #return
 
-    table = get_gpu_entropy(cursor)
-    table += get_lang_entropy(cursor)
-    for feat in Feature_Lists.All:
-        table += get_feature_entropy(cursor, feat)
-    table += get_feature_entropy(cursor, "timezone, resolution, fontlist, adBlock, plugins, agent, headerKeys, cookie, accept, encoding, language, hashes, langs")
-    for row in table:
-        print row
-    return
+    #table = get_gpu_entropy(cursor)
+    #table += get_lang_entropy(cursor)
+    #for feat in Feature_Lists.All:
+    #    table += get_feature_entropy(cursor, feat)
+    #table += get_feature_entropy(cursor, "timezone, resolution, fontlist, adBlock, plugins, agent, headerKeys, cookie, accept, encoding, language, hashes, langs")
+    #for row in table:
+    #    print row
+    #return
 
 
 
@@ -478,7 +483,7 @@ def index():
     #f.close()
     #return
 
-    mode = 1
+    mode = 5
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
@@ -505,6 +510,10 @@ def index():
         table.run(cursor, table_name)
         print("{:latex}".format(table))
         #print("{}".format(table))
+    elif mode == 5:
+        table = Gpu_Table()
+        table.run(cursor, 'chrome', 'ie', table_name, "")
+        print(table)
     else:
         gen_masks = Gen_Masks(browsers)
         #b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu != 'Microsoft Basic Render Driver'")
