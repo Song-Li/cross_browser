@@ -21,6 +21,21 @@ output_root = open_root + "images/generated/"
 db_name = "cross_browser"
 table_name = "round_3_data"
 
+def update_simple_resolution(db):
+    cursor = db.cursor()
+    cursor.execute("SELECT resolution,image_id from {}".format(table_name))
+    sr = {}
+
+    for r,i in cursor.fetchall():
+        d = r.split('_')
+        sr[i] = (str(d[3]) + str(d[4]))
+
+    for i in sr:
+        cursor.execute("UPDATE {} SET simple_resolution =".format(table_name) + str(sr[i]) + " where image_id=" + str(i))
+
+    db.commit()
+
+
 def update_ratio(db):
     ratio = {}
     cursor = db.cursor()
@@ -299,10 +314,9 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
     instability = {}
 
     for uid in uids:
-        #cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b1, uid))
         cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b1, uid))
         image1_id = cursor.fetchone()[0]
-        #cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b2, uid))
+
         cursor.execute("SELECT image_id FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b2, uid))
         image2_id = cursor.fetchone()[0]
 
@@ -312,26 +326,24 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
 
         try:
             # Feature to mask
-            feature = "gpu"
+            feature = "fonts"
             cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image1_id))
-            hashes_1 = cursor.fetchone().split("&")
-            print len(hashes_1)
+            hashes_1 = cursor.fetchone()[0]
 
             cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image2_id))
-            hashes_2 = cursor.fetchone().split("&")
+            hashes_2 = cursor.fetchone()[0]
 
-            #if mask is None:
-            mask = [1 for _ in range(len(hashes_1))]
+            if mask is None:
+                mask = [1 for _ in range(len(hashes_1))]
+
 
 
             if len(hashes_1) == len(hashes_2):
                 s1 = ""
                 s2 = ""
 
-                print 'here'
                 uid_stability.update({uid: []})
                 for i in range(len(hashes_1)):
-
                     if i not in hash_all:
                         hash_all.update({i: []})
                     if i not in hash_all_unique:
@@ -346,18 +358,16 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
                     s1 += hash1_val
                     s2 += hash2_val
 
-                    #if hash1_val == hash2_val and (hash1_val not in hash_all[i]):
                     if hash1_val == hash2_val:
                         hash_all[i].append(hash1_val)
                         hash_all_unique[i].add(hash1_val)
                     else:
                         instability[i] += 1.0/len(uids)
                         uid_stability[uid].append([hash1_val, hash2_val])
+
         except:
             pass
         if fp_1 == fp_2:
-            #else:
-            #    print('found: ' + str(uid) + '%' + str(uids[hash_long.index(s1)]))
             hash_long.append(fp_1)
             index.append(uid)
             if fp_1 in fp_to_count:
@@ -370,11 +380,6 @@ def getRes(b1, b2, cursor, quiet, attrs="hashes, langs", extra_selector="", fp_t
                 )
 
     print 'hashall:' + str(len(hash_all))
-
-        #else:
-        #    print('not same: ' + str(uid))
-    #for i in range(case_number):
-    #    print(i, instability[i])
 
     for index, i in instability.items():
         if i > 0.001:
@@ -458,6 +463,7 @@ def index():
     #update_hashes(db)
     #update_langs(db)
     #update_ratio(db)
+    #update_simple_resolution(db)
     #return
 
     #table = get_gpu_entropy(cursor)
@@ -483,7 +489,7 @@ def index():
     #f.close()
     #return
 
-    mode = 5
+    mode = 4
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:

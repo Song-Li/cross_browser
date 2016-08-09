@@ -34,18 +34,18 @@ class Table_Base():
     latex = ""
     for i, row in enumerate(self.print_table):
       if i is 0:
-        header = "\\begin{tabular}{|l||"
+        header = "\\begin{tabular}{l"
         for _ in range(len(row)):
-          header += "c|"
-        header += "c|c|"
+          header += "c"
+        header += "cc"
         header += "}\hline"
         latex += "{}\n".format(header)
-        latex += "{} {}\n".format(" & ".join(row), "\\\\ \hline \hline")
+        latex += "{} {}\n".format(" & ".join(row), "\\\\ \hline")
       else:
         latex += "{} {}\n".format(" & " * (len(row) - 1), "\\\\[-7pt]")
-        latex += "{} {}\n".format(" & ".join(row).replace('%', '\%'), "\\\\ \hline")
+        latex += "{} {}\n".format(" & ".join(row).replace('%', '\%'), "\\\\")
 
-    latex += "\\end{tabular}\n"
+    latex += "\hline \\end{tabular}\n"
     latex += "\\vspace{0.05in}\n\n"
 
     if self.latex_summary is not None:
@@ -338,7 +338,7 @@ class Feature_Table(Table_Base):
     for feat in Feature_Lists.All:
       self.res_table.append(self.__helper(cursor, table_name, feat, extra_selector))
 
-    self.print_table = [["Feature", "Single-browser", "\multicolumn{3}{|c|}{Cross-browser}"]]
+    self.print_table = [["Feature", "Single-browser", "\multicolumn{3}{c}{Cross-browser} \\\\ \hline & & Sum & Cross Browser Rate & Unique Rate \\\\ "]]
     for i in range(len(self.res_table)):
       feat = Feature_Lists.All[i]
       su, cb, cbu = self.res_table[i]
