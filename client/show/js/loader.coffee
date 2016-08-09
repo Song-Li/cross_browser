@@ -163,6 +163,11 @@ class Loader
     true
 
   beginTests: ->
+    if not navigator.hardwareConcurrency
+      alert "If you are using Firefox, Please update Firefox to the latest version (48.0 or later). The update instruction is https://support.mozilla.org/en-US/kb/update-firefox-latest-version"
+      if navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+        window.open "https://support.mozilla.org/en-US/kb/update-firefox-latest-version"
+        return 
     @susanVertices = @susanModel.meshes[0].vertices
     @susanIndices = [].concat.apply([], @susanModel.meshes[0].faces)
     @susanTexCoords = @susanModel.meshes[0].texturecoords[0]
