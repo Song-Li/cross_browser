@@ -5,14 +5,16 @@ from sets import Set
 from json import loads
 
 class Feature_Lists(Enum):
-  Mapped_All="Agent, Timezone, Screen Ratio, Fontlist (Flash), Plugins, Cookies enabled, Localstorage enabled, Platform, Acceptable formats, Encoding, Headerkeys, Do not track?, Ad Block Enabled, Canvas Rendering, Prefered Language, GPU Images, Writing Sysem Supported?, Fonts (javascript), Writitng System Display, Video, Audio, Cpu cores".split(",")
-  All="agent, timezone, ratio, fontlist, plugins, cookie, localstorage, platform, accept, encoding, headerkeys, dnt, adBlock, canvastest, language, hashes, langs, fonts, lang_hash, video, audio, cpucores".replace(" ", "").split(",")
+  Mapped_All="Agent, Timezone, Screen Ratio, Fontlist (Flash), Plugins, Cookies enabled, Localstorage enabled, Platform, Acceptable formats, Encoding, Headerkeys, Do not track?, Ad Block Enabled, Canvas Rendering, Prefered Language, GPU Images, Writing Sysem Supported?, Fonts (javascript), Writitng System Display, Video, Audio, Cpu cores, Renderer, Simpled Renderer, Vendor".split(",")
+  All="agent, timezone, ratio, fontlist, plugins, cookie, localstorage, platform, accept, encoding, headerkeys, dnt, adBlock, canvastest, language, hashes, langs, fonts, lang_hash, video, audio, cpucores, gpu, simple_gpu, vendor".replace(" ", "").split(",")
   Cross_Browser="cpucores, ratio, fonts, langs, audio, timezone, accept, hashes".replace(" ", "").split(",")
   #Cross_Browser="cpucores".replace(" ", "").split(",")
+  Entropy = "agent, plugins, fontlist, simple_resolution, timezone, cookie".replace(" ","").split(",")
   Single_Browser=All
   Amiunique="agent, timezone, simple_resolution, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest".replace(" ", "").split(",")
   CB_Amiunique="accept, timezone, simple_resolution, localstorage".replace(" ", "").split(",")
   Boda="platform, simple_resolution, timezone, fonts".replace(" ", "").split(",")
+  #Boda="fonts".replace(" ", "").split(",")
 
 def read_file(name):
   with open(name, "r") as file:

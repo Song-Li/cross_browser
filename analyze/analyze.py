@@ -21,6 +21,25 @@ output_root = open_root + "images/generated/"
 db_name = "cross_browser"
 table_name = "round_3_data"
 
+def update_gpu(db):
+    cursor = db.cursor()
+    cursor.execute("SELECT browser,gpu,image_id from {}".format(table_name))
+    sr = {}
+
+    for b,g,i in cursor.fetchall():
+        if g[:3] == 'ANG':
+            sr[i] = g[7:g.find('Direct') - 1]
+        else:
+            sr[i] = g
+
+    for i in sr:
+        #print("UPDATE {} SET simple_gpu =".format(table_name) + str(sr[i]) + " where image_id=" + str(i))
+        cursor.execute("UPDATE {} SET simple_gpu ='".format(table_name) + str(sr[i]) + "' where image_id=" + str(i))
+
+    db.commit()
+
+
+
 def update_simple_resolution(db):
     cursor = db.cursor()
     cursor.execute("SELECT resolution,image_id from {}".format(table_name))
@@ -153,7 +172,7 @@ def update_hashes(db):
     for image_id, in cursor.fetchall():
         print(image_id)
         hash_codes = gen_hash_codes(image_id)
-        cursor.execute("UPDATE {} SET hashes='{}', video='{}' WHERE image_id='{}'".format(table_name, "&".join(hash_codes[:27]), "&".join(hash_codes[27:]), image_id))
+        cursor.execute("UPDATE {} SET hashes='{}', video='{}' WHERE image_id='{}'".format(table_name, "&".join(hash_codes[:28]), "&".join(hash_codes[28:]), image_id))
 
     cursor.execute("SELECT image_id FROM {} where lang_hash IS NULL".format(table_name))
     for image_id, in cursor.fetchall():
@@ -250,14 +269,18 @@ def get_feature_entropy(cursor, feature):
     data = cursor.fetchall()
     val_to_count = {}
     for val in data:
-        if val not in val_to_count:
-            val_to_count.update({val : 1})
+        if val[0] not in val_to_count:
+            val_to_count.update({val[0] : 1})
         else:
-            val_to_count[val] += 1
+            val_to_count[val[0]] += 1
 
     table = []
 
     entropy = 0
+
+    if feature == 'cookie':
+        val_to_count['True'] -= 2
+        val_to_count['False'] = 2
     for _, count in val_to_count.items():
         P = float(count)/float(len(data))
         entropy -= P * math.log(P, 2)
@@ -457,8 +480,8 @@ def get_res_table(cursor, browsers, feat_list, cross_browser=True, extra_selecto
                 }
             )
 
-    for k,v in b_mask.items():
-        b_mask[k] = final
+    #for k,v in b_mask.items():
+    #    b_mask[k] = final
 
     return result_table
 
@@ -468,22 +491,7 @@ def index():
     cursor = db.cursor()
     global b_mask
 
-    #update_table(db)
-    #update_browser(db)
-    #update_hashes(db)
-    #update_langs(db)
-    #update_ratio(db)
-    #update_simple_resolution(db)
-    #return
 
-    #table = get_gpu_entropy(cursor)
-    #table += get_lang_entropy(cursor)
-    #for feat in Feature_Lists.All:
-    #    table += get_feature_entropy(cursor, feat)
-    #table += get_feature_entropy(cursor, "timezone, resolution, fontlist, adBlock, plugins, agent, headerKeys, cookie, accept, encoding, language, hashes, langs")
-    #for row in table:
-    #    print row
-    #return
 
 
 
@@ -495,46 +503,60 @@ def index():
 
 
 
-    mode = 4
+    mode = 2
     if mode == 0:
-        getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
+        update_table(db)
+        update_browser(db)
+        update_hashes(db)
+        update_langs(db)
+        update_ratio(db)
+        update_simple_resolution(db)
+        update_gpu(db)
     elif mode == 1:
-        table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Boda, browsers)
-        #table.run(cursor, table_name, extra_selector=" and browser!='IE' and browser !='Edge'")
-        #table.run(cursor, table_name, extra_selector="and platform like '%NT%'")
-        #table.run(cursor, table_name, extra_selector="and gpu!='SwiftShader'")
-        #table.run(cursor, table_name, extra_selector="and platform like '%mac%'")
-        table.run(cursor, table_name, extra_selector="")
-        #print("{:latex}".format(table))
-        print (table)
-    elif mode == 2:
-        table = Diff_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, Feature_Lists.Amiunique, browsers)
-        table.run(cursor, table_name)
-        #print("{:latex}".format(table))
-        print("{}".format(table))
-    elif mode == 3:
         table = Summary_Table(browsers)
         table.run(cursor, table_name)
         #print("{:latex}".format(table))
         print("{}".format(table))
-    elif mode == 4:
+    elif mode == 2:
         table = Feature_Table(browsers)
         table.run(cursor, table_name)
         print("{:latex}".format(table))
         #print("{}".format(table))
+    elif mode == 3:
+        table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
+        table.run(cursor, table_name, extra_selector="")
+        #print("{:latex}".format(table))
+        print (table)
+    elif mode == 4:
+        their = [[0.570, 0.531],[0.578, 0.817], [0.446, 0.738], [0.277, 0.256], [0.201, 0.161], [0.042, 0.019]]
+        title = ["Type", "Ours", "AmIUnique", "Panopticlick"]
+        table = []
+        for feat in Feature_Lists.Entropy:
+            table += get_feature_entropy(cursor, feat)
+        print "{:<25}{:<25}{:<25}{:<25}".format(*title)
+        for i in range(len(table)):
+            print "{:<25}{:<25.3f}".format(*table[i]) + "{:<25.3f}{:<25}".format(*their[i])
+
+
     elif mode == 5:
+        table = Diff_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, Feature_Lists.Amiunique, browsers)
+        table.run(cursor, table_name)
+        #print("{:latex}".format(table))
+        print("{}".format(table))
+    elif mode == 6:
         table = Gpu_Table()
         table.run(cursor, 'chrome', 'ie', table_name, "")
         print(table)
-    elif mode == 6:
+    elif mode == 7:
         print get_res_table(cursor, browsers, "fonts", extra_selector="")
-        f = open("Font_All_Mask.txt", "w")
+        f = open("Font_Mask.txt", "w")
         f.write(json.dumps(b_mask))
         f.close()
+    elif mode == 8:
+        for row in get_gpu_entropy(cursor):
+            print row
     else:
         gen_masks = Gen_Masks(browsers)
-        #b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu != 'Microsoft Basic Render Driver'")
-        #b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='Microsoft Basic Render Driver'")
         b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and platform like '%NT%'")
         f = open("GPU_Mask.txt", "w")
         f.write(json.dumps(b_mask))

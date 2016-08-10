@@ -248,7 +248,10 @@ class Single_Table(Table_Base):
     self.feat_list, self.browsers = feat_list, browsers
 
   def __entropy(self, cursor, feature, table_name):
-    cursor.execute("SELECT {} from {}".format(','.join(feature), table_name))
+    if type(feature) is list:
+      cursor.execute("SELECT {} from {}".format(','.join(feature), table_name))
+    else:
+      cursor.execute("SELECT {} from {}".format(feature, table_name))
     data = cursor.fetchall()
     val_to_count = {}
     for val in data:
@@ -336,7 +339,7 @@ class Single_Table(Table_Base):
       sum_weights += count
       ave_u += u*count
 
-    #self.entropy = self.__entropy(cursor, self.feat_list, table_name)
+    self.entropy = self.__entropy(cursor, self.feat_list, table_name)
     self.summary = ave_u/sum_weights
     self.print_summary = self.__print_summary()
     self.latex_summary = self.__latex_summary()
@@ -362,8 +365,7 @@ class Feature_Table(Table_Base):
     cb.run(cursor, table_name)
     s = Results_Table.factory(Fingerprint_Type.SINGLE, feature, self.browsers)
     s.run(cursor, table_name)
-
-    return (s.summary,) + cb.summary
+    return (s.summary,,s.entropy,) + (cb.summary, cb.entropy)
 
   def run(self, cursor, table_name, extra_selector=""):
     self.res_table = []
@@ -373,8 +375,8 @@ class Feature_Table(Table_Base):
     self.print_table = [["Feature", "Single-browser", "\multicolumn{3}{c}{Cross-browser} \\\\ \hline & & Sum & Cross Browser Rate & Unique Rate"]]
     for i in range(len(self.res_table)):
       feat = Feature_Lists.All[i]
-      su, cb, cbu = self.res_table[i]
-      self.print_table.append([Feature_Lists.Mapped_All[i], "{:3.1f}%".format(su*100), "{:3.1f}%".format(cb*cbu*100.0),"{:3.1f}%".format(cb*100.0),"{:3.1f}%".format(cbu*100)])
+      su, se, cb, cbu,se = self.res_table[i]
+      self.print_table.append([Feature_Lists.Mapped_All[i], "{:3.1f}%".format(se*100), "{:3.1f}%".format(cb*cbu*100.0),"{:3.1f}%".format(cb*100.0),"{:3.1f}%".format(cbu*100)])
 
     ami_res = self.__helper(cursor, table_name, Feature_Lists.Amiunique, extra_selector)
     su, cb, cbu = ami_res
