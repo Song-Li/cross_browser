@@ -410,6 +410,9 @@ b_mask = {}
 def get_res_table(cursor, browsers, feat_list, cross_browser=True, extra_selector=""):
     global b_mask
     global mask
+    final = [1 for i in range(4422)]
+    #for i in range(200, 4422):
+    #    final[i] = 0
     result_table = {}
     if cross_browser:
         for i in range(len(browsers)):
@@ -421,6 +424,9 @@ def get_res_table(cursor, browsers, feat_list, cross_browser=True, extra_selecto
                     }
                 )
                 if mask is not None:
+                    for j in range(len(mask)):
+                        final[j] = final[j] & mask[j]
+
                     b_mask.update(
                         {
                             "{}{}".format(b1,b2): mask
@@ -450,6 +456,10 @@ def get_res_table(cursor, browsers, feat_list, cross_browser=True, extra_selecto
                     (b, b): getRes(b, b, cursor, True, feat_list, fp_type=Fingerprint_Type.SINGLE, extra_selector=extra_selector)
                 }
             )
+
+    for k,v in b_mask.items():
+        b_mask[k] = final
+
     return result_table
 
 def index():
@@ -483,17 +493,13 @@ def index():
     browsers = [b for b in browsers if cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)) > 20]
 
 
-    #print get_res_table(cursor, browsers, "fonts", extra_selector="")
-    #f = open("Font_Mask.txt", "w")
-    #f.write(json.dumps(b_mask))
-    #f.close()
-    #return
+
 
     mode = 4
     if mode == 0:
         getRes("Firefox", "Chrome", cursor, False, "hashes", fp_type=Fingerprint_Type.CROSS)
     elif mode == 1:
-        table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
+        table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Boda, browsers)
         #table.run(cursor, table_name, extra_selector=" and browser!='IE' and browser !='Edge'")
         #table.run(cursor, table_name, extra_selector="and platform like '%NT%'")
         #table.run(cursor, table_name, extra_selector="and gpu!='SwiftShader'")
@@ -520,6 +526,11 @@ def index():
         table = Gpu_Table()
         table.run(cursor, 'chrome', 'ie', table_name, "")
         print(table)
+    elif mode == 6:
+        print get_res_table(cursor, browsers, "fonts", extra_selector="")
+        f = open("Font_All_Mask.txt", "w")
+        f.write(json.dumps(b_mask))
+        f.close()
     else:
         gen_masks = Gen_Masks(browsers)
         #b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and gpu!='SwiftShader' and gpu != 'Microsoft Basic Render Driver'")

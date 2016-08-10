@@ -2,6 +2,7 @@
 
 from fingerprint import Fingerprint_Type, Fingerprint, Feature_Lists
 from enum import Enum
+import math
 
 
 class Table_Base():
@@ -157,16 +158,20 @@ class Cross_Table(Table_Base):
             }
           )
 
+    entropy = 0.0
     num_distinct = max(float(len(fp_to_count)), 1.0)
     num_unique = 0.0
     for _, count in fp_to_count.items():
       if count == 1:
         num_unique += 1.0
+      
+      P = float(count) / float(num_cross_browser) 
+      entropy -= P * math.log(P, 2)
 
     num_uids = max(float(len(uids)), 1.0)
     num_cross_browser = max(num_cross_browser, 1.0)
 
-    return int(num_uids), num_cross_browser/num_uids, num_unique/num_cross_browser
+    return int(num_uids), num_cross_browser/num_uids, num_unique/num_cross_browser, entropy, num_cross_browser
 
   def __print_summary(self):
     __str = ""
@@ -186,6 +191,8 @@ class Cross_Table(Table_Base):
 
   def run(self, cursor, table_name, extra_selector=""):
     self.res_table = {}
+    cross_count = 0
+    self.entropy = 0.0
     for i in range(len(self.browsers)):
       for j in range(i + 1, len(self.browsers)):
         b1, b2 = self.browsers[i], self.browsers[j]
@@ -209,19 +216,22 @@ class Cross_Table(Table_Base):
       row = [b1]
       for b2 in self.browsers:
         try:
-          num, cb, u = self.res_table[(b1, b2)]
+          num, cb, u, e, cbn = self.res_table[(b1, b2)]
           row.append("{:3d} {:3.1f}%CB  {:3.1f}%Uni {:3.1f}".format(num, cb*100.0, u*100.0, cb*u*100.0))
         except:
           row.append("")
       self.print_table.append(row)
 
     ave_cb, ave_u, sum_weights = 0.0, 0.0, 0.0
+
     for _, val in self.res_table.items():
       try:
-        count, cb, u = val
+        count, cb, u, e, cbn = val
       except:
         continue
 
+      cross_count += cbn
+      self.entropy += float(cbn) * e
       sum_weights += float(count)
       ave_cb += float(cb)*float(count)
       ave_u += float(u)*float(count)
@@ -229,11 +239,32 @@ class Cross_Table(Table_Base):
     self.summary = ave_cb/sum_weights, ave_u/sum_weights
     self.print_summary = self.__print_summary()
     self.latex_summary = self.__latex_summary()
+    self.entropy /= cross_count
+
 
 class Single_Table(Table_Base):
   def __init__(self, feat_list, browsers):
     Table_Base.__init__(self)
     self.feat_list, self.browsers = feat_list, browsers
+
+  def __entropy(self, cursor, feature, table_name):
+    cursor.execute("SELECT {} from {}".format(','.join(feature), table_name))
+    data = cursor.fetchall()
+    val_to_count = {}
+    for val in data:
+        if val not in val_to_count:
+            val_to_count.update({val : 1})
+        else:
+            val_to_count[val] += 1
+
+    entropy = 0
+    for _, count in val_to_count.items():
+        P = float(count)/float(len(data))
+        entropy -= P * math.log(P, 2)
+
+    #entropy /= math.log(len(data), 2)
+    return entropy
+
 
   def __single_helper(self, b, cursor, table_name, attrs, extra_selector):
     cursor.execute("SELECT image_id FROM {} WHERE browser='{}' {}".format(table_name, b, extra_selector))
@@ -305,6 +336,7 @@ class Single_Table(Table_Base):
       sum_weights += count
       ave_u += u*count
 
+    #self.entropy = self.__entropy(cursor, self.feat_list, table_name)
     self.summary = ave_u/sum_weights
     self.print_summary = self.__print_summary()
     self.latex_summary = self.__latex_summary()
@@ -338,7 +370,7 @@ class Feature_Table(Table_Base):
     for feat in Feature_Lists.All:
       self.res_table.append(self.__helper(cursor, table_name, feat, extra_selector))
 
-    self.print_table = [["Feature", "Single-browser", "\multicolumn{3}{c}{Cross-browser} \\\\ \hline & & Sum & Cross Browser Rate & Unique Rate \\\\ "]]
+    self.print_table = [["Feature", "Single-browser", "\multicolumn{3}{c}{Cross-browser} \\\\ \hline & & Sum & Cross Browser Rate & Unique Rate"]]
     for i in range(len(self.res_table)):
       feat = Feature_Lists.All[i]
       su, cb, cbu = self.res_table[i]
@@ -560,34 +592,30 @@ class Summary_Table(Table_Base):
     Table_Base.__init__(self)
     self.browsers = browsers
 
+  def __get_row(self, cursor, table_name, name, feature, cb_feature):
+    row = [name]
+    single = Results_Table.factory(Fingerprint_Type.SINGLE, feature, self.browsers)
+    single.run(cursor, table_name)
+
+    cross = Results_Table.factory(Fingerprint_Type.CROSS, cb_feature, self.browsers)
+    cross.run(cursor, table_name)
+
+    row.append("{:3.2f}%".format(single.summary*100.0))
+    row.append("{:3.2f}".format(single.entropy))
+    row.append("{:3.2f}%".format(cross.summary[0]*cross.summary[1]*100))
+    row.append("{:3.2f}".format(cross.entropy))
+    row.append("{:3.2f}%".format(cross.summary[0]*100.0))
+    return row
+
   def run(self, cursor, table_name):
-
     self.print_table = []
-    self.print_table.append(["Type", "amiunique.org", "Our's"])
-    row = ["Cross Browser"]
+    self.print_table.append(["Features", "Unique", "Entropy", "Unique", "Entropy", "CB Rate"])
 
-    ami = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.CB_Amiunique, self.browsers)
-    ami.run(cursor, table_name)
-
-    ours = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, self.browsers)
-    ours.run(cursor, table_name)
-
-    summary = ami.summary
-    row.append("{:3.2f}%Iden".format(summary[0]*summary[1]*100.0))
-    summary = ours.summary
-    row.append("{:3.2f}%Iden".format(summary[0]*summary[1]*100.0))
+    row = self.__get_row(cursor, table_name, 'Amiunique', Feature_Lists.Amiunique, Feature_Lists.CB_Amiunique)
     self.print_table.append(row)
 
-    row = ["Single Browser"]
+    row = self.__get_row(cursor, table_name, 'Boda', Feature_Lists.Boda, Feature_Lists.Boda)
+    self.print_table.append(row)
 
-    ami = Results_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Amiunique, self.browsers)
-    ami.run(cursor, table_name)
-
-    ours = Results_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, self.browsers)
-    ours.run(cursor, table_name)
-
-    summary = ami.summary
-    row.append("{:3.2f}%Iden".format(summary*100.0))
-    summary = ours.summary
-    row.append("{:3.2f}%Iden".format(summary*100.0))
+    row = self.__get_row(cursor, table_name, 'Ours', Feature_Lists.Single_Browser, Feature_Lists.Cross_Browser)
     self.print_table.append(row)

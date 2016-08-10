@@ -5,13 +5,14 @@ from sets import Set
 from json import loads
 
 class Feature_Lists(Enum):
-  Mapped_All="agent, timezone, resolution, fontlist (Flash), plugins, cookies enabled, localstorage enabled, acceptable formats, encoding, headerkeys, Do not track?, Ad Block Enabled, Canvas Rendering, Prefered Language, GPU Images, Writing Sysem Supported?, Fonts (javascript), Writitng System Display, Video, Audio".split(",")
-  All="agent, timezone, simple_resolution, fontlist, plugins, cookie, localstorage, accept, encoding, headerkeys, dnt, adBlock, canvastest, language, hashes, langs, fonts, lang_hash, video, audio".replace(" ", "").split(",")
-  Cross_Browser="ratio, fonts, langs, audio, timezone, accept, hashes".replace(" ", "").split(",")
-  #Cross_Browser="fonts".replace(" ", "").split(",")
+  Mapped_All="Agent, Timezone, Screen Ratio, Fontlist (Flash), Plugins, Cookies enabled, Localstorage enabled, Platform, Acceptable formats, Encoding, Headerkeys, Do not track?, Ad Block Enabled, Canvas Rendering, Prefered Language, GPU Images, Writing Sysem Supported?, Fonts (javascript), Writitng System Display, Video, Audio, Cpu cores".split(",")
+  All="agent, timezone, ratio, fontlist, plugins, cookie, localstorage, platform, accept, encoding, headerkeys, dnt, adBlock, canvastest, language, hashes, langs, fonts, lang_hash, video, audio, cpucores".replace(" ", "").split(",")
+  Cross_Browser="cpucores, ratio, fonts, langs, audio, timezone, accept, hashes".replace(" ", "").split(",")
+  #Cross_Browser="cpucores".replace(" ", "").split(",")
   Single_Browser=All
   Amiunique="agent, timezone, simple_resolution, plugins, cookie, localstorage, accept, encoding, language, headerkeys, dnt, adBlock, canvastest".replace(" ", "").split(",")
-  CB_Amiunique="accept, timezone, ratio, localstorage".replace(" ", "").split(",")
+  CB_Amiunique="accept, timezone, simple_resolution, localstorage".replace(" ", "").split(",")
+  Boda="platform, simple_resolution, timezone, fonts".replace(" ", "").split(",")
 
 def read_file(name):
   with open(name, "r") as file:
@@ -22,6 +23,7 @@ class Masks(Enum):
     GPU = loads(read_file("GPU_Mask.txt"))
     Lang = loads(read_file("Lang_Mask.txt"))
     Font = loads(read_file("Font_Mask.txt"))
+    #Font = loads(read_file("Font_All_Mask.txt"))
   except:
     pass
 
@@ -231,6 +233,21 @@ class Fingerprint():
         else:
           self.fp.append(
             Feature_Fingerprint(data.split('_')[0])
+          )
+      elif attr == 'cpucores':
+        if self.browser == 'Chrome' and self.b2 == 'Firefox':
+          self.fp.append(
+            data.split(',')[0]
+          )
+
+        if self.browser == 'Firefox' and self.b2 == 'Chrome':
+          self.cursor.execute("SELECT user_id from {} where image_id='{}'".format(self.table_name, self.image_id))
+          user = self.cursor.fetchone()[0]
+
+          self.cursor.execute("SELECT {} from {} where user_id='{}' and browser='{}'".format(attr, self.table_name, user, 'Chrome'))
+          data = self.cursor.fetchone()[0]
+          self.fp.append(
+            data.split(',')[0]
           )
 
       else:
