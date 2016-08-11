@@ -108,11 +108,11 @@ def getPlatform(agent):
 def getBrowser(vendor, agent):
     browser = ''
     if agent.find('Vivaldi') != -1:
-        browser = 'Vivaldi'
+        browser = 'Other'
     elif agent.find('Maxthon') != -1:
         browser = 'IE'
     elif agent.find('ASW') != -1:
-        browser = 'ASW'
+        browser = 'Other'
     elif agent.find('Firefox') != -1:
         browser = 'Firefox'
     elif vendor.find('Microsoft') != -1:
@@ -498,7 +498,7 @@ def index():
     cursor.execute("SELECT DISTINCT(browser) from {}".format(table_name))
     browsers = [b for b, in cursor.fetchall()]
     browsers = sorted(browsers, key=lambda b: -cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)))
-    browsers = [b for b in browsers if cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)) > 20]
+    #browsers = [b for b in browsers if cursor.execute("SELECT gpu from {} where browser='{}'".format(table_name, b)) > 20]
 
 
 
@@ -523,7 +523,9 @@ def index():
         print("{:latex}".format(table))
         #print("{}".format(table))
     elif mode == 3:
-        table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
+        #table = Results_Table.factory(Fingerprint_Type.CROSS, Feature_Lists.Cross_Browser, browsers)
+        table = Results_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, browsers)
+        print browsers
         table.run(cursor, table_name, extra_selector="")
         #print("{:latex}".format(table))
         print (table)

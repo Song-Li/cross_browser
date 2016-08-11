@@ -36,7 +36,7 @@ class Gen_Masks():
         index = []
         uid_stability = {}
         instability = {}
-        mask = [1 for _ in range(27)]
+        mask = [1 for _ in range(28)]
 
         if len(uids) == 0:
             return 0, mask
@@ -52,10 +52,10 @@ class Gen_Masks():
                 # Feature to mask
                 feature = "hashes"
                 cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image1_id))
-                hashes_1 = cursor.fetchone()[0].split("&")[:27]
+                hashes_1 = cursor.fetchone()[0].split("&")[:28]
 
                 cursor.execute("SELECT {} FROM {} WHERE image_id='{}'".format(feature, table_name, image2_id))
-                hashes_2 = cursor.fetchone()[0].split("&")[:27]
+                hashes_2 = cursor.fetchone()[0].split("&")[:28]
 
                 if len(hashes_1) == len(hashes_2):
 

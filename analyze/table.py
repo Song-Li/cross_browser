@@ -38,12 +38,11 @@ class Table_Base():
         header = "\\begin{tabular}{l"
         for _ in range(len(row)):
           header += "c"
-        header += "cc"
+        header += "c"
         header += "}\hline"
         latex += "{}\n".format(header)
         latex += "{} {}\n".format(" & ".join(row), "\\\\ \hline")
       else:
-        latex += "{} {}\n".format(" & " * (len(row) - 1), "\\\\[-7pt]")
         latex += "{} {}\n".format(" & ".join(row).replace('%', '\%'), "\\\\")
 
     latex += "\hline \\end{tabular}\n"
@@ -365,27 +364,142 @@ class Feature_Table(Table_Base):
     cb.run(cursor, table_name)
     s = Results_Table.factory(Fingerprint_Type.SINGLE, feature, self.browsers)
     s.run(cursor, table_name)
-    return (s.summary,,s.entropy,) + (cb.summary, cb.entropy)
+    return s.summary,s.entropy,cb.summary[0],cb.summary[1],cb.entropy
+
+  def __hashes_helper(self, cursor, b1, b2, img_id, table_name):
+    cursor.execute("SELECT user_id FROM {} WHERE browser='{}'".format(table_name, b1))
+    tuids = [uid for uid, in cursor.fetchall()]
+
+    uids = []
+    for uid in tuids:
+      cursor.execute("SELECT user_id FROM {} WHERE user_id='{}' AND browser='{}'".format(table_name, uid, b2))
+      for uid, in cursor.fetchall():
+        uids.append(uid)
+
+    if len(uids) is 0:
+        return None
+
+    fp_to_count = {}
+    num_cross_browser = 0.0
+
+    for uid in uids:
+      cursor.execute("SELECT hashes FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b1, uid))
+      hashes1 = cursor.fetchone()[0].split('&')
+
+      cursor.execute("SELECT hashes FROM {} WHERE browser='{}' AND user_id='{}'".format(table_name, b2, uid))
+      hashes2 = cursor.fetchone()[0].split('&')
+
+      fp_1 = hashes1[img_id] 
+      fp_2 = hashes2[img_id] 
+
+      if fp_1 == fp_2:
+        num_cross_browser += 1
+        if fp_1 in fp_to_count:
+          fp_to_count[fp_1] += 1
+        else:
+          fp_to_count.update(
+            {
+              fp_1: 1
+            }
+          )
+
+    entropy = 0.0
+    num_distinct = max(float(len(fp_to_count)), 1.0)
+    num_unique = 0.0
+    for _, count in fp_to_count.items():
+      if count == 1:
+        num_unique += 1.0
+      
+      P = float(count) / float(num_cross_browser) 
+      entropy -= P * math.log(P, 2)
+
+    num_uids = max(float(len(uids)), 1.0)
+    num_cross_browser = max(num_cross_browser, 1.0)
+
+    return int(num_uids), num_cross_browser/num_uids, num_unique/num_cross_browser, entropy, num_cross_browser
+
+  def __single_entropy(self, cursor, table_name):
+    cursor.execute("SELECT hashes from {}".format(table_name))
+    image_to_hashes = {}
+    for h, in cursor.fetchall():
+      for i, e in enumerate(h.split("&")):
+        if i not in image_to_hashes:
+          image_to_hashes.update({i : [e]})
+        else:
+          image_to_hashes[i].append(e)
+
+    table = []
+    for num, hashes in image_to_hashes.items():
+      count_per_hash = {}
+      for h in hashes:
+        if h not in count_per_hash:
+          count_per_hash.update({h : 1})
+        else:
+          count_per_hash[h] += 1
+
+      entropy = 0
+      for _, count in count_per_hash.items():
+        P = float(count)/float(len(hashes))
+        entropy -= P * math.log(P, 2)
+
+      #entropy /= math.log(len(hashes), 2)
+      table.append(entropy)
+    return table
+
+  def __hashes(self, cursor, table_name):
+    sin = self.__single_entropy(cursor, table_name)
+    table = [[] for i in range(28)]
+    for i in range(len(self.browsers)):
+      b1 = self.browsers[i]
+      for j in range(i + 1, len(self.browsers)):
+        b2 = self.browsers[j]
+        for k in range(28):
+          table[k].append(self.__hashes_helper(cursor, b1, b2, k, table_name))
+
+    res = [[0.0, 0.0, 0.0] for i in range(28)]
+    cb_count = 0
+
+    for i in range(28):
+      cb_count = 0
+      for t in table[i]:
+        if not t:
+          continue
+        nu, cb, cbu, en, cbn = t
+        cb_count += cbn
+        res[i][1] += en * cbn
+        res[i][2] += cb * cbn
+      res[i][0] = sin[i]
+      res[i][1] /= cb_count
+      res[i][2] /= cb_count
+    return res
 
   def run(self, cursor, table_name, extra_selector=""):
+    images = self.__hashes(cursor, table_name)
     self.res_table = []
     for feat in Feature_Lists.All:
       self.res_table.append(self.__helper(cursor, table_name, feat, extra_selector))
+      print 'finished ' + feat
 
-    self.print_table = [["Feature", "Single-browser", "\multicolumn{3}{c}{Cross-browser} \\\\ \hline & & Sum & Cross Browser Rate & Unique Rate"]]
+    self.print_table = [["Feature", "Single-browser", "\multicolumn{2}{c}{Cross-browser} \\\\ \hline & & Sum & Cross Browser Rate"]]
     for i in range(len(self.res_table)):
       feat = Feature_Lists.All[i]
-      su, se, cb, cbu,se = self.res_table[i]
-      self.print_table.append([Feature_Lists.Mapped_All[i], "{:3.1f}%".format(se*100), "{:3.1f}%".format(cb*cbu*100.0),"{:3.1f}%".format(cb*100.0),"{:3.1f}%".format(cbu*100)])
+      su, se, cb, cbu, ce = self.res_table[i]
+      self.print_table.append([Feature_Lists.Mapped_All[i], "{:3.2f}".format(se), "{:3.2f}".format(ce),"{:3.2f}%".format(cb*100.0)])
+    for i in range(len(images)):
+        self.print_table.append(["image " + str(i), "{:3.2f}".format(images[i][0]), "{:3.2f}".format(images[i][1]), "{:3.2f}%".format(images[i][2] * 100.0)])
+
 
     ami_res = self.__helper(cursor, table_name, Feature_Lists.Amiunique, extra_selector)
-    su, cb, cbu = ami_res
-    self.print_table.append(["Amiunique", "{:3.1f}%".format(su*100), "{:3.1f}%".format(cb*cbu*100.0),"{:3.1f}%".format(cb*100.0),"{:3.1f}%".format(cbu*100)])
+    su, se, cb, cbu, ce= ami_res
+    self.print_table.append(["Amiunique", "{:3.2f}".format(se), "{:3.2f}".format(ce),"{:3.2f}%".format(cb*100.0)])
 
     cross_res = self.__helper(cursor, table_name, Feature_Lists.Cross_Browser, extra_selector)
-    su, cb, cbu = cross_res
-    self.print_table.append(["CBFeatures", "{:3.1f}%".format(su*100), "{:3.1f}%".format(cb*cbu*100.0),"{:3.1f}%".format(cb*100.0),"{:3.1f}%".format(cbu*100)])
+    su, se, cb, cbu, ce = cross_res
+    self.print_table.append(["CB Features", "{:3.2f}".format(se), "{:3.2f}".format(ce),"{:3.2f}%".format(cb * 100.0)])
 
+    single_res = self.__helper(cursor, table_name, Feature_Lists.Single_Browser, extra_selector)
+    su, se, cb, cbu, ce = single_res
+    self.print_table.append(["All Features", "{:3.2f}".format(se), "{:3.2f}".format(ce),"{:3.2f}%".format(cb * 100.0)])
 
 class VAL(Enum):
   EQ = 0

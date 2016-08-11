@@ -215,11 +215,18 @@ class Fingerprint():
         self.fp.append(
           Lang_Fingerprint(data, self.fp_type, self.browser, self.b2)
         )
+
       elif attr == 'hashes':
         hashes = data.split("&")
-        self.fp.append(
-          GPU_Fingerprint(hashes[:27], self.fp_type, not self.software_render, self.browser, self.b2, masks=self.masks)
-        )
+        if self.browser == self.b2:
+            self.fp.append(
+              GPU_Fingerprint(hashes[:28], self.fp_type, not self.software_render, self.browser, self.b2, masks=[1 for i in range(28)])
+            )
+        else:
+            self.fp.append(
+              GPU_Fingerprint(hashes[:28], self.fp_type, not self.software_render, self.browser, self.b2, masks=self.masks)
+            )
+
       elif attr == 'fonts':
         self.fp.append(
           Font_Fingerprint(list(data), self.fp_type, self.browser, self.b2)
