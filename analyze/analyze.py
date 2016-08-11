@@ -100,6 +100,43 @@ def update_table(db):
     db.commit()
     cursor.close()
 
+def software_row(cursor, browser, software):
+    cursor.execute("SELECT gpu,hashes from {} where browser='{}' and gpu like '%{}%'".format(table_name, browser, software))
+
+    hashes = [set() for i in range(28)]
+    hash_all = set()
+    count = []
+    row = []
+    for r,h in cursor.fetchall():
+        hash_all.add(h)
+        count.append(h)
+        l = h.split('&')
+        for i in range(28):
+            hashes[i].add(l[i])
+
+    uni = 0
+    for c in count:
+        if count.count(c) == 1:
+            uni += 1
+
+    row.append(browser)
+    row.append(len(count))
+    row.append(len(hash_all))
+    row.append(uni)
+    return row
+
+
+def get_software_table(cursor):
+    #cursor.execute("SELECT gpu,hashes from {} where browser='Chrome' and gpu like '%Swift%'".format(table_name))
+    table = [["Browser", "Number of software", "Number of distinct hashes", "Unique"]]
+    row = software_row(cursor, 'Chrome', 'Swift')
+    table.append(row)
+    row = software_row(cursor, 'IE', 'Driver')
+    table.append(row)
+    return table
+    #for i in range(28):
+    #    print len(hashes[i])
+
 def getPlatform(agent):
     p = agent.split('(')
     p = p[1].split(';')
@@ -503,7 +540,7 @@ def index():
 
 
 
-    mode = 2
+    mode = 9
     if mode == 0:
         update_table(db)
         update_browser(db)
@@ -539,7 +576,6 @@ def index():
         for i in range(len(table)):
             print "{:<25}{:<25.3f}".format(*table[i]) + "{:<25.3f}{:<25}".format(*their[i])
 
-
     elif mode == 5:
         table = Diff_Table.factory(Fingerprint_Type.SINGLE, Feature_Lists.Single_Browser, Feature_Lists.Amiunique, browsers)
         table.run(cursor, table_name)
@@ -557,6 +593,10 @@ def index():
     elif mode == 8:
         for row in get_gpu_entropy(cursor):
             print row
+    elif mode == 9:
+        table = get_software_table(cursor)
+        for t in table:
+            print "{:<25}{:<25}{:<25}{:<25}".format(*t)
     else:
         gen_masks = Gen_Masks(browsers)
         b_mask = gen_masks.run(cursor, Feature_Lists.Cross_Browser, table_name, extra_selector="and platform like '%NT%'")

@@ -4,8 +4,17 @@ import MySQLdb
 db = MySQLdb.connect("localhost", "erik", "erik", 'cross_browser')
 cursor = db.cursor()
 
-cursor.execute("select distinct(ip) from round_3_data")
+ips = set()
 
+cursor.execute("select distinct(user_id) from round_3_data")
+for c in cursor.fetchall():
+    ips.add(c)
+cursor.execute("select distinct(user_id) from round_2_data")
+for c in cursor.fetchall():
+    ips.add(c)
+print len(ips)
+
+'''
 uids = []
 resolution = []
 stupid = {}
@@ -47,3 +56,4 @@ for uid, in cursor.fetchall():
 
 for s in stupid:
     print s, stupid[s]
+'''

@@ -5,8 +5,10 @@ from sets import Set
 from json import loads
 
 class Feature_Lists(Enum):
-  Mapped_All="Agent, Timezone, Screen Ratio, Fontlist (Flash), Plugins, Cookies enabled, Localstorage enabled, Platform, Acceptable formats, Encoding, Headerkeys, Do not track?, Ad Block Enabled, Canvas Rendering, Prefered Language, GPU Images, Writing Sysem Supported?, Fonts (javascript), Writitng System Display, Video, Audio, Cpu cores, Renderer, Simpled Renderer, Vendor".split(",")
-  All="agent, timezone, ratio, fontlist, plugins, cookie, localstorage, platform, accept, encoding, headerkeys, dnt, adBlock, canvastest, language, hashes, langs, fonts, lang_hash, video, audio, cpucores, gpu, simple_gpu, vendor".replace(" ", "").split(",")
+  Mapped_All="Agent, Timezone, Screen Ratio, Resolution, Simple Resolution, Fontlist (Flash), Plugins, Cookies enabled, Localstorage enabled, Platform, Acceptable formats, Encoding, Headerkeys, Do not track?, Ad Block Enabled, Canvas Rendering, Prefered Language, GPU Images, Writing Sysem Supported?, Fonts (javascript), Writitng System Display, Video, Audio, Cpu cores, Renderer, Simpled Renderer, Vendor".split(",")
+  #Mapped_All="Resolution, Simple Resolution".split(",")
+  All="agent, timezone, ratio, resolution, simple_resolution, fontlist, plugins, cookie, localstorage, platform, accept, encoding, headerkeys, dnt, adBlock, canvastest, language, hashes, langs, fonts, lang_hash, video, audio, cpucores, gpu, simple_gpu, vendor".replace(" ", "").split(",")
+  #All="resolution, simple_resolution".replace(" ", "").split(",")
   Cross_Browser="cpucores, ratio, fonts, langs, audio, timezone, accept, hashes".replace(" ", "").split(",")
   #Cross_Browser="cpucores".replace(" ", "").split(",")
   Entropy = "agent, plugins, fontlist, simple_resolution, timezone, cookie".replace(" ","").split(",")
