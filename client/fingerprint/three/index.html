@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>three.js webgl - materials - compressed textures</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <table class="wikitable sortable jquery-tablesorter" style="text-align:left">
+    <thead><tr>
+    <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Name of script</th>
+    <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Type</th>
+    <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Population actively using (in millions)</th>
+    <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Languages associated with</th>
+    <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Regions with predominant usage</th>
+    </tr></thead><tbody>
+    <tr>
+    <td><b><a href="/wiki/Latin_script" title="Latin script">Latin</a></b><br>
+    Latin</td>
+    <td><a href="/wiki/Alphabet" title="Alphabet">Alphabet</a></td>
+    <td><span class="sortkey">4900000</span>over 4900<sup id="cite_ref-4" class="reference"><a href="#cite_note-4">[3]</a></sup></td>
+    <td><a href="/wiki/English_language" title="English language">English</a>, <a href="/wiki/Spanish_language" title="Spanish language">Spanish</a>, <a href="/wiki/French_language" title="French language">French</a>, <a href="/wiki/Portuguese_language" title="Portuguese language">Portuguese</a>, <a href="/wiki/Romanian_language" title="Romanian language">Romanian</a>, <a href="/wiki/Italian_language" title="Italian language">Italian</a>, <a href="/wiki/Malay-Indonesian" class="mw-redirect" title="Malay-Indonesian">Malay-Indonesian</a>, <a href="/wiki/German_language" title="German language">German</a>, <a href="/wiki/Turkish_language" title="Turkish language">Turkish</a>, <a href="/wiki/Vietnamese_language" title="Vietnamese language">Vietnamese</a>, <a href="/wiki/Polish_language" title="Polish language">Polish</a>, <a href="/wiki/Dutch_language" title="Dutch language">Dutch</a>, <a href="/wiki/Swedish_language" title="Swedish language">Swedish</a>, <a href="/wiki/Latin_language" class="mw-redirect" title="Latin language">Latin</a>, others</td>
+    <td>Worldwide</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Chinese_characters" title="Chinese characters">Chinese</a></b><br>
+    汉字<br>
+    漢字</td>
+    <td><a href="/wiki/Logographic" class="mw-redirect" title="Logographic">Logographic</a></td>
+    <td><span class="sortkey">1340000</span>1340<sup id="cite_ref-5" class="reference"><a href="#cite_note-5">[4]</a></sup></td>
+    <td><a href="/wiki/Chinese_language" title="Chinese language">Chinese</a>, <a href="/wiki/Japanese_language" title="Japanese language">Japanese</a> (<a href="/wiki/Kanji" title="Kanji">Kanji</a>), <a href="/wiki/Korean_language" title="Korean language">Korean</a> (<a href="/wiki/Hanja" title="Hanja">Hanja</a>),<sup id="cite_ref-6" class="reference"><a href="#cite_note-6">[5]</a></sup><a href="/wiki/Vietnamese_language" title="Vietnamese language">Vietnamese</a> (<a href="/wiki/Chu_Nom" class="mw-redirect" title="Chu Nom">Chu Nom</a> obsolete), <a href="/wiki/Zhuang_languages" title="Zhuang languages">Zhuang</a> (<a href="/wiki/Sawndip" title="Sawndip">Sawndip</a>)</td>
+    <td><a href="/wiki/Eastern_Asia" class="mw-redirect" title="Eastern Asia">Eastern Asia</a>, <a href="/wiki/Singapore" title="Singapore">Singapore</a>, <a href="/wiki/Malaysia" title="Malaysia">Malaysia</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Arabic_script" title="Arabic script">Arabic</a></b><br>
+    العربية</td>
+    <td><a href="/wiki/Abjad" title="Abjad">Abjad</a> or <a href="/wiki/Abugida" title="Abugida">abugida</a> (when <a href="/wiki/Arabic_diacritics" title="Arabic diacritics">diacritics</a> are used)</td>
+    <td><span class="sortkey">0660000</span>660+</td>
+    <td><a href="/wiki/Arabic_language" class="mw-redirect" title="Arabic language">Arabic</a>, <a href="/wiki/Persian_language" title="Persian language">Persian</a>, <a href="/wiki/Urdu" title="Urdu">Urdu</a>, <a href="/wiki/Punjabi_language" title="Punjabi language">Punjabi</a>, <a href="/wiki/Pashto_language" class="mw-redirect" title="Pashto language">Pashto</a>, <a href="/wiki/Sindhi_language" title="Sindhi language">Sindhi</a>, <a href="/wiki/Balochi_language" title="Balochi language">Balochi</a>, <a href="/wiki/Malay_language" title="Malay language">Malay</a> (<a href="/wiki/Jawi_alphabet" title="Jawi alphabet">Jawi</a>), <a href="/wiki/Uyghur_language" title="Uyghur language">Uyghur</a>, <a href="/wiki/Kazakh_language" title="Kazakh language">Kazakh</a> (in <a href="/wiki/China" title="China">China</a>), <a href="/wiki/Kurdish_Language" class="mw-redirect" title="Kurdish Language">Kurdish</a>, <a href="/wiki/Azerbaijani_Language" class="mw-redirect" title="Azerbaijani Language">Azeri</a> (in <a href="/wiki/Iran" title="Iran">Iran</a>), others</td>
+    <td><a href="/wiki/Middle_East_and_North_Africa" class="mw-redirect" title="Middle East and North Africa">Middle East and North Africa</a>, <a href="/wiki/Pakistan" title="Pakistan">Pakistan</a>, <a href="/wiki/India" title="India">India</a> (some states), <a href="/wiki/China" title="China">China</a> (<a href="/wiki/Xinjiang" title="Xinjiang">Xinjiang</a>), <a href="/wiki/Malaysia" title="Malaysia">Malaysia</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Devanagari" title="Devanagari">Devanagari</a></b><br>
+    देवनागरी</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0420000</span>420<sup id="cite_ref-7" class="reference"><a href="#cite_note-7">[6]</a></sup></td>
+    <td><a href="/wiki/Hindi_language" class="mw-redirect" title="Hindi language">Hindi</a>, <a href="/wiki/Marathi_language" title="Marathi language">Marathi</a>, <a href="/wiki/Konkani" class="mw-redirect" title="Konkani">Konkani</a>, <a href="/wiki/Nepali_language" title="Nepali language">Nepali</a>, <a href="/wiki/Sanskrit" title="Sanskrit">Sanskrit</a>, several others</td>
+    <td><a href="/wiki/India" title="India">India</a>, <a href="/wiki/Nepal" title="Nepal">Nepal</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Cyrillic" class="mw-redirect" title="Cyrillic">Cyrillic</a></b><br>
+    Кирилица</td>
+    <td><a href="/wiki/Alphabet" title="Alphabet">Alphabet</a></td>
+    <td><span class="sortkey">0250000</span>250</td>
+    <td><a href="/wiki/Bulgarian_language" title="Bulgarian language">Bulgarian</a>, <a href="/wiki/Russian_language" title="Russian language">Russian</a>, <a href="/wiki/Serbian_language" title="Serbian language">Serbian</a>, <a href="/wiki/Ukrainian_language" title="Ukrainian language">Ukrainian</a>, <a href="/wiki/Macedonian_language" title="Macedonian language">Macedonian</a>, others</td>
+    <td><a href="/wiki/Eastern_Europe" title="Eastern Europe">Eastern Europe</a>, <a href="/wiki/Central_Asia" title="Central Asia">Central Asia</a> and <a href="/wiki/Mongolia" title="Mongolia">Mongolia</a>, the <a href="/wiki/Russian_Far_East" title="Russian Far East">Russian Far East</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Bengali_alphabet" title="Bengali alphabet">Bengali</a> / <a href="/wiki/Assamese_alphabet" title="Assamese alphabet">Assamese</a></b><br>
+    বাংলা / অসমীয়া</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0220000</span>220<sup id="cite_ref-8" class="reference"><a href="#cite_note-8">[7]</a></sup></td>
+    <td><a href="/wiki/Bengali_language" title="Bengali language">Bengali</a>, <a href="/wiki/Assamese_Language" class="mw-redirect" title="Assamese Language">Assamese</a>, <a href="/wiki/Kokborok" title="Kokborok">Kokborok</a>, <a href="/wiki/Bishnupriya_Manipuri_language" title="Bishnupriya Manipuri language">Bishnupriya Manipuri</a> and <a href="/wiki/Meitei_language" class="mw-redirect" title="Meitei language">Meitei Manipuri</a></td>
+    <td><a href="/wiki/Bangladesh" title="Bangladesh">Bangladesh</a> and <a href="/wiki/India" title="India">India</a> (<a href="/wiki/West_Bengal" title="West Bengal">West Bengal</a>, <a href="/wiki/Tripura" title="Tripura">Tripura</a>, <a href="/wiki/Assam" title="Assam">Assam</a>, <a href="/wiki/Manipur" title="Manipur">Manipur</a>, <a href="/wiki/Andaman_and_Nicobar_Islands" title="Andaman and Nicobar Islands">Andaman and Nicobar Islands</a>)</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Kana" title="Kana">Kana</a></b><br>
+    仮名<br>
+    かな<br>
+    カナ</td>
+    <td><a href="/wiki/Syllabary" title="Syllabary">Syllabary</a></td>
+    <td><span class="sortkey">0120000</span>120<sup id="cite_ref-9" class="reference"><a href="#cite_note-9">[8]</a></sup></td>
+    <td><a href="/wiki/Japanese_language" title="Japanese language">Japanese</a>, <a href="/wiki/Okinawan_language" title="Okinawan language">Okinawan</a>, <a href="/wiki/Ainu_language" title="Ainu language">Ainu</a></td>
+    <td><a href="/wiki/Japan" title="Japan">Japan</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Gurmukhi" class="mw-redirect" title="Gurmukhi">Gurmukhi</a></b><br>
+    ਗੁਰਮੁਖੀ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0100000</span>100</td>
+    <td><a href="/wiki/Punjabi_language" title="Punjabi language">Punjabi</a></td>
+    <td><a href="/wiki/Punjab" class="mw-redirect" title="Punjab">Punjab</a> (India)</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Javanese_alphabet" class="mw-redirect" title="Javanese alphabet">Javanese</a></b><br>
+    ꦗꦮ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0080000</span>80<sup id="cite_ref-10" class="reference"><a href="#cite_note-10">[9]</a></sup></td>
+    <td><a href="/wiki/Javanese_language" title="Javanese language">Javanese</a></td>
+    <td>Central <a href="/wiki/Java" title="Java">Java</a> (Indonesia), <a href="/wiki/Category:Javanese_diaspora" title="Category:Javanese diaspora">Javanese diaspora</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Hangul" title="Hangul">Hangul</a></b><br>
+    한글<br>
+    조선글</td>
+    <td><a href="/wiki/Alphabet" title="Alphabet">Alphabet</a>, <a href="/wiki/Featural_alphabet" class="mw-redirect" title="Featural alphabet">featural</a></td>
+    <td><span class="sortkey">0078700</span>78.7<sup id="cite_ref-11" class="reference"><a href="#cite_note-11">[10]</a></sup></td>
+    <td><a href="/wiki/Korean_language" title="Korean language">Korean</a></td>
+    <td><a href="/wiki/North_Korea" title="North Korea">North Korea</a>, <a href="/wiki/South_Korea" title="South Korea">South Korea</a>, <a href="/wiki/Jilin_Province" class="mw-redirect" title="Jilin Province">Jilin Province (China)</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Telugu_script" title="Telugu script">Telugu</a></b><br>
+    తెలుగు</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0045000</span>74<sup id="cite_ref-12" class="reference"><a href="#cite_note-12">[11]</a></sup></td>
+    <td><a href="/wiki/Telugu_language" title="Telugu language">Telugu</a></td>
+    <td><a href="/wiki/Andhra_Pradesh" title="Andhra Pradesh">Andhra Pradesh</a>, <a href="/wiki/Telangana" title="Telangana">Telangana</a>, <a href="/wiki/Puducherry" title="Puducherry">Puducherry</a> (India)</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Tamil_script" title="Tamil script">Tamil</a></b><br>
+    தமிழ்</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0070000</span>70<sup id="cite_ref-13" class="reference"><a href="#cite_note-13">[12]</a></sup><sup id="cite_ref-14" class="reference"><a href="#cite_note-14">[13]</a></sup></td>
+    <td><a href="/wiki/Tamil_language" title="Tamil language">Tamil</a></td>
+    <td><a href="/wiki/Tamil_Nadu" title="Tamil Nadu">Tamil Nadu</a> (India), <a href="/wiki/Puducherry" title="Puducherry">Puducherry</a> (India), <a href="/wiki/Sri_Lanka" title="Sri Lanka">Sri Lanka</a>, <a href="/wiki/Singapore" title="Singapore">Singapore</a>, <a href="/wiki/Malaysia" title="Malaysia">Malaysia</a>, <a href="/wiki/Mauritius" title="Mauritius">Mauritius</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Malayalam_script" title="Malayalam script">Malayalam</a></b><br>
+    മലയാളം</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0052000</span>52<sup id="cite_ref-15" class="reference"><a href="#cite_note-15">[14]</a></sup></td>
+    <td><a href="/wiki/Malayalam_language" class="mw-redirect" title="Malayalam language">Malayalam</a></td>
+    <td><a href="/wiki/Kerala" title="Kerala">Kerala</a>, <a href="/wiki/Puducherry" title="Puducherry">Puducherry</a> (India)</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Burmese_script" class="mw-redirect" title="Burmese script">Burmese</a></b><br>
+    မြန်မာ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0039000</span>39<sup id="cite_ref-16" class="reference"><a href="#cite_note-16">[15]</a></sup></td>
+    <td><a href="/wiki/Burmese_language" title="Burmese language">Burmese</a></td>
+    <td><a href="/wiki/Myanmar" title="Myanmar">Myanmar</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Thai_script" class="mw-redirect" title="Thai script">Thai</a></b><br>
+    ไทย</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0038000</span>38<sup id="cite_ref-17" class="reference"><a href="#cite_note-17">[16]</a></sup></td>
+    <td><a href="/wiki/Thai_language" title="Thai language">Thai</a>, <a href="/wiki/Southern_Thai_language" title="Southern Thai language">Southern Thai</a>, <a href="/wiki/Northern_Khmer_language" class="mw-redirect" title="Northern Khmer language">Northern Khmer</a> and <a href="/wiki/Lao_language" title="Lao language">Lao</a> (<a href="/wiki/Isan_language" title="Isan language">Isan</a>)</td>
+    <td><a href="/wiki/Thailand" title="Thailand">Thailand</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Sundanese_alphabet" title="Sundanese alphabet">Sundanese</a></b><br>
+    <span lang="su" style="font-family:'Sundanese Unicode','Noto Sans Sundanese'; font-size:18px;" xml:lang="su">ᮞᮥᮔ᮪ᮓ</span></td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0038000</span>38</td>
+    <td><a href="/wiki/Sundanese_language" title="Sundanese language">Sundanese</a></td>
+    <td><a href="/wiki/Java" title="Java">Java</a>, Indonesia</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Kannada_script" class="mw-redirect" title="Kannada script">Kannada</a></b><br>
+    ಕನ್ನಡ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0045000</span>45<sup id="cite_ref-18" class="reference"><a href="#cite_note-18">[17]</a></sup></td>
+    <td><a href="/wiki/Kannada_language" class="mw-redirect" title="Kannada language">Kannada</a></td>
+    <td><a href="/wiki/Karnataka" title="Karnataka">Karnataka</a> (India)</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Gujarati_script" class="mw-redirect" title="Gujarati script">Gujarati</a></b><br>
+    ગુજરાતી</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0030000</span>30</td>
+    <td><a href="/wiki/Gujarati_language" title="Gujarati language">Gujarati</a></td>
+    <td><a href="/wiki/Gujarat" title="Gujarat">Gujarat</a> (India)</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Lao_script" class="mw-redirect" title="Lao script">Lao</a></b><br>
+    ລາວ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0022000</span>22<sup id="cite_ref-19" class="reference"><a href="#cite_note-19">[18]</a></sup></td>
+    <td><a href="/wiki/Lao_language" title="Lao language">Lao</a></td>
+    <td><a href="/wiki/Laos" title="Laos">Laos</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Oriya_alphabet" class="mw-redirect" title="Oriya alphabet">Odia</a></b><br>
+    ଉତ୍କଳ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0021000</span>21<sup id="cite_ref-20" class="reference"><a href="#cite_note-20">[19]</a></sup></td>
+    <td><a href="/wiki/Odia_language" title="Odia language">Odia</a></td>
+    <td><a href="/wiki/Odisha" title="Odisha">Odisha</a> (India)</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Ge%27ez_script" title="Ge'ez script">Ge'ez</a></b><br>
+    ግዕዝ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0018000</span>18<sup id="cite_ref-21" class="reference"><a href="#cite_note-21">[20]</a></sup></td>
+    <td><a href="/wiki/Amharic" title="Amharic">Amharic</a>, <a href="/wiki/Tigrinya_language" title="Tigrinya language">Tigrinya</a></td>
+    <td><a href="/wiki/Ethiopia" title="Ethiopia">Ethiopia</a>, <a href="/wiki/Eritrea" title="Eritrea">Eritrea</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Sinhala_alphabet" class="mw-redirect" title="Sinhala alphabet">Sinhala</a></b><br>
+    සිංහල</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0014400</span>14.4<sup id="cite_ref-22" class="reference"><a href="#cite_note-22">[21]</a></sup></td>
+    <td><a href="/wiki/Sinhala_language" class="mw-redirect" title="Sinhala language">Sinhalese</a></td>
+    <td><a href="/wiki/Sri_Lanka" title="Sri Lanka">Sri Lanka</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Armenian_script" class="mw-redirect" title="Armenian script">Armenian</a></b><br>
+    Հայոց</td>
+    <td><a href="/wiki/Alphabet" title="Alphabet">Alphabet</a></td>
+    <td><span class="sortkey">0012000</span>12</td>
+    <td><a href="/wiki/Armenian_language" title="Armenian language">Armenian</a></td>
+    <td><a href="/wiki/Armenia" title="Armenia">Armenia</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Khmer_script" class="mw-redirect" title="Khmer script">Khmer</a></b><br>
+    ខ្មែរ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0011400</span>11.4<sup id="cite_ref-23" class="reference"><a href="#cite_note-23">[22]</a></sup></td>
+    <td><a href="/wiki/Khmer_language" title="Khmer language">Khmer</a></td>
+    <td><a href="/wiki/Cambodia" title="Cambodia">Cambodia</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Greek_alphabet" title="Greek alphabet">Greek</a></b><br>
+    Ελληνικό</td>
+    <td><a href="/wiki/Alphabet" title="Alphabet">Alphabet</a></td>
+    <td><span class="sortkey">0011000</span>11</td>
+    <td><a href="/wiki/Greek_language" title="Greek language">Greek</a></td>
+    <td><a href="/wiki/Greece" title="Greece">Greece</a>, <a href="/wiki/Cyprus" title="Cyprus">Cyprus</a>, Southern <a href="/wiki/Albania" title="Albania">Albania</a>; worldwide for mathematical and scientific purposes</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Lontara_alphabet" title="Lontara alphabet">Lontara</a></b><br>
+    ᨒᨚᨈᨑ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0007600</span>7.6</td>
+    <td><a href="/wiki/Buginese_language" title="Buginese language">Buginese</a>, <a href="/wiki/Makassar_language" class="mw-redirect" title="Makassar language">Makassar</a>, and <a href="/wiki/Mandar_language" title="Mandar language">Mandar</a></td>
+    <td>Southern <a href="/wiki/Sulawesi" title="Sulawesi">Sulawesi</a>, Indonesia</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Hebrew_script" class="mw-redirect" title="Hebrew script">Hebrew</a></b><br>
+    אלפבית</td>
+    <td><a href="/wiki/Abjad" title="Abjad">Abjad</a></td>
+    <td><span class="sortkey">0006000</span>6</td>
+    <td><a href="/wiki/Hebrew_language" title="Hebrew language">Hebrew</a>, <a href="/wiki/Jewish_languages" title="Jewish languages">Jewish languages</a></td>
+    <td><a href="/wiki/Israel" title="Israel">Israel</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Tibetan_alphabet" title="Tibetan alphabet">Tibetan</a></b><br>
+    བོད་</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0005000</span>5</td>
+    <td><a href="/wiki/Tibetic_languages" title="Tibetic languages">Tibetic languages</a></td>
+    <td><a href="/wiki/Tibet" title="Tibet">Tibet</a>, <a href="/wiki/Bhutan" title="Bhutan">Bhutan</a>, <a href="/wiki/India" title="India">India</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Georgian_script" class="mw-redirect" title="Georgian script">Georgian</a></b><br>
+    ქართული</td>
+    <td><a href="/wiki/Alphabet" title="Alphabet">Alphabet</a></td>
+    <td><span class="sortkey">0004500</span>4.5</td>
+    <td><a href="/wiki/Georgian_language" title="Georgian language">Georgian</a> and many other <a href="/wiki/Kartvelian_languages" title="Kartvelian languages">Kartvelian languages</a></td>
+    <td><a href="/wiki/Georgia_(country)" title="Georgia (country)">Georgia</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Yi_script" title="Yi script">Modern Yi</a></b><br>
+    ꆈꌠ</td>
+    <td><a href="/wiki/Syllabary" title="Syllabary">Syllabary</a></td>
+    <td><span class="sortkey">0004000</span>4</td>
+    <td><a href="/wiki/Nuosu_language" title="Nuosu language">Nuosu Yi</a></td>
+    <td><a href="/wiki/Liangshan_Yi_Autonomous_Prefecture" title="Liangshan Yi Autonomous Prefecture">Liangshan Yi Autonomous Prefecture</a> of China</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Mongolian_script" title="Mongolian script">Mongolian</a></b><br>
+    <span style="display:inline-block; font-weight:normal; font-family:'Menk Hawang Tig', 'Menk Qagan Tig', 'Menk Garqag Tig', 'Menk Har_a Tig', 'Menk Scnin Tig', 'Oyun Gurban Ulus Tig', 'Oyun Qagan Tig', 'Oyun Garqag Tig', 'Oyun Har_a Tig', 'Oyun Scnin Tig', 'Mongolian BT', 'Mongolian Baiti', 'Noto Sans Mongolian', 'MT-Tolbo', 'Mongol Usug', 'Mongolian White', 'MongolianScript', 'Code2000', 'Menksoft Qagan'; font-size: 1.5em; line-height: 1em; writing-mode: vertical-lr; -webkit-writing-mode: vertical-lr; -o-writing-mode: vertical-lr; -ms-writing-mode: tb-lr; writing-mode: tb-lr; vertical-align:text-top;">ᠮᠣᠩᠭᠣᠯ</span></td>
+    <td><a href="/wiki/Alphabet" title="Alphabet">Alphabet</a></td>
+    <td><span class="sortkey">0002000</span>2</td>
+    <td><a href="/wiki/Mongolian_language" title="Mongolian language">Mongolian</a></td>
+    <td><a href="/wiki/Mongolia" title="Mongolia">Mongolia</a>, <a href="/wiki/Inner_Mongolia" title="Inner Mongolia">Inner Mongolia</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Tifinagh" title="Tifinagh">Tifinagh</a></b><br>
+    ⵜⵉⴼⵉⵏⴰⵖ</td>
+    <td><a href="/wiki/Abjad" title="Abjad">Abjad</a></td>
+    <td><span class="sortkey">0001000</span>1</td>
+    <td><a href="/wiki/Berber_languages" title="Berber languages">Berber languages</a></td>
+    <td><a href="/wiki/North_Africa" title="North Africa">North Africa</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Aramaic_script" class="mw-redirect" title="Aramaic script">Aramaic</a></b><br>
+    ܐܪܡܝܐ</td>
+    <td><a href="/wiki/Abjad" title="Abjad">Abjad</a></td>
+    <td><span class="sortkey">0000400</span>0.4</td>
+    <td><a href="/wiki/Aramaic_language" title="Aramaic language">Aramaic</a></td>
+    <td><a href="/wiki/West_Asia" class="mw-redirect" title="West Asia">West Asia</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Thaana_script" class="mw-redirect" title="Thaana script">Thaana</a></b><br>
+    ދިވެހި</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0000350</span>0.35</td>
+    <td><a href="/wiki/Maldivian_language" title="Maldivian language">Maldivian</a></td>
+    <td><a href="/wiki/Maldives" title="Maldives">Maldives</a></td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Inuktitut_syllabics" title="Inuktitut syllabics">Inuktitut</a></b><br>
+    ᐃᓄᒃᑎᑐᑦ</td>
+    <td><a href="/wiki/Abugida" title="Abugida">Abugida</a></td>
+    <td><span class="sortkey">0000035</span>0.035</td>
+    <td><a href="/wiki/Inuktitut" title="Inuktitut">Inuktitut</a></td>
+    <td><a href="/wiki/Canada" title="Canada">Canada</a> (North of Tree Line)</td>
+    </tr>
+    <tr>
+    <td><b><a href="/wiki/Cherokee_syllabary" title="Cherokee syllabary">Cherokee</a></b><br>
+    ᏣᎳᎩ</td>
+    <td><a href="/wiki/Syllabary" title="Syllabary">Syllabary</a></td>
+    <td><span class="sortkey">0000020</span>0.02</td>
+    <td><a href="/wiki/Cherokee_language" title="Cherokee language">Cherokee</a></td>
+    <td><a href="/wiki/United_States" title="United States">United States</a></td>
+    </tr>
+    </tbody><tfoot></tfoot></table>
+    <script type="text/javascript">
+    console.log($('tr').slice(1,2).children().slice(0, 1).text().split('\n')[1].replace(' ', ''));
+    var all = [];
+    $('tr').slice(1).each(function() {
+      var text = $(this).children().slice(0, 1).text().split('\n')[1];
+      var codes = [];
+      for (var i = 0; i < text.length; i++) {
+        codes.push(text.charCodeAt(i));
+      }
+      all.push(codes);
+    });
+
+    console.log(JSON.stringify(all));
+      var fakeChar = String.fromCharCode( 0x0EDF);
+      /*var fakeChar = "";
+      for (var i = 0; i < utf.length; i++) {
+        fakeChar += String.fromCharCode(parseInt(utf[i],16));
+      }*/
+      var canvas = $('<canvas width="100" height="1000" />').appendTo($('body'));
+
+      var ctx = canvas[0].getContext('2d');
+      ctx.font = "20px Arial";
+      ctx.fillText("ᠮᠣᠩᠭᠣᠯ", 10, 50);
+      ctx.fillText("ދިވެހި", 10, 100);
+      ctx.fillText(fakeChar, 10, 150);
+      ctx.fillText(text, 10, 200);
+      console.log(fakeChar);
+    </script>
+  </body>
+</html>

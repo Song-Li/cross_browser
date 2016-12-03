@@ -1,6 +1,5 @@
-cp -rf ./* /home/sol315/machinefingerprinting/;
-cp -rf ./getid/* /home/sol315/machinefingerprinting/;
-cd /home/sol315/machinefingerprinting/ ;
+cp -rf ./* /home/sol315/projs/uniquemachine.github.io/;
+cd /home/sol315/projs/uniquemachine.github.io/ ;
 git add -A;
 git commit -m "new";
 git push -u origin master;
