@@ -5,6 +5,7 @@ jQuery(function($) {
   
   // Listen to message from child window
   eventer(messageEvent,function(e) {
+    alert("recieved message");
     $("#fingerprint-iframe").remove();
     $("#iframe-container").append(e.data);
     $("#fingerprint-button").prop('disabled', false);

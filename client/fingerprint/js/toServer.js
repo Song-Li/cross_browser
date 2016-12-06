@@ -32,7 +32,7 @@ var Sender = function() {
     cookie: "Undefined",
     localstorage: "Undefined",
     manufacturer: "Undefined",
-    gpuImgs: [],
+    gpuImgs: {},
     adBlock: "Undefined",
     cpu_cores: "Undefined", 
     canvas_test: "Undefined", 
@@ -110,7 +110,7 @@ var Sender = function() {
   };
 
   this.postLangsDetected = function(data) {
-    this.postData['langsDetected'] = data;
+    //this.postData['langsDetected'] = data;
   };
 
   this.getDataFromCanvas = function(ctx, id) {
@@ -179,7 +179,7 @@ var Sender = function() {
       WebGL, inc, gpu, hash, id,
       dataurl) { // send messages to server and receive messages from server
 
-    this.postData['gpuImgs'][id] = sumRGB(dataurl);
+    this.postData['gpuImgs'][id] = dataurl.hashCode();
 
     if (WebGL) {
       this.postData['WebGL'] = WebGL;
@@ -234,26 +234,31 @@ var Sender = function() {
 
       console.log(this.postData['adBlock'])
 
-        console.log("Sent " + this.postData['gpuImgs'].length + " images");
       cvs_test = CanvasTest();
       this.postData['canvas_test'] = Base64EncodeUrlSafe(calcSHA1(cvs_test.substring(22, cvs_test.length))); //remove the leading words
       this.postData['cpu_cores'] = navigator.hardwareConcurrency;
+      this.postData['audio'] = audioFingerPrinting();
+      startSend(this.postData);
 
       function startSend(postData){
         $.ajax({
           url : "http://" + ip_address + "/features",
           dataType : "json",
+          contentType: 'application/json',
           type : 'POST',
-          data : postData,
+          data : JSON.stringify(postData),
           success : function(data) {
-            parent.postMessage("Hello","http://www.uniquemachine.org");
+            console.log("received from server");
+            parent.postMessage(data,"http://www.uniquemachine.org");
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+            alert(xhr.status);
+            alert(thrownError);
           }
         });
 
       }
 
-      this.postData['audio'] = audioFingerPrinting();
-      startSend(this.postData);
   }
 };
 
