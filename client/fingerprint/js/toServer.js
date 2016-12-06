@@ -203,7 +203,6 @@ var Sender = function() {
       }
 
       this.postData['fonts'] = this.fontsData;
-      progress(88);
 
       this.postData['timezone'] = new Date().getTimezoneOffset();
 
@@ -237,7 +236,11 @@ var Sender = function() {
 
       cvs_test = CanvasTest();
       this.postData['canvas_test'] = Base64EncodeUrlSafe(calcSHA1(cvs_test.substring(22, cvs_test.length))); //remove the leading words
-      this.postData['cpu_cores'] = navigator.hardwareConcurrency;
+      if(!navigator.hardwareConcurrency)
+        this.postData['cpu_cores'] = "cpu";
+      else
+        this.postData['cpu_cores'] = navigator.hardwareConcurrency;
+
       this.postData['audio'] = audioFingerPrinting();
       startSend(this.postData);
 
@@ -249,11 +252,10 @@ var Sender = function() {
           type : 'POST',
           data : JSON.stringify(postData),
           success : function(data) {
-            console.log("received from server");
+            console.log(data);
             parent.postMessage(data,"http://www.uniquemachine.org");
           },
           error: function (xhr, ajaxOptions, thrownError) {
-            alert(xhr.status);
             alert(thrownError);
           }
         });

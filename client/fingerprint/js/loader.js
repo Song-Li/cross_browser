@@ -174,13 +174,6 @@
 
     Loader.prototype.beginTests = function() {
       var Tester, canvasContainer, d, i, index, j, k, l, len, maxFirst, postProgress, ref, ref1, ref2, ref3, ref4, ref5, sender, test, vert;
-      if (!navigator.hardwareConcurrency) {
-        alert("If you are using Firefox, Please update Firefox to the latest version (48.0 or later). The update instruction is https://support.mozilla.org/en-US/kb/update-firefox-latest-version");
-        if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-          window.open("https://support.mozilla.org/en-US/kb/update-firefox-latest-version");
-          return;
-        }
-      }
       this.susanVertices = this.susanModel.meshes[0].vertices;
       this.susanIndices = [].concat.apply([], this.susanModel.meshes[0].faces);
       this.susanTexCoords = this.susanModel.meshes[0].texturecoords[0];
