@@ -51,13 +51,20 @@ def features():
             "fonts"
             ]
     
+
+    result = request.get_json()
     mask = []
     with open("mask.txt", 'r') as f:
         mask = json.loads(f.read())
 
     single_hash = ""
+    cross_hash = ""
 
-    result = request.get_json()
+    fonts = list(result['fonts'])
+
+    for i in range(len(mask)):
+        fonts[i] = str(int(fonts[i]) & mask[i])
+
     result['agent'] = agent
     result['accept'] = accept
     result['encoding'] = encoding
@@ -69,11 +76,20 @@ def features():
         print feature, hash_object.hexdigest()
 #        print str(result[feature])
 
+    result['fonts'] = fonts
+    for feature in cross_feature_list:
+        cross_hash += str(result[feature])
+        hash_object = hashlib.md5(str(result[feature]))
+        print feature, hash_object.hexdigest()
+
     hash_object = hashlib.md5(single_hash)
     single_hash = hash_object.hexdigest()
 
-    print (single_hash)
-    return flask.jsonify(single_hash)
+    hash_object = hashlib.md5(cross_hash)
+    cross_hash = hash_object.hexdigest()
+
+    print (single_hash, cross_hash)
+    return flask.jsonify({"single": single_hash, "cross": cross_hash})
 
 if __name__ == "__main__":
     app.run(host = '0.0.0.0')
