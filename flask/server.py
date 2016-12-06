@@ -54,22 +54,41 @@ def features():
 
     result = request.get_json()
     mask = []
+    mac_mask = []
+
     with open("mask.txt", 'r') as f:
         mask = json.loads(f.read())
+
+    if 'Mac' in agent:
+        print "mac"
+        with open("mac_mask.txt", 'r') as fm:
+            mac_mask = json.loads(fm.read())
+    else:
+        print 'not mac'
+        mac_mask = [1 for i in range(len(mask))]
 
     single_hash = ""
     cross_hash = ""
 
+    with open("fonts.txt", 'a') as f:
+        f.write(result['fonts'] + '\n')
+
     fonts = list(result['fonts'])
 
+    print mac_mask
+    cnt = 0
     for i in range(len(mask)):
-        fonts[i] = str(int(fonts[i]) & mask[i])
+        fonts[i] = str(int(fonts[i]) & mask[i] & mac_mask[i])
+        if fonts[i] == '1':
+            cnt += 1
+    print "cnt is ", cnt
 
     result['agent'] = agent
     result['accept'] = accept
     result['encoding'] = encoding
     result['language'] = language
     
+    print agent
     for feature in feature_list:
         single_hash += str(result[feature])
         hash_object = hashlib.md5(str(result[feature]))

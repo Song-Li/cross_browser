@@ -5,6 +5,7 @@ with open("font_mask.txt",'r') as f:
     masks = json.loads(res)
     
     l = len(masks['IEFirefox'])
+    print l
 
     mask = [1 for i in range(l)]
 
@@ -14,4 +15,5 @@ with open("font_mask.txt",'r') as f:
             mask[i] = mask[i] & values[i]
 
     print mask
+
 
