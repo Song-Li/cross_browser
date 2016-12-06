@@ -70,12 +70,11 @@ def features():
     single_hash = ""
     cross_hash = ""
 
-    with open("fonts.txt", 'a') as f:
-        f.write(result['fonts'] + '\n')
+    #with open("fonts.txt", 'a') as f:
+        #f.write(result['fonts'] + '\n')
 
     fonts = list(result['fonts'])
 
-    print mac_mask
     cnt = 0
     for i in range(len(mask)):
         fonts[i] = str(int(fonts[i]) & mask[i] & mac_mask[i])
