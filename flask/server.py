@@ -26,8 +26,6 @@ def features():
     except:
         pass
 
-    print agent, accept, encoding, language
-
     feature_list = [
             #"fontlist", 
             "agent",
@@ -52,16 +50,18 @@ def features():
             "timezone",
             "fonts"
             ]
+    
+    mask = []
+    with open("mask.txt", 'r') as f:
+        mask = json.loads(f.read())
 
     single_hash = ""
-    print single_hash
 
     result = request.get_json()
     result['agent'] = agent
     result['accept'] = accept
     result['encoding'] = encoding
     result['language'] = language
-   # print (request.form)
     
     for feature in feature_list:
         single_hash += str(result[feature])

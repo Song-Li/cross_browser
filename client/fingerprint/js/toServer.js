@@ -22,6 +22,7 @@ var Sender = function() {
   this.finalized = false;
   this.postData = {
     fontlist: "No Flash",
+    fonts: "",
     WebGL: false,
     inc: "Undefined",
     gpu: "Undefined",

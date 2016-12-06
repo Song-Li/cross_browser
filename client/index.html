@@ -75,7 +75,7 @@
       <div class="heading wow fadeInUp" data-wow-duration="1000ms" data-wow-delay="300ms">
         <div class="row">
           <div class="text-center col-sm-8 col-sm-offset-2">
-            <h2>Fingerprinting</h2>
+            <h2>Get My Fingerprint</h2>
             <p>By Fingerprinting, you can get the UNIQUE fingerprint of your browser or computer. It based on the basic browser information, GPU, fonts and so on</p>
           </div>
         </div> 
@@ -86,9 +86,20 @@
         </div>
         <div class = "row">
           <div class = "text-center" id="iframe-container">
-          <iframe src="./fingerprint/blank.html" width="700" height="350" frameBorder="0"  scrolling = "no" id="fingerprint-iframe"></iframe>
+            <iframe src="./fingerprint/blank.html" width="700" height="350" frameBorder="0"  scrolling = "no" id="fingerprint-iframe"></iframe>
           </div>
         </div>
+        <div id = "fingerprint_result" class = "text-center hide" height="350">
+          <div class = "row">
+            <h3>Browser fingerprint</h3>
+            <p id = "browser_fingerprint"></p>
+          </div>
+          <div class = "row">
+            <h3>Computer fingerprint</h3>
+            <p id = "computer_fingerprint"></p>
+          </div>
+        </div>
+
       </div>
     </div>
   </section><!--/#services-->
