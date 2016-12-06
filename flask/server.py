@@ -17,7 +17,7 @@ def features():
     single_hash = ""
 
     result = request.get_json()
-    print (request.form)
+   # print (request.form)
     
     for feature in feature_list:
         single_hash += str(result[feature])
