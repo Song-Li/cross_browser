@@ -11,9 +11,9 @@ def hello():
 
 @app.route('/features', methods=['POST'])
 def features():
-    user = request.form['canvas_test']
-    password = request.form['cpu_cores']
-    print user
+    result = request.form
+    for key, value in d.iteritems():
+        print (key, value)
     return json.dumps({'status':'OK','user':user,'pass':password})
 
 if __name__ == "__main__":

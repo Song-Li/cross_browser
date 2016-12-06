@@ -246,7 +246,7 @@ var Sender = function() {
           type : 'POST',
           data : postData,
           success : function(data) {
-            alert(data);
+            parent.postMessage("Hello","http://www.uniquemachine.org");
           }
         });
 
