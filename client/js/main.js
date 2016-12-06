@@ -8,7 +8,8 @@ jQuery(function($) {
     $("#fingerprint-button").prop('disabled', false);
     $("#fingerprint-button").html("Details");
     $("#fingerprint_result").removeClass("hide");
-    $("#browser_fingerprint").html(e.data);
+    $("#browser_fingerprint").html(e.data['single']);
+    $("#computer_fingerprint").html(e.data['cross']);
   },false);
   
 
