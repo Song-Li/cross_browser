@@ -3,9 +3,22 @@ import flask
 from flask_cors import CORS, cross_origin
 import json
 import hashlib
+from flaskext.mysql import MySQL
+import ConfigParser
+import re
 
+config = ConfigParser.ConfigParser()
+config.read('password.ignore')
+
+mysql = MySQL()
 app = Flask(__name__)
+app.config['MYSQL_DATABASE_USER'] = config.get('mysql', 'username')
+app.config['MYSQL_DATABASE_PASSWORD'] = config.get('mysql', 'password')
+app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+mysql.init_app(app)
 CORS(app)
+
 
 @app.route("/")
 def hello():
@@ -17,17 +30,18 @@ def features():
     accept = ""
     encoding = ""
     language = ""
+    IP = ""
 
     try:
         agent = request.headers.get('User-Agent')
         accpet = request.headers.get('Accept')
         encoding = request.headers.get('Accept-Encoding')
         language = request.headers.get('Accept-Language')
+        IP = request.remote_addr
     except:
         pass
 
     feature_list = [
-            #"fontlist", 
             "agent",
             "accept",
             "encoding",
@@ -36,7 +50,7 @@ def features():
             "WebGL", 
             "inc", 
             "gpu", 
-            "hash", 
+            "gpuImgs", 
             "timezone", 
             "plugins", 
             "cookie", 
@@ -60,11 +74,9 @@ def features():
         mask = json.loads(f.read())
 
     if 'Mac' in agent:
-        print "mac"
         with open("mac_mask.txt", 'r') as fm:
             mac_mask = json.loads(fm.read())
     else:
-        print 'not mac'
         mac_mask = [1 for i in range(len(mask))]
 
     single_hash = ""
@@ -80,7 +92,6 @@ def features():
         fonts[i] = str(int(fonts[i]) & mask[i] & mac_mask[i])
         if fonts[i] == '1':
             cnt += 1
-    print "cnt is ", cnt
 
     result['agent'] = agent
     result['accept'] = accept
@@ -88,23 +99,49 @@ def features():
     result['language'] = language
     
     print agent
+           
+    feature_str = "IP"
+    value_str = "'" + IP + "'"
+
     for feature in feature_list:
         single_hash += str(result[feature])
         hash_object = hashlib.md5(str(result[feature]))
-        print feature, hash_object.hexdigest()
-#        print str(result[feature])
+        
+        if result[feature] is not "":
+            value = result[feature]
+        else:
+            value = "NULL"
+
+        feature_str += "," + feature
+#for gpu imgs
+        if feature == "gpuImgs":
+            value = ",".join('%s_%s' % (k,v) for k,v in value.iteritems())
+        else:
+            value = str(value)
+        
+        value_str += ",'" + value + "'"
+        #print feature, hash_object.hexdigest()
+
 
     result['fonts'] = fonts
     for feature in cross_feature_list:
         cross_hash += str(result[feature])
         hash_object = hashlib.md5(str(result[feature]))
-        print feature, hash_object.hexdigest()
 
     hash_object = hashlib.md5(single_hash)
     single_hash = hash_object.hexdigest()
 
     hash_object = hashlib.md5(cross_hash)
     cross_hash = hash_object.hexdigest()
+
+    feature_str += ',browser_fingerprint,computer_fingerprint_1'
+    value_str += ",'" + single_hash + "','" + cross_hash + "'"
+
+    db = mysql.get_db()
+    cursor = db.cursor()
+    sql_str = "INSERT INTO features (" + feature_str + ") VALUES (" + value_str + ");"
+    cursor.execute(sql_str)
+    db.commit()
 
     print (single_hash, cross_hash)
     return flask.jsonify({"single": single_hash, "cross": cross_hash})
