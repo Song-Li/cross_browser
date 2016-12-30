@@ -24,6 +24,23 @@ CORS(app)
 def hello():
     return "Hello World!"
 
+@app.route('/details', methods=['POST'])
+def details():
+    res = {}
+    ID = request.get_json()["ID"]
+    db = mysql.get_db()
+    cursor = db.cursor()
+    sql_str = "SELECT * FROM features WHERE browser_fingerprint = '" + ID +"'"
+    cursor.execute(sql_str)
+    db.commit()
+    row = cursor.fetchone()
+    for i in range(len(row)):
+        value = row[i]
+        name = cursor.description[i][0]
+        res[name] = value
+
+    return flask.jsonify(res)
+
 @app.route('/features', methods=['POST'])
 def features():
     agent = ""

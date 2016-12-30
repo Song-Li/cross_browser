@@ -4,7 +4,8 @@ jQuery(function($) {
   var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
   
   eventer(messageEvent,function(e) {
-    $("#fingerprint-iframe").remove();
+    $("#fingerprint-iframe").addClass("hide");
+    $("#fingerprint-iframe").attr("src", "./fingerprint/details.html?" + e.data['single']);
     $("#fingerprint-button").prop('disabled', false);
     $("#fingerprint-button").html("Details");
     $("#fingerprint_result").removeClass("hide");
@@ -111,12 +112,14 @@ jQuery(function($) {
 
   //add fingerprint iframe
   $("#fingerprint-button").click(function() {
-    $("#fingerprint-button").html("Running");
-    $("#fingerprint-button").prop('disabled', true);
-    $("#fingerprint-iframe").attr("src", "./fingerprint/index.html");
-    /*
-    $("<iframe />", { src: "./fingerprint/index.html", width: "700", height: "350", frameborder: 0, scrolling: 'no'}).appendTo("#iframe-container");
-    */
+    if ($("#fingerprint-button").text() != "Details") {
+      $("#fingerprint-button").html("Running");
+      $("#fingerprint-button").prop('disabled', true);
+      $("#fingerprint-iframe").attr("src", "./fingerprint/index.html");
+    } else {
+      $("#fingerprint-result").addClass("hide");
+      $("#fingerprint-iframe").removeClass("hide");
+    }
     $('html, body').animate({
       scrollTop: $("#fingerprint").offset().top - 5
     }, 1000);
