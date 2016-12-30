@@ -111,12 +111,14 @@ jQuery(function($) {
 
   //add fingerprint iframe
   $("#fingerprint-button").click(function() {
+    if ($("#fingerprint_button").text() == "Details") {
+      $("#fingerprint-button").prop('disabled', true);
+      var fingerprint = $("#browser_fingerprint").text();
+      $("#fingerprint-iframe").attr("src", "./fingerprint/details.html?fingerprint=" + fingerprint);
+    }
     $("#fingerprint-button").html("Running");
     $("#fingerprint-button").prop('disabled', true);
     $("#fingerprint-iframe").attr("src", "./fingerprint/index.html");
-    /*
-    $("<iframe />", { src: "./fingerprint/index.html", width: "700", height: "350", frameborder: 0, scrolling: 'no'}).appendTo("#iframe-container");
-    */
     $('html, body').animate({
       scrollTop: $("#fingerprint").offset().top - 5
     }, 1000);
