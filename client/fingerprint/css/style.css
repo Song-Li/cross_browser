@@ -1,5 +1,10 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:700);
 
+.details_table {
+  border-collapse: collapse;
+  border: 1px solid black;
+}
+
 .bar {
     padding: -10px -10px -10px -10px;
     background: rgba(230,240,255,0.4);
