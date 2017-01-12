@@ -1,11 +1,25 @@
 .details_table {
   border-collapse: collapse;
-  border: 1px solid black;
+  border: 1px solid #fff;
   table-layout: fixed;
   width: 100%;
 }
 
+th, td {
+  padding: 8px;
+  text-aligh: left;
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+}
+
 .details_table td {
-  word-wrap: break-word;         /* All browsers since IE 5.5+ */
+  word-wrap: break-word;       /* All browsers since IE 5.5+ */
   overflow-wrap: break-word;     /* Renamed property in CSS3 draft spec */
+}
+
+.feature {
+  width: 30%;
+}
+.value {
+  width: 70%;
 }
