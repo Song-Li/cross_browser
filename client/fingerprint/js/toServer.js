@@ -255,7 +255,7 @@ var Sender = function() {
           data : JSON.stringify(postData),
           success : function(data) {
             console.log(data);
-            parent.postMessage(data,"http://sec.uniquemachine.org:9876");
+            parent.postMessage(data,"http://www.uniquemachine.org");
           },
           error: function (xhr, ajaxOptions, thrownError) {
             alert(thrownError);
