@@ -91,7 +91,7 @@ def features():
     with open("mask.txt", 'r') as f:
         mask = json.loads(f.read())
 
-    if 'Mac' in agent:
+    if 'Mac' in agent or 1:
         with open("mac_mask.txt", 'r') as fm:
             mac_mask = json.loads(fm.read())
     else:
