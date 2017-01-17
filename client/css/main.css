@@ -548,13 +548,13 @@ section {
   font-size: 14px;
 }
 
-.team-member:hover .social-icons ul li a.facebook {
-  background-color: #3b5999;
+.team-member:hover .social-icons ul li a.github {
+  background-color: #000;
 }
-.team-member:hover .social-icons ul li a.twitter {
+.team-member:hover .social-icons ul li a.email {
   background-color: #2ac6f7;
 }
-.team-member:hover .social-icons ul li a.dribbble {
+.team-member:hover .social-icons ul li a.website {
   background-color: #ff5b92;
 }
 .team-member:hover .social-icons ul li a.linkedin {
@@ -576,6 +576,10 @@ section {
   font-size: 14px;
   margin-bottom: 15px;
   color: #999;
+}
+.member-image {
+  height: 300px;
+  width: 100%;
 }
 
 

@@ -44,7 +44,7 @@
               <h1 class="animated fadeInLeftBig">Unique<span>Machine</span></h1>
               <p class="animated fadeInRightBig">is my computer unique?(Developing, not fully supported)</p>
               <a data-scroll class="btn btn-start animated fadeInUpBig" href="#fingerprint">Get My Fingerprint</a>
-              <a data-scroll class="btn btn-start animated fadeInUpBig" href="#services">About us</a>
+              <a data-scroll class="btn btn-start animated fadeInUpBig" href="#about_us">About us</a>
               <a data-scroll class="btn btn-start animated fadeInUpBig" href="https://github.com/Song-Li/cross_browser">Source code</a>
               <a data-scroll class="btn btn-start animated fadeInUpBig" href="https://drive.google.com/file/d/0B4s900Byvv1ibW5uc1NiU2g3R3c/view?usp=sharing">Paper</a>
             </div>
@@ -70,7 +70,7 @@
           <ul class="nav navbar-nav navbar-right">                 
             <li class="scroll"><a href="#home">Home</a></li>
             <li class="scroll"><a href="#fingerprint">Fingerprint</a></li> 
-            <li class="scroll"><a href="#about-us">About Us</a></li>                     
+            <li class="scroll"><a href="#about_us">About Us</a></li>                     
             <li class="scroll"><a href="https://github.com/Song-Li/cross_browser">Source Code</a></li>
             <li class="scroll"><a href="https://drive.google.com/file/d/0B4s900Byvv1ibW5uc1NiU2g3R3c/view?usp=sharing">Paper</a></li>
           </ul>
@@ -96,7 +96,7 @@
         </div>
         <div class = "row">
           <div class = "text-center" id="iframe-container">
-            <iframe src="./fingerprint/blank.html" width="700" height="400" frameBorder="0"  scrolling = "no" id="fingerprint-iframe"></iframe>
+            <iframe src="./fingerprint/blank.html" width="700" height="700" frameBorder="0"  scrolling = "no" id="fingerprint-iframe"></iframe>
           </div>
         </div>
         <div id = "fingerprint_result" class = "text-center hide" height="400">
@@ -109,10 +109,69 @@
             <p id = "computer_fingerprint"></p>
           </div>
         </div>
-
       </div>
     </div>
   </section><!--/#services-->
+  <section id="about_us">
+    <div class="container">
+      <div class="row">
+        <div class="heading text-center col-sm-8 col-sm-offset-2 wow fadeInUp" data-wow-duration="1200ms" data-wow-delay="300ms">
+          <h2>About Us</h2>
+          <p>We are members of a security lab (SecLab) in Lehigh University</p>
+        </div>
+      </div>
+
+      <div class="team-members">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="team-member wow flipInY" data-wow-duration="1000ms" data-wow-delay="300ms">
+              <div class="member-info">
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="team-member wow flipInY" data-wow-duration="1000ms" data-wow-delay="300ms">
+              <div class="member-image">
+                <img class="member-image" src="images/team/yinzhi.jpg" alt="">
+              </div>
+              <div class="member-info">
+                <h3>Yinzhi Cao</h3>
+                <h4>Assistant Professor of Lehigh University</h4>
+                <p>Leader of SecLab</p>
+              </div>
+              <div class="social-icons">
+                <ul>
+                  <li><a class="github" href="#"><i class="fa fa-github"></i></a></li>
+                  <li><a class="email" href="mailto:yinzhi.cao@lehigh.edu"><i class="fa fa-envelope"></i></a></li>
+                  <li><a class="website" href="http://yinzhicao.org/"><i class="fa fa-globe"></i></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="team-member wow flipInY" data-wow-duration="1000ms" data-wow-delay="500ms">
+              <div class="member-image">
+                <img class="member-image" src="images/team/songli.jpg" alt="">
+              </div>
+              <div class="member-info">
+                <h3>Song Li</h3>
+                <h4>Student of Lehigh University</h4>
+                <p>Website Developer and Maintainer</p>
+                <p>Report bug to me (lisong1013@gmail.com)</p>
+              </div>
+              <div class="social-icons">
+                <ul>
+                  <li><a class="github" href="https://github.com/Song-Li"><i class="fa fa-github"></i></a></li>
+                  <li><a class="email" href="mailto:lisong1013@gmail.com"><i class="fa fa-envelope"></i></a></li>
+                  <li><a class="website" href="http://www.songli.us/"><i class="fa fa-globe"></i></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>            
+    </div>
+  </section><!--/#team-->
 
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/bootstrap.min.js"></script>
