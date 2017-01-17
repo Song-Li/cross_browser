@@ -38,7 +38,7 @@ function buildTable(data) {
   }
 }
 function getDetails() {
-  ip_address = "sec.uniquemachine.org:5000"
+  ip_address = "sec.uniquemachine.org/uniquemachine"
   var ID = window.location.href.split("?")[1];
 
   $.ajax({

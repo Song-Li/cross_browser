@@ -1,4 +1,4 @@
-var ip_address = "sec.uniquemachine.org:5000";
+var ip_address = "sec.uniquemachine.org/uniquemachine/";
 
 function populateFontList(fontArr) {
   fonts = [];

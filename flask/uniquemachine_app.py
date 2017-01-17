@@ -8,8 +8,9 @@ from flaskext.mysql import MySQL
 import ConfigParser
 import re
 
+root = "/home/sol315/server/uniquemachine/"
 config = ConfigParser.ConfigParser()
-config.read('password.ignore')
+config.read(root + 'password.ignore')
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -88,11 +89,11 @@ def features():
     mask = []
     mac_mask = []
 
-    with open("mask.txt", 'r') as f:
+    with open(root + "mask.txt", 'r') as f:
         mask = json.loads(f.read())
 
     if 'Mac' in agent or 1:
-        with open("mac_mask.txt", 'r') as fm:
+        with open(root + "mac_mask.txt", 'r') as fm:
             mac_mask = json.loads(fm.read())
     else:
         mac_mask = [1 for i in range(len(mask))]
