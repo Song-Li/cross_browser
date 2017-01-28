@@ -65,6 +65,7 @@ def features():
             "accept",
             "encoding",
             "language",
+            "resolution",
             "fonts",
             "WebGL", 
             "inc", 

@@ -7,7 +7,7 @@
 
 th, td {
   padding: 8px;
-  text-aligh: left;
+  text-align: left;
   border-bottom: 1px solid #ddd;
   border-top: 1px solid #ddd;
 }
@@ -18,8 +18,21 @@ th, td {
 }
 
 .feature {
-  width: 30%;
+  width: 25%;
 }
 .value {
   width: 70%;
+}
+
+.type {
+  text-align: center;
+}
+
+.checkbox {
+  width: 5%;
+}
+
+.heading {
+  padding: 36px;
+  text-align: center;
 }
