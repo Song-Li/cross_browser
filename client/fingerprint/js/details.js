@@ -5,7 +5,8 @@ var cross_list = {
   cpu_cores: 'Number of Cpu Cores',
   fonts: 'Detected Fonts',
   audio: 'Audio', 
-  ratio: 'Screen Ratio'
+  ratio: 'Screen Ratio',
+  gpuimgs: 'Hash Value of GPU Rendering Results'
 }
 var cnted_list = {
   timezone: 'Time Zone',
@@ -55,6 +56,16 @@ function gen_code() {
   $('#cur_fingerprint').html("Current Fingerprint: " + md5(res));
 }
 
+function getGPUTable(hashes) {
+  res = "";
+  var cur = 0;
+  for (hash in hashes) {
+    res += "<label width = '30px'><input type='checkbox' class = 'checkbox'/> " + hashes[hash] + "</label>";
+    if (cur ++ % 3 == 2) 
+      res += "<br>";
+  }  
+  return res;
+}
 function buildTable(data) {
   trans_data = data;
   var list = data['resolution'].split('_');
@@ -70,6 +81,16 @@ function buildTable(data) {
       value = data[cross];
       if (cross == 'fonts') {
         value = getFontsString(value);
+      }
+
+      var hashes = {};
+      if (cross == 'gpuimgs') {
+        value = data[cross].split(',');
+        for (hash in value) {
+          cur = value[hash].split('_');
+          hashes[cur[0]] = cur[1];
+        }
+        value = getGPUTable(hashes);
       }
       $('#result_table').append('<tr><td class = "checkbox"> <input id="box_' + cross + '"type="checkbox" onclick="gen_code();" checked></td><td class = "feature">' + cross_list[cross] + '</td><td class = "value">' + value + '</td></tr>');
     }
