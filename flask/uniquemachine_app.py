@@ -21,6 +21,13 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 CORS(app)
 
+mask = []
+mac_mask = []
+
+with open(root + "mask.txt", 'r') as f:
+    mask = json.loads(f.read())
+with open(root + "mac_mask.txt", 'r') as fm:
+    mac_mask = json.loads(fm.read())
 
 @app.route("/")
 def hello():
@@ -40,6 +47,10 @@ def details():
         value = row[i]
         name = cursor.description[i][0]
         res[name] = value
+
+    if 'fonts' in res:
+        for i in range(len(mask)):
+            res['fonts'][i] = str(int(res['fonts'][i]) & mask[i] & mac_mask[i])
 
     return flask.jsonify(res)
 
@@ -87,17 +98,6 @@ def features():
     
 
     result = request.get_json()
-    mask = []
-    mac_mask = []
-
-    with open(root + "mask.txt", 'r') as f:
-        mask = json.loads(f.read())
-
-    if 'Mac' in agent or 1:
-        with open(root + "mac_mask.txt", 'r') as fm:
-            mac_mask = json.loads(fm.read())
-    else:
-        mac_mask = [1 for i in range(len(mask))]
 
     single_hash = ""
     cross_hash = ""
