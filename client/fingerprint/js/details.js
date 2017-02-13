@@ -6,7 +6,8 @@ var cross_list = {
   fonts: 'Detected Fonts',
   audio: 'Audio', 
   ratio: 'Screen Ratio',
-  gpuimgs: 'Hash Value of GPU Rendering Results'
+  depth: 'Screen Depth',
+  //gpuimgs: 'Hash Value of GPU Rendering Results'
 }
 var cnted_list = {
   timezone: 'Time Zone',
@@ -71,6 +72,19 @@ function buildTable(data) {
   var list = data['resolution'].split('_');
   trans_data['ratio'] = Math.round(list[0] / list[1] * 100) / 100;
   data['ratio'] = trans_data['ratio'];
+  data['depth'] = list[5];//data['resolution'];
+
+  //If CPU core is not detected, N/A
+  if (data['cpu_cores'] == -1 || data['cpu_cores'] == '-1') { //here we can also use == '-1'
+    data['cpu_cores'] = 'N/A';
+  }
+
+  //convert timezone to a better way
+  var timezone = parseInt(data['timezone']);
+  var base;
+  if (timezone > 0) base = 'UTC-';
+  else base = 'UTC+';
+  data['timezone'] = 'UTC-' + (timezone / 60).toString();
 
   $('#result_table').append('<tr><td class = "checkbox"></td><td>Feature</td><td class = "value">Value</td></tr>');
   $('#result_table').append('<tr><td colspan="3" class = "type">Cross-browser Features</td></tr>');
