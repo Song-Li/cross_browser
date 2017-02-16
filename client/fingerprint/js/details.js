@@ -7,18 +7,23 @@ var cross_list = {
   audio: 'Audio', 
   ratio: 'Screen Ratio',
   depth: 'Screen Depth',
-  //gpuimgs: 'Hash Value of GPU Rendering Results'
+  gpuimgs: 'Hash Value of GPU Rendering Results'
 }
 var cnted_list = {
   timezone: 'Time Zone',
   fonts: 'Detected Fonts'
 }
+var gpu_hashes = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
+]
 var show_list = {
   WebGL: 'WebGL',
   timezone: 'Time Zone', 
   adblock: 'Ad Block',
   agent: 'Agent',
   audio: 'Audio',
+  depth: 'Screen Depth',
+  ratio: 'Screen Ratio',
   canvas_test: 'Canvas Test',
   cookie: 'Cookie Enabled',
   cpu_cores: 'Number of Cpu Cores',
@@ -48,25 +53,55 @@ function getFontsString(indexes) {
 
 function gen_code() {
   res = "";
-  for (cross in cross_list) {
-    label = 'box_' + cross;
+  for (var feature in show_list) {
+    label = 'box_' + feature;
     if (document.getElementById(label).checked) {
-      res += trans_data[cross]; 
+      res += trans_data[feature]; 
     }
   }
+
+  //this part is used for generate the hash values
+  gpu_hash = 0;
+  for (gpu_hash in gpu_hashes) {
+    label = 'box_' + gpu_hash;
+    if (document.getElementById(label).checked) {
+      res += trans_data['gpu_hashes'][gpu_hash]; 
+    }
+  }
+
   $('#cur_fingerprint').html("Current Fingerprint: " + md5(res));
 }
 
 function getGPUTable(hashes) {
-  res = "";
+  res = "<table border='0' id='gputable' class='gpu_table'><tr>";
   var cur = 0;
   for (hash in hashes) {
-    res += "<label width = '30px'><input type='checkbox' class = 'checkbox'/> " + hashes[hash] + "</label>";
+    res += "<td><label width = '30px'><input id='box_" + hash + "' type='checkbox' class = 'checkbox' onclick='gen_code();'/> " + hashes[hash] + "</label></td>";
     if (cur ++ % 3 == 2) 
-      res += "<br>";
+      res += "</tr><tr>";
   }  
+  res += "</tr></table>";
   return res;
 }
+
+function getGPUString() {
+  var hashes = {};
+  value = trans_data['gpuimgs'].split(',');
+  for (hash in value) {
+    cur = value[hash].split('_');
+    hashes[cur[0]] = cur[1];
+  }
+  trans_data['gpu_hashes'] = hashes;
+  value = getGPUTable(hashes);
+  return value;
+}
+
+function getTable(name) {
+  if (name == "fonts") return getFontsString(trans_data[name]);
+  if (name == "gpuimgs") return getGPUString(trans_data[name]); 
+  return trans_data[name];
+}
+
 function buildTable(data) {
   trans_data = data;
   var list = data['resolution'].split('_');
@@ -87,25 +122,12 @@ function buildTable(data) {
   data['timezone'] = 'UTC-' + (timezone / 60).toString();
 
   $('#result_table').append('<tr><td class = "checkbox"></td><td>Feature</td><td class = "value">Value</td></tr>');
-  $('#result_table').append('<tr><td colspan="3" class = "type">Cross-browser Features</td></tr>');
+  //$('#result_table').append('<tr><td colspan="3" class = "type">Cross-browser Features</td></tr>');
 
 
   for (var cross in cross_list) {
     if (cross in data) {
-      value = data[cross];
-      if (cross == 'fonts') {
-        value = getFontsString(value);
-      }
-
-      var hashes = {};
-      if (cross == 'gpuimgs') {
-        value = data[cross].split(',');
-        for (hash in value) {
-          cur = value[hash].split('_');
-          hashes[cur[0]] = cur[1];
-        }
-        value = getGPUTable(hashes);
-      }
+      value = getTable(cross);
       $('#result_table').append('<tr><td class = "checkbox"> <input id="box_' + cross + '"type="checkbox" onclick="gen_code();" checked></td><td class = "feature">' + cross_list[cross] + '</td><td class = "value">' + value + '</td></tr>');
     }
   }
@@ -117,11 +139,8 @@ function buildTable(data) {
     if (feature in cross_list) 
       continue;
     if (feature in data) {
-      value = data[feature];
-      if (feature == 'fonts') {
-        value = getFontsString(value);
-      }
-      $('#result_table').append('<tr><td class = "checkbox"><input type="checkbox" onclick="gen_code();" disabled readonly></td><td class = "feature">' + show_list[feature] + '</td><td class = "value">' + value + '</td></tr>');
+      value = getTable(feature);
+      $('#result_table').append('<tr><td class = "checkbox"><input id="box_' + feature + '" type="checkbox" onclick="gen_code();"></td><td class = "feature">' + show_list[feature] + '</td><td class = "value">' + value + '</td></tr>');
     }
   }
 }

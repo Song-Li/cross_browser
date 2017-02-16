@@ -5,6 +5,11 @@
   width: 100%;
 }
 
+.gpu_table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
 th, td {
   padding: 8px;
   text-align: left;
