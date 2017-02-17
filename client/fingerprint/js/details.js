@@ -7,7 +7,7 @@ var cross_list = {
   audio: 'Audio', 
   ratio: 'Screen Ratio',
   depth: 'Screen Depth',
-  gpuimgs: 'Hash Value of GPU Rendering Results'
+ // gpuimgs: 'Hash Value of GPU Rendering Results'
 }
 var cnted_list = {
   timezone: 'Time Zone',
@@ -17,6 +17,7 @@ var gpu_hashes = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
 ]
 var show_list = {
+  gpuimgs: 'Hash Value of GPU Rendering Results (partially cross_browser)',
   WebGL: 'WebGL',
   timezone: 'Time Zone', 
   adblock: 'Ad Block',
@@ -30,7 +31,6 @@ var show_list = {
   encoding: 'Encoding',
   fonts: 'Detected Fonts',
   gpu: 'GPU',
-  gpuimgs: 'Hash Value of GPU Rendering Results',
   language: 'Language',
   plugins: 'Plugins'
 };
@@ -75,8 +75,10 @@ function gen_code() {
 function getGPUTable(hashes) {
   res = "<table border='0' id='gputable' class='gpu_table'><tr>";
   var cur = 0;
+  var checked = 'checked';
   for (hash in hashes) {
-    res += "<td><label width = '30px'><input id='box_" + hash + "' type='checkbox' class = 'checkbox' onclick='gen_code();'/> " + hashes[hash] + "</label></td>";
+    if (hash >= 1) checked = '';
+    res += "<td><label width = '30px'><input id='box_" + hash + "' type='checkbox' " + checked + " onclick='gen_code();'/> " + hashes[hash] + "</label></td>";
     if (cur ++ % 3 == 2) 
       res += "</tr><tr>";
   }  
@@ -132,7 +134,7 @@ function buildTable(data) {
     }
   }
 
-  $('#result_table').append('<tr><td colspan="3" class = "type">Single-browser Features</td></tr>');
+ // $('#result_table').append('<tr><td colspan="3" class = "type">Features do not recommend for cross_browser</td></tr>');
 
   for (var feature in show_list) {
     //pass all the cross browser features
