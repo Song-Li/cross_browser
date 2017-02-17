@@ -145,6 +145,9 @@ function buildTable(data) {
       $('#result_table').append('<tr><td class = "checkbox"><input id="box_' + feature + '" type="checkbox" onclick="gen_code();"></td><td class = "feature">' + show_list[feature] + '</td><td class = "value">' + value + '</td></tr>');
     }
   }
+
+  //disable the GPU img hashes
+  document.getElementById('box_gpuimgs').disabled = "disabled;";
 }
 
 
