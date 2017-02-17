@@ -141,8 +141,11 @@ def features():
         else:
             value = str(value)
 
-        if feature == "cpu_cores" and type(value) != 'int':
-            value = -1
+#        if feature == "cpu_cores" and type(value) != 'int':
+#           value = -1
+#fix the bug for N/A for cpu_cores
+        if feature == 'cpu_cores':
+            value = int(value)
         
         value_str += ",'" + str(value) + "'"
         #print feature, hash_object.hexdigest()
