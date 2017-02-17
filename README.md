@@ -5,6 +5,8 @@ Group: SECLAB in Lehigh University
 
 Website: http://uniquemachine.org
 
+Paper: https://drive.google.com/file/d/0B4s900Byvv1ibW5uc1NiU2g3R3c/view
+
 [Demo](http://uniquemachine.org)
 
 ## Description
