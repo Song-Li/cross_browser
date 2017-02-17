@@ -12,5 +12,7 @@ The whole client part is JS based in "client" dir. Some of the modules are gener
 Here is a list of usful description of dirs in "client":
 - fingerprint: Including all files related to fingerprinting tests.
 - js: Javascript part used for index.html
+
 ### Server
+
 The server part is writen in python. Using apache2 and flask as the framework. 
