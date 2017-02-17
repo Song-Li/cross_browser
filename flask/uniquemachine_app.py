@@ -101,8 +101,8 @@ def features():
 
     result = request.get_json()
 
-    single_hash = ""
-    cross_hash = ""
+    single_hash = "single"
+    cross_hash = "cross"
 
     #with open("fonts.txt", 'a') as f:
         #f.write(result['fonts'] + '\n')
