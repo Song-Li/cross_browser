@@ -238,7 +238,7 @@ var Sender = function() {
       cvs_test = CanvasTest();
       this.postData['canvas_test'] = Base64EncodeUrlSafe(calcSHA1(cvs_test.substring(22, cvs_test.length))); //remove the leading words
       if(!navigator.hardwareConcurrency)
-        this.postData['cpu_cores'] = "cpu";
+        this.postData['cpu_cores'] = "-1";
       else
         this.postData['cpu_cores'] = navigator.hardwareConcurrency;
 
