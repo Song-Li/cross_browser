@@ -34,6 +34,36 @@ var show_list = {
   language: 'Language',
   plugins: 'Plugins'
 };
+var gpu_imgs_name = [
+  "Cube Test",
+  "AA_Cube Test",
+  "Camera Test",
+  "Curve Test",
+  "AA_Curve Test",
+  "Texture Test",
+  "Two Models",
+  "Light Test",
+  "Light Test to Two Models",
+  "Two Lights to Two Models",
+  "AA_Two Lights to Two Models",
+  "Rotation Test",
+  "Two Lights, Textures, Models",
+  "Transparent Test 0",
+  "Transparent Test 1",
+  "Transparent Test 2",
+  "Transparent Test 3",
+  "Transparent Test 4",
+  "Transparent Test 5",
+  "Transparent Test 6",
+  "Transparent Test 7",
+  "AA_Complex Light Test",
+  "Complex Light Test",
+  "Clipping Test",
+  "Bubble Test",
+  "Compressed Texture Test",
+  "Shadow Test",
+  ""
+]
 trans_data = {};
 
 function getFontsString(indexes) {
@@ -78,7 +108,7 @@ function getGPUTable(hashes) {
   var checked = 'checked';
   for (hash in hashes) {
     if (hash >= 1) checked = '';
-    res += "<td><label width = '30px'><input id='box_" + hash + "' type='checkbox' " + checked + " onclick='gen_code();'/> " + hashes[hash] + "</label></td>";
+    res += "<td><label width = '30px'><input id='box_" + hash + "' type='checkbox' " + checked + " onclick='gen_code();'/> " + gpu_imgs_name[hash] + "(" + hashes[hash] + ")</label></td>";
     if (cur ++ % 3 == 2) 
       res += "</tr><tr>";
   }  
