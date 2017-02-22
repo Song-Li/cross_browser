@@ -243,6 +243,8 @@ var Sender = function() {
         this.postData['cpu_cores'] = navigator.hardwareConcurrency;
 
       this.postData['audio'] = audioFingerPrinting();
+      this.postData['langsDetected'] = get_writing_scripts();
+
       $('#status').html("Waitting for the server...");
       startSend(this.postData);
 
