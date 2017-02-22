@@ -127,8 +127,6 @@ def features():
     value_str = "'" + IP + "'"
 
     for feature in feature_list:
-        single_hash += str(result[feature])
-        hash_object = hashlib.md5(str(result[feature]))
         
         if result[feature] is not "":
             value = result[feature]
@@ -150,12 +148,12 @@ def features():
 
         if feature == 'langsDetected':
             value = str("".join(value))
-            value = value.replace("u'", "")
+            value = value.replace(" u'", "")
             value = value.replace("'", "")
-            value = value.replace(", ", "_")
+            value = value.replace(",", "_")
             value = value.replace("[", "")
             value = value.replace("]", "")
-            print value
+            value = value[1:]
         
         value_str += ",'" + str(value) + "'"
         #print feature, hash_object.hexdigest()
@@ -166,7 +164,7 @@ def features():
         cross_hash += str(result[feature])
         hash_object = hashlib.md5(str(result[feature]))
 
-    hash_object = hashlib.md5(single_hash)
+    hash_object = hashlib.md5(value_str)
     single_hash = hash_object.hexdigest()
 
     hash_object = hashlib.md5(cross_hash)
