@@ -1,4 +1,5 @@
 var ip_address = "sec.uniquemachine.org/uniquemachine/";
+//var ip_address = "aws.songli.us:5000";
 
 function populateFontList(fontArr) {
   fonts = [];
