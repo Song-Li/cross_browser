@@ -7,7 +7,7 @@ var cross_list = {
   audio: 'Audio', 
   ratio: 'Screen Ratio',
   depth: 'Screen Depth',
-  langsdetected: 'Detected Supported Languages',
+  langsdetected: 'Detected Supported Languages (Buggy and not finished)',
  // gpuimgs: 'Hash Value of GPU Rendering Results'
 }
 var cnted_list = {
