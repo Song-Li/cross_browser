@@ -7,6 +7,7 @@ var cross_list = {
   audio: 'Audio', 
   ratio: 'Screen Ratio',
   depth: 'Screen Depth',
+  langsdetected: 'Detected Supported Languages',
  // gpuimgs: 'Hash Value of GPU Rendering Results'
 }
 var cnted_list = {
@@ -32,6 +33,7 @@ var show_list = {
   fonts: 'Detected Fonts',
   gpu: 'GPU',
   language: 'Language',
+  langsdetected: 'Detected Supported Languages',
   plugins: 'Plugins'
 };
 var gpu_imgs_name = [
@@ -131,6 +133,7 @@ function getGPUString() {
 function getTable(name) {
   if (name == "fonts") return getFontsString(trans_data[name]);
   if (name == "gpuimgs") return getGPUString(trans_data[name]); 
+  if (name == "langsdetected") return trans_data[name].split('_');
   return trans_data[name];
 }
 
