@@ -78,6 +78,7 @@ def features():
             "accept",
             "encoding",
             "language",
+            "langsDetected",
             "resolution",
             "fonts",
             "WebGL", 
@@ -146,6 +147,15 @@ def features():
 #fix the bug for N/A for cpu_cores
         if feature == 'cpu_cores':
             value = int(value)
+
+        if feature == 'langsDetected':
+            value = str("".join(value))
+            value = value.replace("u'", "")
+            value = value.replace("'", "")
+            value = value.replace(", ", "_")
+            value = value.replace("[", "")
+            value = value.replace("]", "")
+            print value
         
         value_str += ",'" + str(value) + "'"
         #print feature, hash_object.hexdigest()
