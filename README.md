@@ -9,6 +9,8 @@ Paper: https://drive.google.com/file/d/0B4s900Byvv1ibW5uc1NiU2g3R3c/view
 
 [Demo](http://uniquemachine.org)
 
+Related repo: https://github.com/Song-Li/LanguageDetector  Used to detect supported languages
+
 ## Description
 This is a project for a browser fingerprinting technique that can track users not only within a single browser but also across different browsers on the same machine. 
 
