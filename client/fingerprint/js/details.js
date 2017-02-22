@@ -33,7 +33,7 @@ var show_list = {
   fonts: 'Detected Fonts',
   gpu: 'GPU',
   language: 'Language',
-  langsdetected: 'Detected Supported Languages',
+  langsdetected: 'Detected Supported Languages (Buggy and not finished)',
   plugins: 'Plugins'
 };
 var gpu_imgs_name = [
