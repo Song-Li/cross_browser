@@ -239,7 +239,8 @@
       this.testList.push(new CompressedTextureTest());
       this.testList.push(new ShadowTest());
       this.asyncTests = [];
-      this.asyncTests.push(new LanguageDector());
+      //language detection is done by another js file
+      //this.asyncTests.push(new LanguageDector());
       sender.finalized = true;
       this.numberOfTests = this.testList.length + this.asyncTests.length;
       this.numComplete = 0;
