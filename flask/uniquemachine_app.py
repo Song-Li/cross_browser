@@ -96,7 +96,9 @@ def features():
 
     cross_feature_list = [
             "timezone",
-            "fonts"
+            "fonts",
+            "langsDetected",
+            "audio"
             ]
     
 
