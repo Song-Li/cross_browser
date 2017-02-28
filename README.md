@@ -7,7 +7,7 @@ Website: http://uniquemachine.org
 
 Paper: https://drive.google.com/file/d/0B4s900Byvv1ibW5uc1NiU2g3R3c/view
 
-[Demo](http://uniquemachine.org)
+[Demo](http://uniquemachine.org) This is only a DEMO. Only 2 features in the paper is implemented. Far from finished. 10 ~20 features is waiting for implementation, more masks for GPU and Fonts needed to be updated. 
 
 Related repo: https://github.com/Song-Li/LanguageDetector  Used to detect supported languages
 
