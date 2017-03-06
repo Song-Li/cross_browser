@@ -164,7 +164,7 @@ var Sender = function() {
       ren = 'No debug Info';
     }
     var hash = pixels.hashCode();
-    console.log("gl: " + hash);
+    //console.log("gl: " + hash);
 
     this.toServer(WebGL, ven, ren, hash, id, pixels);
     if (sumRGB(pixels) > 1.0) {
@@ -234,7 +234,7 @@ var Sender = function() {
 
       this.postData['adBlock'] = $('#ad')[0] == null ? 'Yes' : 'No';
 
-      console.log(this.postData['adBlock'])
+      //console.log(this.postData['adBlock'])
 
       cvs_test = CanvasTest();
       this.postData['canvas_test'] = Base64EncodeUrlSafe(calcSHA1(cvs_test.substring(22, cvs_test.length))); //remove the leading words
