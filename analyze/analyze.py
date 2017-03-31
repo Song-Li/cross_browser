@@ -44,6 +44,23 @@ for f in cursor.fetchall():
         distinct_column_names.append(f[0])
 
 ip_fingerprint = get_distinct(distinct_column_names, cursor)
+img_idx = distinct_column_names.index("gpuimgs")
+num_imgs = 28
+imgs = [[] for i in range(0, num_imgs)]
+
+for f in ip_fingerprint:
+    img = f[img_idx].split(',')
+    if (len(img) != 28):
+        continue
+    for i in range(0, num_imgs):
+        imgs[i].append(img[i])
+
+# get the imgs
+for i in range(num_imgs):
+    print i, ': ', len(set(imgs[i]))
+
+
+print ip_fingerprint[0][distinct_column_names.index("gpuimgs")]
 print (len(ip_fingerprint))
 
 webgls = get_column('gpuimgs', cursor)
