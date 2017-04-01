@@ -174,11 +174,11 @@ var Sender = function() {
       context:this, 
       url : "http://" + ip_address + "/pictures",
       type : 'POST',
+      async: false,
       data : {
         imageBase64: dataurl
       },
       success : function(data) {
-        console.log(data);
         this.toServer(WebGL, ven, ren, data, id, data);
         //parent.postMessage(data,"http://uniquemachine.org");
       },
@@ -199,10 +199,12 @@ var Sender = function() {
 
   this.toServer = function(
       WebGL, inc, gpu, hash, id,
-      dataurl) { // send messages to server and receive messages from server
+      image_id) { 
+    // send messages to server and receive messages from server
 
     // send the whole img
-    this.postData['gpuImgs'][id] = Base64EncodeUrlSafe(dataurl); //dataurl.hashCode();
+    console.log(id);
+    this.postData['gpuImgs'][id] = image_id; //dataurl.hashCode();
     //console.log(dataurl)
 
     if (WebGL) {
