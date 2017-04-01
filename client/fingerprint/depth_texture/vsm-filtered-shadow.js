@@ -139,7 +139,7 @@ and how they are implemented on the GPU
           draw();
           if (depth++ === 5) {
             caf(frame);
-            sender.getData(gl.getContext(), _this.id);
+            sender.getData(gl.getContext(), canvas, _this.id);
             return _this.cb();
           }
         };

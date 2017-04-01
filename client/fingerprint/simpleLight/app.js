@@ -219,7 +219,7 @@ var SimpleLightTest = function(vertices, indices, texCoords, normals, texture) {
 
         if (count == 50) {
           cancelAnimationFrame(frame);
-          sender.getData(gl, parent.IDs[childNumber]);
+          sender.getData(gl, canvas, parent.IDs[childNumber]);
           parent.childComplete();
         }
       };

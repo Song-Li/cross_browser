@@ -159,7 +159,7 @@ This makes use of a variety of different webgl compressed texture extensions
             _this.renderer.render(_this.scene, _this.camera);
             if (_this.counter === 10) {
               caf(frame);
-              sender.getData(_this.renderer.getContext(), _this.id);
+              sender.getData(_this.renderer.getContext(), canvas, _this.id);
               return _this.cb();
             }
           };
@@ -277,7 +277,7 @@ This makes use of a variety of different webgl compressed texture extensions
             _this.renderer.render(_this.scene, _this.camera);
             if (_this.counter === 10) {
               caf(frame);
-              sender.getData(_this.renderer.getContext(), _this.id);
+              sender.getData(_this.renderer.getContext(), canvas, _this.id);
               return _this.cb();
             }
           };

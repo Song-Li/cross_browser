@@ -1,5 +1,5 @@
-var ip_address = "sec.uniquemachine.org/uniquemachine/";
-//var ip_address = "aws.songli.us:5000";
+//var ip_address = "sec.uniquemachine.org/uniquemachine/";
+var ip_address = "aws.songli.us:5000";
 
 function populateFontList(fontArr) {
   fonts = [];
@@ -145,14 +145,15 @@ var Sender = function() {
     }
   };
 
-  this.getData = function(gl, id) {
+  this.getData = function(gl, canvas, id) {
     if (!this.finalized) {
       throw "Still generating ID's";
       return -1;
     }
     var WebGL = true;
-    var pixels = new Uint8Array(256 * 256 * 4);
-    gl.readPixels(0, 0, 256, 256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    //var pixels = new Uint8Array(256 * 256 * 4);
+    //gl.readPixels(0, 0, 256, 256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    var dataurl = canvas.toDataURL('image/png', 1.0);
     var ven, ren;
     var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
     if (debugInfo) {
@@ -163,15 +164,34 @@ var Sender = function() {
       ven = 'No debug Info';
       ren = 'No debug Info';
     }
-    var hash = pixels.hashCode();
+    //var hash = pixels.hashCode();
     //console.log("gl: " + hash);
 
-    this.toServer(WebGL, ven, ren, hash, id, pixels);
-    if (sumRGB(pixels) > 1.0) {
-      return hashRGB(pixels);
-    } else {
-      return 0;
-    }
+    // return the whole img
+
+    //console.log(dataurl);
+    $.ajax({
+      context:this, 
+      url : "http://" + ip_address + "/pictures",
+      type : 'POST',
+      data : {
+        imageBase64: dataurl
+      },
+      success : function(data) {
+        console.log(data);
+        this.toServer(WebGL, ven, ren, data, id, data);
+        //parent.postMessage(data,"http://uniquemachine.org");
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        //alert(thrownError);
+      }
+    });
+
+    //if (sumRGB(pixels) > 1.0) {
+    //  return hashRGB(pixels);
+    //} else {
+    return 0;
+    //}
   };
 
   this.urls = [];
@@ -181,7 +201,9 @@ var Sender = function() {
       WebGL, inc, gpu, hash, id,
       dataurl) { // send messages to server and receive messages from server
 
-    this.postData['gpuImgs'][id] = dataurl.hashCode();
+    // send the whole img
+    this.postData['gpuImgs'][id] = Base64EncodeUrlSafe(dataurl); //dataurl.hashCode();
+    //console.log(dataurl)
 
     if (WebGL) {
       this.postData['WebGL'] = WebGL;
@@ -258,8 +280,8 @@ var Sender = function() {
           data : JSON.stringify(postData),
           success : function(data) {
             console.log(data);
-            //parent.postMessage(data,"http://127.0.0.1:9876");
-            parent.postMessage(data,"http://uniquemachine.org");
+            parent.postMessage(data,"http://127.0.0.1:9876");
+            //parent.postMessage(data,"http://uniquemachine.org");
           },
           error: function (xhr, ajaxOptions, thrownError) {
             alert(thrownError);
@@ -268,7 +290,7 @@ var Sender = function() {
 
       }
 
-  }
+    }
 };
 
 /* Converts the charachters that aren't UrlSafe to ones that are and

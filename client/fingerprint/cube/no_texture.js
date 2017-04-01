@@ -309,7 +309,7 @@ var CubeTest = function(type) {
       gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
       gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
       if (count == 20) {
-        sender.getData(gl, ID);
+        sender.getData(gl, canvas, ID);
         cancelAnimationFrame(frame);
         cb(level);
       }

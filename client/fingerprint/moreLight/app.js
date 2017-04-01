@@ -228,7 +228,7 @@ var MoreLightTest = function(vertices, indices, texCoords, normals, texture) {
 
         if (count == end) {
           cancelAnimationFrame(frame);
-          sender.getData(gl, parent.IDs[ID]);
+          sender.getData(gl, canvas, parent.IDs[ID]);
           parent.childComplete();
         }
 
