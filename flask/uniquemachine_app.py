@@ -49,10 +49,12 @@ def store_pictures():
     cursor = db.cursor()
     sql_str = "INSERT INTO pictures (dataurl) VALUES ('" + image_binary + "')"
     cursor.execute(sql_str)
+    db.commit()
 
     sql_str = "SELECT LAST_INSERT_ID()"
     cursor.execute(sql_str)
     ID = cursor.fetchone()
+    db.commit()
     return str(ID[0])
 
 @app.route('/details', methods=['POST'])
