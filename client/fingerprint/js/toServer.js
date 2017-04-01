@@ -203,7 +203,6 @@ var Sender = function() {
     // send messages to server and receive messages from server
 
     // send the whole img
-    console.log(id);
     this.postData['gpuImgs'][id] = image_id; //dataurl.hashCode();
     //console.log(dataurl)
 
