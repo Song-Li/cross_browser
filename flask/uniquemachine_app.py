@@ -7,6 +7,10 @@ import hashlib
 from flaskext.mysql import MySQL
 import ConfigParser
 import re
+import numpy as np
+from PIL import Image
+import base64
+import cStringIO
 
 root = "/home/sol315/server/uniquemachine/"
 config = ConfigParser.ConfigParser()
@@ -20,6 +24,7 @@ app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 CORS(app)
+base64_header = "data:image/png;base64,"
 
 mask = []
 mac_mask = []
@@ -29,9 +34,26 @@ with open(root + "mask.txt", 'r') as f:
 with open(root + "mac_mask.txt", 'r') as fm:
     mac_mask = json.loads(fm.read())
 
-@app.route("/")
-def hello():
-    return "Hello World!"
+@app.route("/pictures", methods=['POST'])
+def store_pictures():
+    image_b64 = request.values['imageBase64']
+    # remove the define part of image_b64
+    image_b64 = re.sub('^data:image/.+;base64,', '', image_b64)
+    # decode image_b64
+    image_data = image_b64.decode('base64')
+    image_data = cStringIO.StringIO(image_data)
+    image_PIL = Image.open(image_data)
+    image_binary = image_PIL.tobytes().encode('hex')
+
+    db = mysql.get_db()
+    cursor = db.cursor()
+    sql_str = "INSERT INTO pictures (dataurl) VALUES ('" + image_binary + "')"
+    cursor.execute(sql_str)
+
+    sql_str = "SELECT LAST_INSERT_ID()"
+    cursor.execute(sql_str)
+    ID = cursor.fetchone()
+    return str(ID[0])
 
 @app.route('/details', methods=['POST'])
 def details():
@@ -127,6 +149,7 @@ def features():
            
     feature_str = "IP"
     value_str = "'" + IP + "'"
+
 
     for feature in feature_list:
         
