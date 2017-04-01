@@ -34,6 +34,31 @@ with open(root + "mask.txt", 'r') as f:
 with open(root + "mac_mask.txt", 'r') as fm:
     mac_mask = json.loads(fm.read())
 
+@app.route("/utils", methods=['POST'])
+def utils():
+    command = request.values['key']
+    sql_str = ""
+    if command == "keys":
+        sql_str = "SELECT distinct(IP) from features"
+
+    db = mysql.get_db()
+    cursor = db.cursor()
+    cursor.execute(sql_str)
+    db.commit()
+    res = cursor.fetchall() 
+    return ",".join([r[0] for r in res])
+
+
+@app.route("/result", methods=['POST'])
+def get_result():
+    image_id = request.values['image_id']
+    sql_str = "SELECT dataurl from pirctures where ID={image_id}"
+    db = mysql.get_db()
+    cursor = db.cursor()
+    cursor.execute(sql_str)
+    db.commit()
+    return cursor.fetchone()[0]
+
 @app.route("/pictures", methods=['POST'])
 def store_pictures():
     image_b64 = request.values['imageBase64']
