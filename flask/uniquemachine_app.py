@@ -1,4 +1,5 @@
 from flask import Flask, request,make_response, current_app
+import md5
 from flask_failsafe import failsafe
 import flask
 from flask_cors import CORS, cross_origin
@@ -34,20 +35,31 @@ with open(root + "mask.txt", 'r') as f:
 with open(root + "mac_mask.txt", 'r') as fm:
     mac_mask = json.loads(fm.read())
 
-@app.route("/utils", methods=['POST'])
-def utils():
-    command = request.values['key']
-    sql_str = ""
-    if command == "keys":
-        sql_str = "SELECT distinct IP, time from features"
-
+def run_sql(sql_str):
     db = mysql.get_db()
     cursor = db.cursor()
     cursor.execute(sql_str)
     db.commit()
     res = cursor.fetchall() 
-    return ",".join([r[0] + '=' + r[1].isoformat() for r in res])
+    return res
 
+
+@app.route("/utils", methods=['POST'])
+def utils():
+    command = request.values['key']
+    sql_str = ""
+    if command == "keys":
+        sql_str = "SELECT distinct IP, time, id from features"
+        res = run_sql(sql_str)
+        # return the ip, time and the id
+        return ",".join([r[0] + '=' + r[1].isoformat() + '_' + str(r[2]) for r in res])
+
+    elif command.split(',')[0] == "get_pictures_by_id":
+        ID = command.split(',')[1]
+        sql_str = "SELECT gpuImgs from features where id = " + ID
+        res = run_sql(sql_str)
+        imgs_str = res[0][0]
+        return imgs_str
 
 @app.route("/result", methods=['POST'])
 def get_result():
@@ -61,18 +73,11 @@ def get_result():
 
 @app.route("/pictures", methods=['POST'])
 def store_pictures():
-    image_b64 = request.values['imageBase64']
-    # remove the define part of image_b64
-    image_b64 = re.sub('^data:image/.+;base64,', '', image_b64)
-    # decode image_b64
-    image_data = image_b64.decode('base64')
-    image_data = cStringIO.StringIO(image_data)
-    image_PIL = Image.open(image_data)
-    image_binary = image_PIL.tobytes().encode('hex')
 
+    # get ID for this picture
     db = mysql.get_db()
     cursor = db.cursor()
-    sql_str = "INSERT INTO pictures (dataurl) VALUES ('" + image_binary + "')"
+    sql_str = "INSERT INTO pictures (dataurl) VALUES ('" + "tmp"+ "')"
     cursor.execute(sql_str)
     db.commit()
 
@@ -80,6 +85,15 @@ def store_pictures():
     cursor.execute(sql_str)
     ID = cursor.fetchone()
     db.commit()
+
+    image_b64 = request.values['imageBase64']
+    # remove the define part of image_b64
+    image_b64 = re.sub('^data:image/.+;base64,', '', image_b64)
+    # decode image_b64
+    image_data = image_b64.decode('base64')
+    image_data = cStringIO.StringIO(image_data)
+    image_PIL = Image.open(image_data)
+    image_PIL.save("/home/sol315/pictures/" + str(ID[0]) + ".png")
     return str(ID[0])
 
 @app.route('/details', methods=['POST'])
