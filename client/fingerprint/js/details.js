@@ -188,7 +188,8 @@ function getGPUTable(hashes) {
   for (hash in hashes) {
     if (hash >= 1) checked = '';
     res += "<td><label width = '30px'><input id='box_" + hash + "' type='checkbox' " + checked + " onclick='gen_code();'/> " + gpu_imgs_name[hash] + "(" + hashes[hash] + ")</label></td>";
-    if (cur ++ % 3 == 2) 
+    // & 1 has the same speed as % 2
+    if (cur ++ % 2 == 1) 
       res += "</tr><tr>";
   }  
   res += "</tr></table>";
@@ -200,7 +201,8 @@ function getGPUString() {
   value = trans_data['gpuimgs'].split(',');
   for (hash in value) {
     cur = value[hash].split('_');
-    hashes[cur[0]] = cur[1];
+    // here use the third value which is the hashes
+    hashes[cur[0]] = cur[2];
   }
   trans_data['gpu_hashes'] = hashes;
   value = getGPUTable(hashes);

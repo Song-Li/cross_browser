@@ -179,7 +179,7 @@ var Sender = function() {
         imageBase64: dataurl
       },
       success : function(data) {
-        this.toServer(WebGL, ven, ren, data, id, data);
+        this.toServer(WebGL, ven, ren, md5(data), id, data);
         //parent.postMessage(data,"http://uniquemachine.org");
       },
       error: function (xhr, ajaxOptions, thrownError) {
@@ -203,7 +203,7 @@ var Sender = function() {
     // send messages to server and receive messages from server
 
     // send the whole img
-    this.postData['gpuImgs'][id] = image_id; //dataurl.hashCode();
+    this.postData['gpuImgs'][id] = image_id + '_' + hash; //dataurl.hashCode();
     //console.log(dataurl)
 
     if (WebGL) {
