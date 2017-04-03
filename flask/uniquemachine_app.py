@@ -39,14 +39,14 @@ def utils():
     command = request.values['key']
     sql_str = ""
     if command == "keys":
-        sql_str = "SELECT distinct(IP) from features"
+        sql_str = "SELECT distinct IP, time from features"
 
     db = mysql.get_db()
     cursor = db.cursor()
     cursor.execute(sql_str)
     db.commit()
     res = cursor.fetchall() 
-    return ",".join([r[0] for r in res])
+    return ",".join([r[0] + '=' + r[1].isoformat() for r in res])
 
 
 @app.route("/result", methods=['POST'])
@@ -184,11 +184,17 @@ def features():
             value = result[feature]
         else:
             value = "NULL"
+        
+        # set hash_str as the pure value from js
+        hash_str = str(value)
 
         feature_str += "," + feature
-#for gpu imgs
+        # for gpu imgs
         if feature == "gpuImgs":
-            value = ",".join('%s_%s' % (k,v) for k,v in value.iteritems())
+            # only keep the pure value of every result
+            hash_str = ",".join(v.split('_')[1] for k, v in value.iteritems())
+            # change value to str
+            value = ",".join('%s_%s' % (k, v) for k, v in value.iteritems())
         else:
             value = str(value)
 
@@ -206,7 +212,9 @@ def features():
             value = value.replace("[", "")
             value = value.replace("]", "")
             value = value[1:]
-        
+
+        # if feature is gpuImgs
+        # we need to ignore the picture id
         value_str += ",'" + str(value) + "'"
         #print feature, hash_object.hexdigest()
 
@@ -216,7 +224,7 @@ def features():
         cross_hash += str(result[feature])
         hash_object = hashlib.md5(str(result[feature]))
 
-    hash_object = hashlib.md5(value_str)
+    hash_object = hashlib.md5(hash_str)
     single_hash = hash_object.hexdigest()
 
     hash_object = hashlib.md5(cross_hash)
@@ -231,5 +239,10 @@ def features():
     cursor.execute(sql_str)
     db.commit()
 
-    print (single_hash, cross_hash)
-    return flask.jsonify({"single": single_hash, "cross": cross_hash})
+    sql_str = "SELECT LAST_INSERT_ID()"
+    cursor.execute(sql_str)
+    ID = cursor.fetchone()[0]
+    db.commit()
+
+    print (single_hash, cross_hash, ID)
+    return flask.jsonify({"single": single_hash, "cross": cross_hash, "id": ID})
