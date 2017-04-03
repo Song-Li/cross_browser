@@ -1,0 +1,28 @@
+#keys {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20%;
+  height: 100%;
+}
+#picture_1 {
+  position: absolute;
+  top: 0;
+  left: 20%;
+  width: 20%;
+  height: 100%;
+}
+#picture_2 {
+  position: absolute;
+  top: 0;
+  left: 40%;
+  width: 20%;
+  height: 100%;
+}
+#subtract {
+  position: absolute;
+  top: 0;
+  left: 60%;
+  width: 20%;
+  height: 100%;
+}
