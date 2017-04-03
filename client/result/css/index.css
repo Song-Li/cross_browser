@@ -26,3 +26,10 @@
   width: 20%;
   height: 100%;
 }
+#operations {
+  position: absolute;
+  top: 0;
+  left: 80%;
+  width: 20%;
+  height: 100%;
+}

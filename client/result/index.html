@@ -5,14 +5,23 @@
 <link type="text/css" rel="stylesheet" href="./css/index.css">
 <script type="text/javascript" src="js/get_result.js"></script>
 </head>
-<body onload="get_result();">
+<body onload="get_result(1);">
   <div id = "keys" class = "keys">
+    <select id="select_1" onChange="get_pictures(1);">
+      <option disabled selected value> -- select an option -- </option>
+    </select>
+    <select id="select_2" onChange="get_pictures(2);">
+      <option disabled selected value> -- select an option -- </option>
+    </select>
   </div>
   <div id = "picture_1" class = "picture_1">
   </div>
   <div id = "picture_2" class = "picture_2">
   </div>
   <div id = "subtract" class = "subtract">
+  </div>
+  <div id = "operations" class = "operations">
+    <input type="button" value = "subtract" onclick="subtract();" />
   </div>
 </body>
 </html>

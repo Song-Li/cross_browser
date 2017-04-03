@@ -30,13 +30,19 @@ function get_result() {
     id = keys[idx].split('_')[1];
     ip = keys[idx].split('_')[0];
 
-    var b = $('<input type="button" value = ' + ip + ' onclick="get_pictures_by_id(' + id + ')"/>');
-    $("#keys").append(b);
+    var b_1 = $('<option value = "' + id + '">' + ip + '</option>');
+    var b_2 = $('<option value = "' + id + '">' + ip + '</option>');
+    $("#select_1").append(b_1);
+    $("#select_2").append(b_2);
   }
 }
 
-function get_pictures_by_id(id) {
-  console.log(id);
+function get_pictures(column) {
+  var id = $("select[id=select_" + column + "]").val();
+  get_pictures_by_id(column, id);
+}
+
+function get_pictures_by_id(column, id) {
   picture_ids = send_to_utils("get_pictures_by_id," + id).split(',');
   sorted = {}
   for(var idx in picture_ids) {
@@ -44,8 +50,11 @@ function get_pictures_by_id(id) {
     sorted[parseInt(v.split('_')[0])] = v.split('_')[1]
   }
   for(k in sorted){
-    console.log(k)
-    var img = $('<img src="' + address + sorted[k] + '.png" />');
-    $('#picture_1').append(img);
+    var img = $('<img id=' + column + k + ' src="' + address + sorted[k] + '.png" />');
+    $('#picture_' + column).append(img);
   }
+}
+
+function subtract() {
+  console.log("here");
 }
