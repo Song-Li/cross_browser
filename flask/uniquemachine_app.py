@@ -240,7 +240,7 @@ def features():
         cross_hash += str(result[feature])
         hash_object = hashlib.md5(str(result[feature]))
 
-    hash_object = hashlib.md5(single_hash)
+    hash_object = hashlib.md5(single_hash_str)
     single_hash = hash_object.hexdigest()
 
     hash_object = hashlib.md5(cross_hash)
