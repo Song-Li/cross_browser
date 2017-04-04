@@ -30,11 +30,14 @@ function get_result() {
   var keys = get_keys();
   console.log(keys);
   for (var idx in keys) {
-    id = keys[idx].split('_')[1];
-    ip = keys[idx].split('_')[0];
+    parts = keys[idx].split('_')
+    ip = parts[0];
+    time = parts[1];
+    browser = parts[2];
+    id = parts[3];
 
-    var b_1 = $('<option value = "' + id + '">' + ip + '</option>');
-    var b_2 = $('<option value = "' + id + '">' + ip + '</option>');
+    var b_1 = $('<option value = "' + id + '">' + ip + '_' + browser + '_' + time + '</option>');
+    var b_2 = $('<option value = "' + id + '">' + ip + '_' + browser + '_' + time + '</option>');
     $("#select_1").append(b_1);
     $("#select_2").append(b_2);
   }

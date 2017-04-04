@@ -281,6 +281,7 @@ var Sender = function() {
           data : JSON.stringify(postData),
           success : function(data) {
             console.log(data);
+            console.log(data.str);
             parent.postMessage(data,"http://www.songli.us");
             //parent.postMessage(data,"http://uniquemachine.org");
           },
