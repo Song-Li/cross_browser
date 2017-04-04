@@ -76,7 +76,6 @@ function get_pixel_from_img(img_id) {
   var img = document.getElementById(img_id); 
   var width = img.clientWidth;
   var height = img.clientHeight;
-  console.log(width, height);
   // the canvas may be taint for cross origin info
   var canvas = document.createElement('canvas');
   canvas.width = width;
@@ -92,7 +91,6 @@ function get_pixel_from_img(img_id) {
 function sub_pic_data(pic1_data, pic2_data) {
   var sub_data = pic1_data;
   var same = true;
-  console.log(pic1_data.data.length)
   for (var i in pic1_data.data) {
     // both the two will be considered
     sub_data.data[i] = Math.abs(pic1_data.data[i] - pic2_data.data[i]);
@@ -109,7 +107,6 @@ function sub_pic_data(pic1_data, pic2_data) {
     }
   }
   sub_data.same = same;
-  console.log(sub_data);
   return sub_data;
 }
 
@@ -142,4 +139,11 @@ function subtract() {
 
     $('#subtract').append(res_img);
   }
+}
+
+// this function is used to clear all the data
+function clear_all_data() {
+  var password = prompt("Input your password to clear data: ");
+  res = send_to_utils("clear," + password);
+  alert(res);
 }
