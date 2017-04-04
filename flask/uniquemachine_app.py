@@ -168,6 +168,7 @@ def features():
     result = request.get_json()
 
     single_hash = "single"
+    single_hash_str = "single"
     cross_hash = "cross"
 
     #with open("fonts.txt", 'a') as f:
@@ -231,6 +232,7 @@ def features():
         # we need to ignore the picture id
         value_str += ",'" + str(value) + "'"
         #print feature, hash_object.hexdigest()
+        single_hash_str += hash_str
 
 
     result['fonts'] = fonts
@@ -238,7 +240,7 @@ def features():
         cross_hash += str(result[feature])
         hash_object = hashlib.md5(str(result[feature]))
 
-    hash_object = hashlib.md5(hash_str)
+    hash_object = hashlib.md5(single_hash)
     single_hash = hash_object.hexdigest()
 
     hash_object = hashlib.md5(cross_hash)
