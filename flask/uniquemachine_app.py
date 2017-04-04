@@ -1,4 +1,5 @@
 from flask import Flask, request,make_response, current_app
+import os
 import md5
 from flask_failsafe import failsafe
 import flask
@@ -14,6 +15,7 @@ import base64
 import cStringIO
 
 root = "/home/sol315/server/uniquemachine/"
+pictures_path = "/home/sol315/pictures/"
 config = ConfigParser.ConfigParser()
 config.read(root + 'password.ignore')
 
@@ -34,6 +36,17 @@ with open(root + "mask.txt", 'r') as f:
     mask = json.loads(f.read())
 with open(root + "mac_mask.txt", 'r') as fm:
     mac_mask = json.loads(fm.read())
+
+def clear_all_data():
+    sql_str = "delete from features"
+    run_sql(sql_str)
+    sql_str = "delete from pictures"
+    run_sql(sql_str)
+    sql_str = "ALTER TABLE features AUTO_INCREMENT = 1"
+    run_sql(sql_str)
+    sql_str = "ALTER TABLE pictures AUTO_INCREMENT = 1"
+    run_sql(sql_str)
+    os.system("rm " + pictures_path + "*")
 
 def run_sql(sql_str):
     db = mysql.get_db()
@@ -79,6 +92,12 @@ def utils():
         res = run_sql(sql_str)
         imgs_str = res[0][0]
         return imgs_str
+    elif command.split(',')[0] == "clear":
+        if command.split(',')[1] == "seclab":
+            clear_all_data()
+            return "cleared"
+        else:
+            return "wrong password"
 
 @app.route("/result", methods=['POST'])
 def get_result():
