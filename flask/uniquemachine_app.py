@@ -43,16 +43,35 @@ def run_sql(sql_str):
     res = cursor.fetchall() 
     return res
 
+def get_browser_from_agent(agent):
+    start_pos = 0
+    if agent.find('Firefox') != -1:
+        start_pos = agent.find("Firefox")
+    elif agent.find('Edge') != -1:
+        start_pos = agent.find('Edge')
+    elif agent.find('Chrome') != -1:
+        start_pos = agent.find('Chrome')
+    elif agent.find('Safari') != -1:
+        start_pos = agent.find('Safari')
+
+    if start_pos == 0:
+        return 'unknown'
+    else:
+        # here use space as the end char
+        end_pos = agent.find(' ', start_pos)
+        if end_pos == -1:
+            end_pos = len(agent)
+        return agent[start_pos:end_pos]
 
 @app.route("/utils", methods=['POST'])
 def utils():
     command = request.values['key']
     sql_str = ""
     if command == "keys":
-        sql_str = "SELECT distinct IP, time, id from features"
+        sql_str = "SELECT distinct IP, time, id, agent from features"
         res = run_sql(sql_str)
         # return the ip, time and the id
-        return ",".join([r[0] + '=' + r[1].isoformat() + '_' + str(r[2]) for r in res])
+        return ",".join([r[0] + '_' + r[1].isoformat() + '_' + get_browser_from_agent(r[3]) + '_' + str(r[2]) for r in res])
 
     elif command.split(',')[0] == "get_pictures_by_id":
         ID = command.split(',')[1]
@@ -73,7 +92,6 @@ def get_result():
 
 @app.route("/pictures", methods=['POST'])
 def store_pictures():
-
     # get ID for this picture
     db = mysql.get_db()
     cursor = db.cursor()
