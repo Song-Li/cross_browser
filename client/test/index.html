@@ -1,0 +1,25 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <canvas width = 500 height = 500 onmousemove="draw(event);" id="test_canvas"></canvas>
+  </body>  
+  <script>
+//put this outside the event loop..
+var canvas = document.getElementById("test_canvas");
+var context = canvas.getContext("2d");
+
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
+function draw(evt) {
+  var pos = getMousePos(canvas, evt);
+  context.fillStyle = "#000000";
+  context.fillRect (pos.x, pos.y, 4, 4);
+}
+  </script>
+</html>
