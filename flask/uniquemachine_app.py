@@ -56,6 +56,15 @@ def run_sql(sql_str):
     res = cursor.fetchall() 
     return res
 
+
+def get_os_from_agent(agent):
+    start_pos = 0
+    if agent.find('(') != -1:
+        start_pos = agent.find('(')
+    end_pos = agent.find(')', start_pos)
+
+    return agent[start_pos:end_pos]
+
 def get_browser_from_agent(agent):
     start_pos = 0
     if agent.find('Firefox') != -1:
@@ -84,7 +93,7 @@ def utils():
         sql_str = "SELECT distinct IP, time, id, agent from features"
         res = run_sql(sql_str)
         # return the ip, time and the id
-        return ",".join([r[0] + '_' + r[1].isoformat() + '_' + get_browser_from_agent(r[3]) + '_' + str(r[2]) for r in res])
+        return ",".join([r[0] + '_' + r[1].isoformat() + '_' + get_browser_from_agent(r[3]) + '_' + get_os_from_agent(r[3]) + '_' + str(r[2]) for r in res])
 
     elif command.split(',')[0] == "get_pictures_by_id":
         ID = command.split(',')[1]
