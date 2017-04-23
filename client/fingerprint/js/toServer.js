@@ -282,7 +282,7 @@ var Sender = function() {
           success : function(data) {
             console.log(data);
             console.log(data.str);
-            parent.postMessage(data,"http://www.songli.us");
+            parent.postMessage(data,"http://songli.us");
             //parent.postMessage(data,"http://uniquemachine.org");
           },
           error: function (xhr, ajaxOptions, thrownError) {
