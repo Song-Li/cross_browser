@@ -93,7 +93,7 @@ def utils():
         sql_str = "SELECT distinct IP, time, id, agent from features"
         res = run_sql(sql_str)
         # return the ip, time and the id
-        return ",".join([r[0] + '_' + r[1].isoformat() + '_' + get_browser_from_agent(r[3]) + '_' + get_os_from_agent(r[3]) + '_' + str(r[2]) for r in res])
+        return ",".join([r[0] + '~' + r[1].isoformat() + '~' + get_browser_from_agent(r[3]) + '~' + get_os_from_agent(r[3]) + '~' + str(r[2]) for r in res])
 
     elif command.split(',')[0] == "get_pictures_by_id":
         ID = command.split(',')[1]
