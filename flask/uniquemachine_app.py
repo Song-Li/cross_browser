@@ -108,6 +108,22 @@ def utils():
         else:
             return "wrong password"
 
+    elif command.split(',')[0] == "get_details":
+        res = {}
+        ID = command.split(',')[1]
+        db = mysql.get_db()
+        cursor = db.cursor()
+        sql_str = "SELECT * FROM features WHERE id = '" + ID +"'"
+        cursor.execute(sql_str)
+        db.commit()
+        row = cursor.fetchone()
+        for i in range(len(row)):
+            value = row[i]
+            name = cursor.description[i][0]
+            res[name] = value
+
+        return flask.jsonify(res)
+
 @app.route("/result", methods=['POST'])
 def get_result():
     image_id = request.values['image_id']

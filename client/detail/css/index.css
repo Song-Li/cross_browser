@@ -1,0 +1,27 @@
+.left {
+  position: absolute;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  top: 0;
+  left: 0%;
+  width: 33%;
+  height: 100%;
+}
+.mid {
+  position: absolute;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  top: 0;
+  left: 33%;
+  width: 66%;
+  height: 100%;
+}
+.right {
+  position: absolute;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  top: 0;
+  left: 66%;
+  width: 100%;
+  height: 100%;
+}

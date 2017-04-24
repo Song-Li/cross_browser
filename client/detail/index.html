@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <link type="text/css" rel="stylesheet" href="css/index.css">
+    <script type="text/javascript" src="js/get_result.js"></script>
+  </head>
+  <body onload="get_keys();">
+    <div id = "left" class="left">
+      <select id="select_1" onChange="get_details(1);">
+        <option disabled selected value> -- select an option -- </option>
+      </select>
+      <div id = "detail_1">
+        <table id="table_1">
+        </table>
+      </div>
+    </div>
+    <div id="mid" class="mid">
+      <select id="select_2" onChange="get_details(2);">
+        <option disabled selected value> -- select an option -- </option>
+      </select>
+      <div id = "detail_2">
+        <table id="table_2">
+        </table>
+      </div>
+    </div>
+    <div id="right" class="right">
+      <input type="button" value = "subtract" onclick="subtract();" />
+      <div id = "subtract">
+        <table id="table_3">
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
