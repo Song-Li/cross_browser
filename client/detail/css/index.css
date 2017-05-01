@@ -1,27 +1,25 @@
 .left {
   position: absolute;
-  text-overflow: ellipsis;
-  overflow: hidden;
   top: 0;
   left: 0%;
-  width: 33%;
+  width: 40%;
   height: 100%;
 }
 .mid {
   position: absolute;
-  text-overflow: ellipsis;
-  overflow: hidden;
   top: 0;
-  left: 33%;
-  width: 66%;
+  left: 40%;
+  width: 40%;
   height: 100%;
 }
 .right {
   position: absolute;
-  text-overflow: ellipsis;
-  overflow: hidden;
   top: 0;
-  left: 66%;
-  width: 100%;
+  left: 80%;
+  width: 20%;
+  height: 100%;
+}
+.table {
+  width: 33%;
   height: 100%;
 }

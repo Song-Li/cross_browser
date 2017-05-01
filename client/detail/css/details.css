@@ -1,0 +1,43 @@
+.details_table {
+  border-collapse: collapse;
+  border: 1px solid #fff;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.gpu_table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+}
+
+.details_table td {
+  word-wrap: break-word;       /* All browsers since IE 5.5+ */
+  overflow-wrap: break-word;     /* Renamed property in CSS3 draft spec */
+}
+
+.feature {
+  width: 25%;
+}
+.value {
+  width: 70%;
+}
+
+.type {
+  text-align: center;
+}
+
+.checkbox {
+  width: 5%;
+}
+
+.heading {
+  padding: 36px;
+  text-align: center;
+}

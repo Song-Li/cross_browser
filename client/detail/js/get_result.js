@@ -49,10 +49,7 @@ function get_details(column) {
   var id = $("select[id=select_" + column + "]").val();
   var details = get_details_by_id(column, id);
   details_global.push(details);
-  for (var d in details) {
-    var line = $('<tr><td>' + d + '</td><td>' + details[d] + '</td></tr>')
-    $("#table_" + column).append(line);
-  }
+  getDetails(details, column);
 }
 
 // subtract all the imgs
