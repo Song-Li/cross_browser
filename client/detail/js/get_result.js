@@ -59,7 +59,29 @@ function subtract() {
   // here we only have 28 pictures
   for (var i in details_global[0]) {
     if (details_global[0][i] == details_global[1][i]) continue;
-    $('#table_3').append('<tr><td>' + i + '</td></tr>');
+    g_0 = details_global[0][i];
+    g_1 = details_global[1][i];
+    if (i != 'gpuimgs')
+      $('#table_3').append('<tr><td>' + i + '</td><td>' + g_0.substring(0, 6) + '</td><td>' + g_1.substring(0, 6) + '</td></tr>');
+    else {
+      hashes_0 = {};
+      hashes_1 = {};
+      var str_0 = details_global[0][i].split(',');
+      var str_1 = details_global[1][i].split(',');
+      for (var j in str_0) {
+        var id = str_0[j].split('_')[0];
+        hashes_0[id] = str_0[j].split('_')[2];
+        id = str_1[j].split('_')[0];
+        hashes_1[id] = str_1[j].split('_')[2];
+      }
+      for (var j in hashes_0) {
+        if (hashes_0[j] != hashes_1[j]) {
+          $('#table_3').append('<tr><td>' + j + '</td><td>' + hashes_0[j].substring(0, 4) + '</td><td>' + hashes_1[j].substring(0, 4) + '</td></tr>');
+          console.log(j, hashes_0[j]);
+        }
+      }
+      console.log(details_global[0][i]);
+    }
   }
 }
 
