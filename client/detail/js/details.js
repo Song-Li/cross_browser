@@ -152,7 +152,7 @@ function getFontsString(indexes) {
     v = indexes[index]; //get every single value of font
     if (v == '1') {
       if (cnt < 10) 
-        value += '"' + font_list[cnt] + '" ';
+        value += '"' + font_list[index] + '" ';
       cnt ++;
     }
   }

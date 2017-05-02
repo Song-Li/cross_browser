@@ -61,9 +61,8 @@ function subtract() {
     if (details_global[0][i] == details_global[1][i]) continue;
     g_0 = details_global[0][i];
     g_1 = details_global[1][i];
-    if (i != 'gpuimgs')
-      $('#table_3').append('<tr><td>' + i + '</td><td>' + g_0.substring(0, 6) + '</td><td>' + g_1.substring(0, 6) + '</td></tr>');
-    else {
+    $('#table_3').append('<tr><td>' + i + '</td><td>' + g_0.substring(0, 6) + '</td><td>' + g_1.substring(0, 6) + '</td></tr>');
+    if (i == 'gpuimgs') {
       hashes_0 = {};
       hashes_1 = {};
       var str_0 = details_global[0][i].split(',');
@@ -77,10 +76,22 @@ function subtract() {
       for (var j in hashes_0) {
         if (hashes_0[j] != hashes_1[j]) {
           $('#table_3').append('<tr><td>' + j + '</td><td>' + hashes_0[j].substring(0, 4) + '</td><td>' + hashes_1[j].substring(0, 4) + '</td></tr>');
-          console.log(j, hashes_0[j]);
         }
       }
-      console.log(details_global[0][i]);
+    } else if (i == "fonts") {
+      var str_0 = details_global[0][i];
+      var str_1 = details_global[1][i];
+      var font_res = [];
+      for (var j in str_0) {
+        if (str_0[j] != str_1[j]) {
+          console.log(j, str_0[j], str_1[j]);
+          font_res.push(font_list[j]);
+        }
+      }
+      for (var j = 0;j < font_res.length;j += 3) {
+        $('#table_3').append('<tr><td>' + font_res[j] + '</td><td>' + font_res[j + 1]
+          + '</td><td>' + font_res[j + 2] + '</td></tr>');
+      }
     }
   }
 }
