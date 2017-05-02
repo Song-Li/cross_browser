@@ -47,35 +47,33 @@ function get_details_by_id(column, id) {
 
 function get_details(column) {
   var id = $("select[id=select_" + column + "]").val();
+  $('#table_' + column).empty();
   var details = get_details_by_id(column, id);
-  details_global.push(details);
+  details_global[column - 1] = details;
   getDetails(details, column);
 }
 
 // subtract all the imgs
 function subtract() {
   // clear the res div
-  //$('#subtract').empty();
+  $('#table_3').empty();
   // here we only have 28 pictures
   for (var i in details_global[0]) {
     if (details_global[0][i] == details_global[1][i]) continue;
     g_0 = details_global[0][i];
     g_1 = details_global[1][i];
-    $('#table_3').append('<tr><td>' + i + '</td><td>' + g_0.substring(0, 6) + '</td><td>' + g_1.substring(0, 6) + '</td></tr>');
-    if (i == 'gpuimgs') {
-      hashes_0 = {};
-      hashes_1 = {};
-      var str_0 = details_global[0][i].split(',');
-      var str_1 = details_global[1][i].split(',');
-      for (var j in str_0) {
-        var id = str_0[j].split('_')[0];
-        hashes_0[id] = str_0[j].split('_')[2];
-        id = str_1[j].split('_')[0];
-        hashes_1[id] = str_1[j].split('_')[2];
-      }
-      for (var j in hashes_0) {
-        if (hashes_0[j] != hashes_1[j]) {
-          $('#table_3').append('<tr><td>' + j + '</td><td>' + hashes_0[j].substring(0, 4) + '</td><td>' + hashes_1[j].substring(0, 4) + '</td></tr>');
+    console.log(i, g_0);
+    try {
+      $('#table_3').append('<tr><td>' + i + '</td><td>' + g_0.substring(0, 32) + '</td><td>' + g_1.substring(0, 32) + '</td></tr>');
+    } catch (e) {
+      console.error(e);
+    }
+    //Only GOD knows where 'gpu_hashes' comes from
+    //use it and figure it later....
+    if (i == 'gpu_hashes') {
+      for (var j in g_0) {
+        if (g_0[j] != g_1[j]) {
+          $('#table_3').append('<tr><td>' + j + '</td><td>' + g_0[j].substring(0, 4) + '</td><td>' + g_1[j].substring(0, 4) + '</td></tr>');
         }
       }
     } else if (i == "fonts") {
@@ -84,7 +82,6 @@ function subtract() {
       var font_res = [];
       for (var j in str_0) {
         if (str_0[j] != str_1[j]) {
-          console.log(j, str_0[j], str_1[j]);
           font_res.push(font_list[j]);
         }
       }
