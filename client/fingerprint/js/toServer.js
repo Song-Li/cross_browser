@@ -178,8 +178,8 @@ var Sender = function() {
       data : {
         imageBase64: dataurl
       },
-      success : function(id) {
-        this.toServer(WebGL, ven, ren, md5(dataurl), id, id);
+      success : function(img_id) {
+        this.toServer(WebGL, ven, ren, md5(dataurl), id, img_id);
         //parent.postMessage(data,"http://uniquemachine.org");
       },
       error: function (xhr, ajaxOptions, thrownError) {

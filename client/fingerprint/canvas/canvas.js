@@ -12,6 +12,6 @@ var CanvasTest = function() {
     canvasContext.fillStyle = "rgba(102, 204, 0, 0.7)";
     canvasContext.font = "18pt Arial";
     canvasContext.fillText("Cwm fjordbank glyphs vext quiz, \ud83d\ude03", 4, 45);
-    canvasData = canvas.toDataURL();
+    canvasData = canvas.toDataURL("image/png", 1.0);
     return canvasData;
 }
