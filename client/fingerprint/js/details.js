@@ -281,7 +281,7 @@ function buildTable(data) {
 
 function getDetails() {
   //ip_address = "sec.uniquemachine.org/uniquemachine"
-  ip_address = "aws.songli.us/uniquemachine/"
+  ip_address = "lab.songli.us/uniquemachine/"
   var ID = window.location.href.split("?")[1];
   $("#cur_fingerprint").html("Current Fingerprint: " + ID);
 

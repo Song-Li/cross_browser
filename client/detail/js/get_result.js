@@ -1,5 +1,4 @@
-ip_address = "aws.songli.us/uniquemachine"
-address = "http://aws.songli.us/pictures/"
+ip_address = "lab.songli.us/uniquemachine"
 details_global = [];
 // send information to utils function
 function send_to_utils(command) {
