@@ -115,8 +115,8 @@ function sub_pic_data(pic1_data, pic2_data) {
 function subtract() {
   // clear the res div
   $('#subtract').empty();
-  // here we only have 28 pictures
-  for (var idx = 0;idx < 28;++ idx) {
+  // here we only have 29 pictures
+  for (var idx = 0;idx < 29;++ idx) {
     pic1_data = get_pixel_from_img("1" + idx);
     pic2_data = get_pixel_from_img("2" + idx);
     var sub_data = sub_pic_data(pic1_data, pic2_data);

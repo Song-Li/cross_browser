@@ -155,7 +155,8 @@ var Sender = function() {
     //gl.readPixels(0, 0, 256, 256, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
     var dataurl = canvas.toDataURL('image/png', 1.0);
     var ven, ren;
-    var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    var debugInfo = null;
+    if (gl) gl.getExtension('WEBGL_debug_renderer_info');
     if (debugInfo) {
       ven = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
       ren = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
@@ -260,6 +261,12 @@ var Sender = function() {
       //console.log(this.postData['adBlock'])
 
       cvs_test = CanvasTest();
+      //assume that the ID for canvas is 28
+      //==========================================
+      //Maybe dangerous later
+      //==========================================
+      this.getData(null, canvas, 28);
+      
       this.postData['canvas_test'] = Base64EncodeUrlSafe(calcSHA1(cvs_test.substring(22, cvs_test.length))); //remove the leading words
       if(!navigator.hardwareConcurrency)
         this.postData['cpu_cores'] = "-1";
@@ -282,7 +289,7 @@ var Sender = function() {
           success : function(data) {
             console.log(data);
             console.log(data.str);
-            parent.postMessage(data,"http://songli.us");
+            parent.postMessage(data,"http://lab.songli.us");
             //parent.postMessage(data,"http://uniquemachine.org");
           },
           error: function (xhr, ajaxOptions, thrownError) {
