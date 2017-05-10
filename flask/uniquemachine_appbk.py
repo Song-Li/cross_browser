@@ -21,13 +21,6 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 CORS(app)
 
-mask = []
-mac_mask = []
-
-with open(root + "mask.txt", 'r') as f:
-    mask = json.loads(f.read())
-with open(root + "mac_mask.txt", 'r') as fm:
-    mac_mask = json.loads(fm.read())
 
 @app.route("/")
 def hello():
@@ -47,12 +40,6 @@ def details():
         value = row[i]
         name = cursor.description[i][0]
         res[name] = value
-
-    if 'fonts' in res:
-        fs = list(res['fonts'])
-        for i in range(len(mask)):
-            fs[i] = str(int(fs[i]) & mask[i] & mac_mask[i])
-        res['fonts'] = ''.join(fs)
 
     return flask.jsonify(res)
 
@@ -78,7 +65,6 @@ def features():
             "accept",
             "encoding",
             "language",
-            "langsDetected",
             "resolution",
             "fonts",
             "WebGL", 
@@ -96,16 +82,25 @@ def features():
 
     cross_feature_list = [
             "timezone",
-            "fonts",
-            "langsDetected",
-            "audio"
+            "fonts"
             ]
     
 
     result = request.get_json()
+    mask = []
+    mac_mask = []
 
-    single_hash = "single"
-    cross_hash = "cross"
+    with open(root + "mask.txt", 'r') as f:
+        mask = json.loads(f.read())
+
+    if 'Mac' in agent or 1:
+        with open(root + "mac_mask.txt", 'r') as fm:
+            mac_mask = json.loads(fm.read())
+    else:
+        mac_mask = [1 for i in range(len(mask))]
+
+    single_hash = ""
+    cross_hash = ""
 
     #with open("fonts.txt", 'a') as f:
         #f.write(result['fonts'] + '\n')
@@ -129,6 +124,8 @@ def features():
     value_str = "'" + IP + "'"
 
     for feature in feature_list:
+        single_hash += str(result[feature])
+        hash_object = hashlib.md5(str(result[feature]))
         
         if result[feature] is not "":
             value = result[feature]
@@ -142,20 +139,8 @@ def features():
         else:
             value = str(value)
 
-#        if feature == "cpu_cores" and type(value) != 'int':
-#           value = -1
-#fix the bug for N/A for cpu_cores
-        if feature == 'cpu_cores':
-            value = int(value)
-
-        if feature == 'langsDetected':
-            value = str("".join(value))
-            value = value.replace(" u'", "")
-            value = value.replace("'", "")
-            value = value.replace(",", "_")
-            value = value.replace("[", "")
-            value = value.replace("]", "")
-            value = value[1:]
+        if feature == "cpu_cores" and type(value) != 'int':
+            value = -1
         
         value_str += ",'" + str(value) + "'"
         #print feature, hash_object.hexdigest()
@@ -166,7 +151,7 @@ def features():
         cross_hash += str(result[feature])
         hash_object = hashlib.md5(str(result[feature]))
 
-    hash_object = hashlib.md5(value_str)
+    hash_object = hashlib.md5(single_hash)
     single_hash = hash_object.hexdigest()
 
     hash_object = hashlib.md5(cross_hash)
