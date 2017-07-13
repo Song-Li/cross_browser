@@ -11,6 +11,8 @@ Paper: https://drive.google.com/file/d/0B4s900Byvv1ibW5uc1NiU2g3R3c/view
 
 Related repo: https://github.com/Song-Li/LanguageDetector  Used to detect supported languages
 
+Development: Currentlly I'm focusing on https://github.com/Song-Li/dynamic_fingerprinting. It's another related project. I will update this repo when I'm free
+
 ## Description
 This is a project for a browser fingerprinting technique that can track users not only within a single browser but also across different browsers on the same machine. 
 
