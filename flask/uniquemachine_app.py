@@ -1,23 +1,23 @@
 from flask import Flask, request,make_response, current_app
 from flask_failsafe import failsafe
-import flask
 from flask_cors import CORS, cross_origin
-import json
-import hashlib
 from flaskext.mysql import MySQL
-import ConfigParser
-import re
+#import configparser
+import re, os, json, hashlib, flask
 
-root = "/home/sol315/server/uniquemachine/"
-config = ConfigParser.ConfigParser()
-config.read(root + 'password.ignore')
+root = os.getcwd()+"/"
 
 mysql = MySQL()
 app = Flask(__name__)
-app.config['MYSQL_DATABASE_USER'] = config.get('mysql', 'username')
-app.config['MYSQL_DATABASE_PASSWORD'] = config.get('mysql', 'password')
-app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+# app.config['MYSQL_DATABASE_USER'] = config.get('mysql', 'username')
+# app.config['MYSQL_DATABASE_PASSWORD'] = config.get('mysql', 'password')
+# app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
+# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+
+app.config['MYSQL_DATABASE_USER'] = 'cross_browser_user'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'even_a_meilleur_password'
+app.config['MYSQL_DATABASE_DB'] = 'cross_browser'
+app.config['MYSQL_DATABASE_HOST'] = '172.18.0.2'
 mysql.init_app(app)
 CORS(app)
 
@@ -123,7 +123,7 @@ def features():
     result['encoding'] = encoding
     result['language'] = language
     
-    print agent
+    print(agent)
            
     feature_str = "IP"
     value_str = "'" + IP + "'"
@@ -138,7 +138,7 @@ def features():
         feature_str += "," + feature
 #for gpu imgs
         if feature == "gpuImgs":
-            value = ",".join('%s_%s' % (k,v) for k,v in value.iteritems())
+            value = ",".join('%s_%s' % (k,v) for k,v in value.items())
         else:
             value = str(value)
 
@@ -164,12 +164,12 @@ def features():
     result['fonts'] = fonts
     for feature in cross_feature_list:
         cross_hash += str(result[feature])
-        hash_object = hashlib.md5(str(result[feature]))
+        hash_object = hashlib.md5(str(result[feature]).encode('utf8'))
 
-    hash_object = hashlib.md5(value_str)
+    hash_object = hashlib.md5(value_str.encode('utf8'))
     single_hash = hash_object.hexdigest()
 
-    hash_object = hashlib.md5(cross_hash)
+    hash_object = hashlib.md5(cross_hash.encode('utf8'))
     cross_hash = hash_object.hexdigest()
 
     feature_str += ',browser_fingerprint,computer_fingerprint_1'

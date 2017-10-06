@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  db:
+    image: mysql
+    restart: always
+    env_file: mysql.env

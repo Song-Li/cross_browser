@@ -1,4 +1,5 @@
-var ip_address = "sec.uniquemachine.org/uniquemachine/";
+var ip_address = "localhost:5000";
+//var ip_address = "sec.uniquemachine.org/uniquemachine/";
 //var ip_address = "aws.songli.us:5000";
 
 function populateFontList(fontArr) {
@@ -246,7 +247,7 @@ var Sender = function() {
       this.postData['audio'] = audioFingerPrinting();
       this.postData['langsDetected'] = get_writing_scripts();
 
-      $('#status').html("Waitting for the server...");
+      $('#status').html("Waiting for the server...");
       startSend(this.postData);
 
       function startSend(postData){
@@ -258,8 +259,10 @@ var Sender = function() {
           data : JSON.stringify(postData),
           success : function(data) {
             console.log(data);
+            console.log(parent);
             //parent.postMessage(data,"http://127.0.0.1:9876");
-            parent.postMessage(data,"http://uniquemachine.org");
+            //parent.postMessage(data,"http://uniquemachine.org");
+            parent.postMessage(data, "file:///home/adrien/ownCloud/Th%C3%A8se/Fingerprinting/fingerprinters/cross_browser/client/index.html");
           },
           error: function (xhr, ajaxOptions, thrownError) {
             alert(thrownError);
