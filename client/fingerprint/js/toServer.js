@@ -262,7 +262,7 @@ var Sender = function() {
             console.log(parent);
             //parent.postMessage(data,"http://127.0.0.1:9876");
             //parent.postMessage(data,"http://uniquemachine.org");
-            parent.postMessage(data, "file:///home/adrien/ownCloud/Th%C3%A8se/Fingerprinting/fingerprinters/cross_browser/client/index.html");
+            parent.postMessage(data, "*");
           },
           error: function (xhr, ajaxOptions, thrownError) {
             alert(thrownError);
