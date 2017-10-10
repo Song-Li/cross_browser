@@ -190,3 +190,6 @@ def features():
 
     print (single_hash, cross_hash)
     return jsonify({"single": single_hash, "cross": cross_hash})
+
+if __name__ == "__main__":
+    app.run(host = '0.0.0.0', port=80)

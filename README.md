@@ -17,13 +17,22 @@ Development: Currentlly I'm focusing on https://github.com/Song-Li/dynamic_finge
 This is a project for a browser fingerprinting technique that can track users not only within a single browser but also across different browsers on the same machine. 
 
 Specifically, our approach utilizes many novel OS and hardware level features, such as those from graphics cards, CPU, and installed writing scripts (Implementing). We extract these features by asking browsers to perform tasks that rely on corresponding OS and hardware functionalities.
+
 ## Implementation
-### Client
-The whole client part is JS based in "client" dir. Some of the modules are generated from C or coffee.
-Here is a list of usful description of dirs in "client":
+
+### Front-end
+
+The whole client part is JS based in "server/front" dir. Some of the modules are generated from C or coffee.
+Here is a list of usful description of dirs in "server/front":
 - fingerprint: Including all files related to fingerprinting tests.
 - js: Javascript part used for index.html
 
-### Server
+### Back-end
 
-The server part is writen in python. Using apache2 and flask as the framework. 
+The server part is writen in python, using Flask. It is located in "server/".
+
+## How to run 
+
+This version of CrossBrowser was adapted by Adrien Luxey to be easily deployable through Docker Compose. The architecture simply consists of a MySQL image and a Flask one.
+
+On a properly configured machine with Docker and Docker Compose, a simple `docker-compose up --build` should bootstrap the project. Then find the IP of the Flask container through `docker inspect <container_name>`, and direct your browser to this location. You should see the same page as `uniquemachine.org`, the fingerprinting should work, and the MySQL DB should save the results.

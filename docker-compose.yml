@@ -6,6 +6,8 @@ services:
     restart: always
     env_file: mysql/mysql.env
     image: cross_browser_mysql
+    volumes:
+      - db_volume:/var/lib/mysql
 
   server:
     build: server/
@@ -13,3 +15,6 @@ services:
     image: cross_browser_server
     ports:
       - "80:80"
+
+volumes:
+  db_volume:
