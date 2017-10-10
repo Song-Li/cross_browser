@@ -22,8 +22,8 @@ Specifically, our approach utilizes many novel OS and hardware level features, s
 
 ### Front-end
 
-The whole client part is JS based in "server/front" dir. Some of the modules are generated from C or coffee.
-Here is a list of usful description of dirs in "server/front":
+The whole client part is JS based in "server/front/" dir. Some of the modules are generated from C or coffee.
+Here is a list of directories of interest in "server/front/":
 - fingerprint: Including all files related to fingerprinting tests.
 - js: Javascript part used for index.html
 
