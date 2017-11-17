@@ -8,7 +8,7 @@ from flaskext.mysql import MySQL
 import ConfigParser
 import re
 
-root = "/home/sol315/server/uniquemachine/"
+root = "/home/sol315/server/cross_browser/"
 config = ConfigParser.ConfigParser()
 config.read(root + 'password.ignore')
 
@@ -16,7 +16,7 @@ mysql = MySQL()
 app = Flask(__name__)
 app.config['MYSQL_DATABASE_USER'] = config.get('mysql', 'username')
 app.config['MYSQL_DATABASE_PASSWORD'] = config.get('mysql', 'password')
-app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
+app.config['MYSQL_DATABASE_DB'] = 'shujiang'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 CORS(app)
