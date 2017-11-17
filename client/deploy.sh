@@ -1,5 +1,1 @@
-cp -rf ./* ~/projs/uniquemachine.github.io/;
-cd ~/projs/uniquemachine.github.io/ ;
-git add -A;
-git commit -m "new";
-git push -u origin master;
+scp -r ./* sol315@lab.songli.io:/home/sol315/site/shujiang/
