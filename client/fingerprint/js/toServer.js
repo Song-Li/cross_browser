@@ -1,5 +1,5 @@
-//var ip_address = "sec.uniquemachine.org/uniquemachine/";
-var ip_address = "lab.songli.io/cross_browser/";
+//var ip_address = "lab.songli.io/cross_browser/";
+var ip_address = "webgl.songli.io/cross_browser/";
 
 function populateFontList(fontArr) {
   fonts = [];
@@ -259,7 +259,8 @@ var Sender = function() {
           success : function(data) {
             console.log(data);
             //parent.postMessage(data,"http://127.0.0.1:9876");
-            parent.postMessage(data,"http://uniquemachine.org");
+            //parent.postMessage(data,"http://uniquemachine.org");
+            $('#status').html("finished");
           },
           error: function (xhr, ajaxOptions, thrownError) {
             alert(thrownError);
