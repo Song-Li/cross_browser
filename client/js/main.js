@@ -4,6 +4,7 @@ jQuery(function($) {
   var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
   
   eventer(messageEvent,function(e) {
+    if (e['data']['finished'] != true) return ;
     $("#fingerprint-iframe").addClass("hide");
     $("#fingerprint-iframe").attr("src", "./fingerprint/details.html?" + e.data['single']);
     $("#fingerprint-button").prop('disabled', false);
