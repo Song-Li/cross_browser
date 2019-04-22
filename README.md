@@ -8,7 +8,7 @@ Website: http://uniquemachine.org
 Paper: https://drive.google.com/file/d/0B4s900Byvv1ibW5uc1NiU2g3R3c/view
 
 ## Rebuild schedule
-The repo will be rebuilt from 2018 Oct. 10th to Dec. 1st
+Rebuilding in branch Guanlong. Should be finished in weeks. Once generated a usable script, the code will be merged to master and be released. At that time, the license will be changed to MIT.
 
 ## Demo 
 [Demo](http://uniquemachine.org) This is only a DEMO. Only 2 features in the paper is implemented. Far from finished. 10 ~20 features is waiting for implementation, more masks for GPU and Fonts needed to be updated. The research code can't be used directly...
