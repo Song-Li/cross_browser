@@ -5,7 +5,7 @@ Group: SECLAB in Johns Hopkins University
 
 Website: http://uniquemachine.org
 
-Paper: https://drive.google.com/file/d/0B4s900Byvv1ibW5uc1NiU2g3R3c/view
+Paper: [Paper](https://yinzhicao.org/TrackingFree/crossbrowsertracking_NDSS17.pdf)
 
 ## Rebuild schedule
 Rebuilding in branch Guanlong. Should be finished in weeks. Once generated a usable script, the code will be merged to master and be released. At that time, the license will be changed to MIT.
