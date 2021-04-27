@@ -27,7 +27,7 @@ app.config['MYSQL_DATABASE_USER'] = "admin"
 app.config['MYSQL_DATABASE_PASSWORD'] = "Mong!#%8"
 # app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get('mySqlPSWD')
 app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_HOST'] = 'uniquemachine.cwmjd3rybf92.us-east-1.rds.amazonaws.com'
 mysql.init_app(app)
 CORS(app)
 
@@ -151,7 +151,7 @@ def features():
         feature_str += "," + feature
 #for gpu imgs
         if feature == "gpuImgs":
-            value = ",".join('%s_%s' % (k,v) for k,v in value.iteritems())
+            value = ",".join('%s_%s' % (k,v) for k,v in value.items())
         else:
             value = str(value)
 
@@ -177,12 +177,12 @@ def features():
     result['fonts'] = fonts
     for feature in cross_feature_list:
         cross_hash += str(result[feature])
-        hash_object = hashlib.md5(str(result[feature]))
+        hash_object = hashlib.md5(str(result[feature]).encode('utf-8'))
 
-    hash_object = hashlib.md5(value_str)
+    hash_object = hashlib.md5(value_str.encode('utf-8'))
     single_hash = hash_object.hexdigest()
 
-    hash_object = hashlib.md5(cross_hash)
+    hash_object = hashlib.md5(cross_hash.encode('utf-8'))
     cross_hash = hash_object.hexdigest()
 
     feature_str += ',browser_fingerprint,computer_fingerprint_1'
