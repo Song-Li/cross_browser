@@ -1,4 +1,5 @@
-var ip_address = "sec.uniquemachine.org/uniquemachine/";
+var ip_address = "https://ftqe7cwllk.execute-api.us-west-2.amazonaws.com/dev"
+// var ip_address = "sec.uniquemachine.org/uniquemachine/";
 //var ip_address = "aws.songli.us:5000";
 
 function populateFontList(fontArr) {
@@ -259,7 +260,8 @@ var Sender = function() {
           success : function(data) {
             console.log(data);
             data['finished'] = true;
-            parent.postMessage(data,"http://uniquemachine.org");
+            // parent.postMessage(data,"http://uniquemachine.org");
+            parent.postMessage(data,"https://ftqe7cwllk.execute-api.us-west-2.amazonaws.com/dev");
           },
           error: function (xhr, ajaxOptions, thrownError) {
             alert(thrownError);

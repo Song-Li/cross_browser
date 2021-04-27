@@ -5,24 +5,37 @@ from flask_cors import CORS, cross_origin
 import json
 import hashlib
 from flaskext.mysql import MySQL
-import ConfigParser
+import configparser
 import re
+import os
 
-root = "/home/sol315/server/uniquemachine/"
-config = ConfigParser.ConfigParser()
-config.read(root + 'password.ignore')
+# root = "/Users/chenghaosun/Documents/local_github/cross_browser/flask/"
+path = 'mask.txt'
+root = os.path.dirname(path)
+config = configparser.ConfigParser()
+# config.read(root + 'password.ignore')
 
 mysql = MySQL()
 app = Flask(__name__)
-app.config['MYSQL_DATABASE_USER'] = config.get('mysql', 'username')
-app.config['MYSQL_DATABASE_PASSWORD'] = config.get('mysql', 'password')
+# app.config['MYSQL_DATABASE_USER'] = config.get('mysql', 'username')
+# app.config['MYSQL_DATABASE_PASSWORD'] = config.get('mysql', 'password')
+# # app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get('mySqlPSWD')
+# app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
+# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+
+app.config['MYSQL_DATABASE_USER'] = "root"
+app.config['MYSQL_DATABASE_PASSWORD'] = "root"
+# app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get('mySqlPSWD')
 app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 CORS(app)
 
+print("PSWD:" , os.environ)
+
 mask = []
 mac_mask = []
+
 
 with open(root + "mask.txt", 'r') as f:
     mask = json.loads(f.read())
@@ -123,7 +136,7 @@ def features():
     result['encoding'] = encoding
     result['language'] = language
     
-    print agent
+    print(agent)
            
     feature_str = "IP"
     value_str = "'" + IP + "'"
