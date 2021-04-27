@@ -7,7 +7,7 @@ backports-abc==0.5
 backports.functools-lru-cache==1.6.1
 backports.shutil-get-terminal-size==1.0.0
 bdist-mpkg==0.5.0
-bleach==3.1.0
+bleach==3.3.0
 bonjour-py==0.3
 cffi==1.12.2
 click==7.1.2
