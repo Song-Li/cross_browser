@@ -23,8 +23,8 @@ app = Flask(__name__)
 # app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
 # app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 
-app.config['MYSQL_DATABASE_USER'] = "root"
-app.config['MYSQL_DATABASE_PASSWORD'] = "root"
+app.config['MYSQL_DATABASE_USER'] = "admin"
+app.config['MYSQL_DATABASE_PASSWORD'] = "Mong!#%8"
 # app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get('mySqlPSWD')
 app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
