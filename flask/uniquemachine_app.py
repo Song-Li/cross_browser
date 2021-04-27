@@ -23,18 +23,20 @@ app = Flask(__name__)
 # app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
 # app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 
-app.config['MYSQL_DATABASE_USER'] = "admin"
-app.config['MYSQL_DATABASE_PASSWORD'] = "Mong!#%8"
-# app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get('mySqlPSWD')
+# app.config['MYSQL_DATABASE_USER'] = "admin"
+# app.config['MYSQL_DATABASE_PASSWORD'] = "Mong!#%8"
+app.config['MYSQL_DATABASE_USER'] = os.environ.get('DB_USERNAME')
+app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get('DB_PASSWORD')
+
 app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
 app.config['MYSQL_DATABASE_HOST'] = 'uniquemachine.cwmjd3rybf92.us-east-1.rds.amazonaws.com'
 mysql.init_app(app)
 CORS(app)
 
-print("PSWD:" , os.environ)
-
 mask = []
 mac_mask = []
+
+# print("Coming :" ,os.environ)
 
 
 with open(root + "mask.txt", 'r') as f:
@@ -143,7 +145,7 @@ def features():
 
     for feature in feature_list:
         
-        if result[feature] is not "":
+        if result[feature] != "":
             value = result[feature]
         else:
             value = "NULL"
