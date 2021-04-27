@@ -63,7 +63,7 @@ prompt-toolkit==1.0.18
 ptyprocess==0.6.0
 py2app==0.7.3
 pycparser==2.19
-Pygments==2.5.2
+Pygments==2.7.4
 pyobjc-core==2.5.1
 pyobjc-framework-Accounts==2.5.1
 pyobjc-framework-AddressBook==2.5.1
