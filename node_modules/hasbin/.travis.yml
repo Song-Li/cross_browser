@@ -1,0 +1,31 @@
+
+# Language/versions
+language: node_js
+matrix:
+  include:
+
+    # Run linter once
+    - node_js: '6'
+      env: LINT=true
+
+    # Run tests
+    - node_js: '0.10'
+    - node_js: '0.12'
+    - node_js: '4'
+    - node_js: '5'
+    - node_js: '6'
+
+# Build only master (and pull-requests)
+branches:
+  only:
+    - master
+
+# Before install
+before_install:
+  #- npm install coveralls
+
+# Build script
+script:
+  - 'if [ $LINT ]; then make lint; fi'
+  - 'if [ ! $LINT ]; then make test; fi'
+  #- 'if [ ! $LINT ]; then cat ./coverage/lcov.info | ./node_modules/.bin/coveralls; fi'
