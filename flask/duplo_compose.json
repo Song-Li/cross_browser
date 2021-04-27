@@ -1,0 +1,15 @@
+{
+    "LambdaFunctions": [{
+         "Description":"Hello World",
+         "Environment":{
+                 "Variables":{
+                       "foo":"bar"
+                   }
+         },
+         "FunctionName":"helloworld",
+         "Handler":"handler.lambda_handler",
+         "MemorySize":128,
+         "Runtime":"python2.7",
+         "Timeout":7
+    }]
+   }
