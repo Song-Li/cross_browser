@@ -1,4 +1,4 @@
-var ip_address = "https://ftqe7cwllk.execute-api.us-west-2.amazonaws.com/dev"
+var ip_address = "https://clg69be31k.execute-api.us-west-2.amazonaws.com/dev"
 // var ip_address = "http://0.0.0.0:5000"
 // var ip_address = "sec.uniquemachine.org/uniquemachine/";
 // var ip_address = "aws.songli.us:5000";

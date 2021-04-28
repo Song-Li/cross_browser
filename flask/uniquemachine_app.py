@@ -8,6 +8,9 @@ from flaskext.mysql import MySQL
 import configparser
 import re
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # root = "/Users/chenghaosun/Documents/local_github/cross_browser/flask/"
 path = 'mask.txt'
@@ -17,17 +20,9 @@ config = configparser.ConfigParser()
 
 mysql = MySQL()
 app = Flask(__name__)
-# app.config['MYSQL_DATABASE_USER'] = config.get('mysql', 'username')
-# app.config['MYSQL_DATABASE_PASSWORD'] = config.get('mysql', 'password')
-# # app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get('mySqlPSWD')
-# app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
-# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 
-# app.config['MYSQL_DATABASE_USER'] = "admin"
-# app.config['MYSQL_DATABASE_PASSWORD'] = "Mong!#%8"
-app.config['MYSQL_DATABASE_USER'] = os.environ.get('DB_USERNAME')
-app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get('DB_PASSWORD')
-
+app.config['MYSQL_DATABASE_USER'] = os.environ.get("DB_USERNAME")
+app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get("DB_PASSWORD")
 app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
 app.config['MYSQL_DATABASE_HOST'] = 'uniquemachine.cwmjd3rybf92.us-east-1.rds.amazonaws.com'
 mysql.init_app(app)
@@ -35,8 +30,6 @@ CORS(app)
 
 mask = []
 mac_mask = []
-
-# print("Coming :" ,os.environ)
 
 
 with open(root + "mask.txt", 'r') as f:
