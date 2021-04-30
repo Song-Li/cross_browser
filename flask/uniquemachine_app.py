@@ -9,6 +9,7 @@ import configparser
 import re
 import os
 from dotenv import load_dotenv
+from psycopg2 import sql
 
 load_dotenv()
 
@@ -23,8 +24,8 @@ app = Flask(__name__)
 
 app.config['MYSQL_DATABASE_USER'] = os.environ.get("DB_USERNAME")
 app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get("DB_PASSWORD")
-app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
-app.config['MYSQL_DATABASE_HOST'] = 'uniquemachine.cwmjd3rybf92.us-east-1.rds.amazonaws.com'
+app.config['MYSQL_DATABASE_DB'] = os.environ.get("MYSQL_DATABASE_DB")
+app.config['MYSQL_DATABASE_HOST'] = os.environ.get("MYSQL_DATABASE_HOST")
 mysql.init_app(app)
 CORS(app)
 
@@ -48,7 +49,8 @@ def details():
     db = mysql.get_db()
     cursor = db.cursor()
     sql_str = "SELECT * FROM features WHERE browser_fingerprint = '" + ID +"'"
-    cursor.execute(sql_str)
+    # cursor.execute(sql_str)
+    cursor.execute("SELECT * FROM features WHERE browser_fingerprint = %(id)s",{'id':ID})
     db.commit()
     row = cursor.fetchone()
     for i in range(len(row)):
@@ -135,6 +137,7 @@ def features():
            
     feature_str = "IP"
     value_str = "'" + IP + "'"
+    value_list = ["'" + IP + "'"]
 
     for feature in feature_list:
         
@@ -166,6 +169,7 @@ def features():
             value = value[1:]
         
         value_str += ",'" + str(value) + "'"
+        value_list.append("'" + str(value) + "'")
         #print feature, hash_object.hexdigest()
 
 
@@ -182,11 +186,16 @@ def features():
 
     feature_str += ',browser_fingerprint,computer_fingerprint_1'
     value_str += ",'" + single_hash + "','" + cross_hash + "'"
+    value_list.append("'" + single_hash + "'")
+    value_list.append("'" + cross_hash + "'")
 
     db = mysql.get_db()
     cursor = db.cursor()
     sql_str = "INSERT INTO features (" + feature_str + ") VALUES (" + value_str + ");"
-    cursor.execute(sql_str)
+    # cursor.execute(sql_str)
+
+    value_placeholder = ', '.join(['%s'] * len(value_list))
+    cursor.execute("INSERT INTO features ({columns}) VALUES ({value_placeholder})".format(columns=feature_str,value_placeholder=value_placeholder),tuple(value_list))
     db.commit()
 
     print (single_hash, cross_hash)
