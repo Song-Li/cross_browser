@@ -48,7 +48,7 @@ def details():
     ID = request.get_json()["ID"]
     db = mysql.get_db()
     cursor = db.cursor()
-    sql_str = "SELECT * FROM features WHERE browser_fingerprint = '" + ID +"'"
+    # sql_str = "SELECT * FROM features WHERE browser_fingerprint = '" + ID +"'"
     # cursor.execute(sql_str)
     cursor.execute("SELECT * FROM features WHERE browser_fingerprint = %(id)s",{'id':ID})
     db.commit()
