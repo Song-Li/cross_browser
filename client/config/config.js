@@ -1,0 +1,1 @@
+export const ip_address = "https://clg69be31k.execute-api.us-west-2.amazonaws.com/dev";

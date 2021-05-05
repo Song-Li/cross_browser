@@ -1,3 +1,4 @@
+// import {ip_address} from "../../config/config"
 var ip_address = "https://clg69be31k.execute-api.us-west-2.amazonaws.com/dev"
 // var ip_address = "http://0.0.0.0:5000"
 // var ip_address = "sec.uniquemachine.org/uniquemachine/";

@@ -26,6 +26,7 @@ app.config['MYSQL_DATABASE_USER'] = os.environ.get("DB_USERNAME")
 app.config['MYSQL_DATABASE_PASSWORD'] = os.environ.get("DB_PASSWORD")
 app.config['MYSQL_DATABASE_DB'] = os.environ.get("MYSQL_DATABASE_DB")
 app.config['MYSQL_DATABASE_HOST'] = os.environ.get("MYSQL_DATABASE_HOST")
+
 mysql.init_app(app)
 CORS(app)
 
@@ -48,11 +49,13 @@ def details():
     ID = request.get_json()["ID"]
     db = mysql.get_db()
     cursor = db.cursor()
-    # sql_str = "SELECT * FROM features WHERE browser_fingerprint = '" + ID +"'"
+    sql_str = "SELECT * FROM features WHERE browser_fingerprint = '" + ID +"'"
     # cursor.execute(sql_str)
     cursor.execute("SELECT * FROM features WHERE browser_fingerprint = %(id)s",{'id':ID})
     db.commit()
     row = cursor.fetchone()
+
+    # if row is not None:
     for i in range(len(row)):
         value = row[i]
         name = cursor.description[i][0]

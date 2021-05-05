@@ -31,3 +31,19 @@ Here is a list of usful description of dirs in "client":
 ### Server
 
 The server part is writen in python. Using apache2 and flask as the framework. 
+
+### Deploy to AWS Lambda
+Below is our recommanded way to deploy our application on AWS, it is totally free! But, feel free to implement your own ways!
+
+1.Follow this tutorial to set up AWS account and all the credentials you need
+https://pythonforundergradengineers.com/deploy-serverless-web-app-aws-lambda-zappa.html
+
+2.Follow this tutorial to utilize zappa to link AWS credentials and deploy
+https://towardsdatascience.com/deploy-a-python-api-on-aws-c8227b3799f0
+
+3.Create a database on AWS RDS
+
+4.Store the database credentials using environment variables in lambda functions
+
+5.Change the ip_address variable defined in the cross_browser/client/config/config.js to your deployed aws address.
+
