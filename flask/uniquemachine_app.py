@@ -140,7 +140,7 @@ def features():
            
     feature_str = "IP"
     value_str = "'" + IP + "'"
-    value_list = ["'" + IP + "'"]
+    value_list = [str(IP)]
 
     for feature in feature_list:
         
@@ -172,7 +172,8 @@ def features():
             value = value[1:]
         
         value_str += ",'" + str(value) + "'"
-        value_list.append("'" + str(value) + "'")
+        # value_list.append("'" + str(value) + "'")
+        value_list.append(value)
         #print feature, hash_object.hexdigest()
 
 
@@ -189,8 +190,10 @@ def features():
 
     feature_str += ',browser_fingerprint,computer_fingerprint_1'
     value_str += ",'" + single_hash + "','" + cross_hash + "'"
-    value_list.append("'" + single_hash + "'")
-    value_list.append("'" + cross_hash + "'")
+    # value_list.append("'" + single_hash + "'")
+    # value_list.append("'" + cross_hash + "'")
+    value_list.append(single_hash)
+    value_list.append(cross_hash)
 
     db = mysql.get_db()
     cursor = db.cursor()
@@ -198,7 +201,8 @@ def features():
     # cursor.execute(sql_str)
 
     value_placeholder = ', '.join(['%s'] * len(value_list))
-    cursor.execute("INSERT INTO features ({columns}) VALUES ({value_placeholder})".format(columns=feature_str,value_placeholder=value_placeholder),tuple(value_list))
+    add_column = ("INSERT INTO features ({columns}) VALUES ({value_placeholder})".format(columns=feature_str,value_placeholder=value_placeholder))
+    cursor.execute(add_column,tuple(value_list))
     db.commit()
 
     print (single_hash, cross_hash)

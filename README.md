@@ -45,5 +45,7 @@ https://towardsdatascience.com/deploy-a-python-api-on-aws-c8227b3799f0
 
 4.Store the database credentials using environment variables in lambda functions
 
-5.Change the ip_address variable defined in the cross_browser/client/config/config.js to your deployed aws address.
+5.Change the ip_address variable defined in cross_browser/client/fingerprint/js/toServer.js line 1 to your deployed address.
+
+6.Change the ip_address variable defined in cross_browser/client/fingerprint/js/details.js line 284 to your deployed address.
 
