@@ -280,10 +280,8 @@ function buildTable(data) {
 
 
 function getDetails() {
-  // ip_address = "sec.uniquemachine.org/uniquemachine"
   ip_address = "https://clg69be31k.execute-api.us-west-2.amazonaws.com/dev"
   // ip_address = "http://0.0.0.0:5000"
-  //ip_address = "aws.songli.us:5000"
   var ID = window.location.href.split("?")[1];
   $("#cur_fingerprint").html("Current Fingerprint: " + ID);
 

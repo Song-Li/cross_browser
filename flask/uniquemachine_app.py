@@ -13,11 +13,9 @@ from psycopg2 import sql
 
 load_dotenv()
 
-# root = "/Users/chenghaosun/Documents/local_github/cross_browser/flask/"
 path = 'mask.txt'
 root = os.path.dirname(path)
 config = configparser.ConfigParser()
-# config.read(root + 'password.ignore')
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -49,13 +47,10 @@ def details():
     ID = request.get_json()["ID"]
     db = mysql.get_db()
     cursor = db.cursor()
-    sql_str = "SELECT * FROM features WHERE browser_fingerprint = '" + ID +"'"
-    # cursor.execute(sql_str)
     cursor.execute("SELECT * FROM features WHERE browser_fingerprint = %(id)s",{'id':ID})
     db.commit()
     row = cursor.fetchone()
 
-    # if row is not None:
     for i in range(len(row)):
         value = row[i]
         name = cursor.description[i][0]
@@ -150,7 +145,7 @@ def features():
             value = "NULL"
 
         feature_str += "," + feature
-#for gpu imgs
+        #for gpu imgs
         if feature == "gpuImgs":
             value = ",".join('%s_%s' % (k,v) for k,v in value.items())
         else:
@@ -172,9 +167,7 @@ def features():
             value = value[1:]
         
         value_str += ",'" + str(value) + "'"
-        # value_list.append("'" + str(value) + "'")
         value_list.append(value)
-        #print feature, hash_object.hexdigest()
 
 
     result['fonts'] = fonts
@@ -190,15 +183,11 @@ def features():
 
     feature_str += ',browser_fingerprint,computer_fingerprint_1'
     value_str += ",'" + single_hash + "','" + cross_hash + "'"
-    # value_list.append("'" + single_hash + "'")
-    # value_list.append("'" + cross_hash + "'")
     value_list.append(single_hash)
     value_list.append(cross_hash)
 
     db = mysql.get_db()
     cursor = db.cursor()
-    sql_str = "INSERT INTO features (" + feature_str + ") VALUES (" + value_str + ");"
-    # cursor.execute(sql_str)
 
     value_placeholder = ', '.join(['%s'] * len(value_list))
     add_column = ("INSERT INTO features ({columns}) VALUES ({value_placeholder})".format(columns=feature_str,value_placeholder=value_placeholder))
