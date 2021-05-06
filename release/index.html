@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-90435344-1', 'auto');
+    ga('send', 'pageview');
+    
+</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Unique Machine</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/animate.min.css" rel="stylesheet"> 
+  <link href="css/font-awesome.min.css" rel="stylesheet">
+  <link href="css/lightbox.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <link id="css-preset" href="css/presets/preset1.css" rel="stylesheet">
+  <link href="css/responsive.css" rel="stylesheet">
+
+  <link rel="shortcut icon" href="images/favicon.ico">
+</head><!--/head-->
+
+<body>
+
+  <!--.preloader-->
+  <div class="preloader"> <i class="fa fa-circle-o-notch fa-spin"></i></div>
+  <!--/.preloader-->
+
+  <header id="home">
+    <div id="home-slider" class="carousel slide carousel-fade" data-ride="carousel">
+      <div class="carousel-inner">
+          <div id = "background" class="item active" style="background-image: url(images/fingerprint.gif);
+          background-attachment: fixed;
+          background-position: center; ">
+            <div class="caption">
+              <h1 class="animated fadeInLeftBig">Unique<span>Machine</span></h1>
+              <p class="animated fadeInRightBig">is my computer unique?(Developing, not fully supported)</p>
+              <a data-scroll class="btn btn-start animated fadeInUpBig" href="#fingerprint">Get My Fingerprint</a>
+              <a data-scroll class="btn btn-start animated fadeInUpBig" href="#about_us">About us</a>
+              <a data-scroll class="btn btn-start animated fadeInUpBig" href="https://github.com/Song-Li/cross_browser">Source code</a>
+              <a data-scroll class="btn btn-start animated fadeInUpBig" href="https://yinzhicao.org/TrackingFree/crossbrowsertracking_NDSS17.pdf">Paper</a>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    </div><!--/#home-slider-->
+    <div class="main-nav">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">
+            <h1><img class="img-responsive" src="images/logo.png" alt="logo"></h1>
+          </a>                    
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">                 
+            <li class="scroll"><a href="#home">Home</a></li>
+            <li class="scroll"><a href="#fingerprint">Fingerprint</a></li> 
+            <li class="scroll"><a href="#about_us">About Us</a></li>                     
+            <li class="scroll"><a href="https://github.com/Song-Li/cross_browser">Source Code</a></li>
+            <li class="scroll"><a href="https://drive.google.com/file/d/0B4s900Byvv1ibW5uc1NiU2g3R3c/view?usp=sharing">Paper</a></li>
+          </ul>
+        </div>
+      </div>
+    </div><!--/#main-nav-->
+  </header><!--/#home-->
+  <section id="fingerprint">
+    <div class="container">
+      <div class="heading wow fadeInUp" data-wow-duration="1000ms" data-wow-delay="300ms">
+        <div class="row">
+          <div class="text-center col-sm-8 col-sm-offset-2">
+            <h2>Get My Fingerprint</h2>
+            <p>By Fingerprinting, you can get the UNIQUE fingerprint of your browser or computer. It based on the basic browser information, GPU, fonts and so on</p>
+          </div>
+        </div> 
+        <div class = "row">
+          <div class = "text-center">
+            <button class="btn btn-lg btn-primary" id = "fingerprint-button">Get My Fingerprint</button>
+          </div>
+        </div>
+        <div class = "row text-center" id = "status">
+        </div>
+        <div class = "row">
+          <div class = "text-center" id="iframe-container">
+            <iframe src="./fingerprint/blank.html" width="1000" height="1800" frameBorder="0"  scrolling = "no" id="fingerprint-iframe"></iframe>
+          </div>
+        </div>
+        <div id = "fingerprint_result" class = "text-center hide" height="400">
+          <div class = "row">
+            <h3>Browser fingerprint</h3>
+            <p id = "browser_fingerprint"></p>
+          </div>
+          <div class = "row">
+            <h3>Computer fingerprint (Developing, not finished)</h3>
+            <p id = "computer_fingerprint"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section><!--/#services-->
+  <section id="about_us">
+    <div class="container">
+      <div class="row">
+        <div class="heading text-center col-sm-8 col-sm-offset-2 wow fadeInUp" data-wow-duration="1200ms" data-wow-delay="300ms">
+          <h2>About Us</h2>
+          <p>We are members of a security lab (SecLab) in Johns Hopkins University</p>
+        </div>
+      </div>
+
+      <div class="team-members">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="team-member wow flipInY" data-wow-duration="1000ms" data-wow-delay="300ms">
+              <div class="member-info">
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="team-member wow flipInY" data-wow-duration="1000ms" data-wow-delay="300ms">
+              <div class="member-image">
+                <img class="member-image" src="images/team/yinzhi.jpg" alt="">
+              </div>
+              <div class="member-info">
+                <h3>Yinzhi Cao</h3>
+                <h4>Assistant Professor of Johns Hopkins University</h4>
+                <p>Leader of SecLab</p>
+              </div>
+              <div class="social-icons">
+                <ul>
+                  <li><a class="github" href="#"><i class="fa fa-github"></i></a></li>
+                  <li><a class="email" href="mailto:yinzhi.cao@lehigh.edu"><i class="fa fa-envelope"></i></a></li>
+                  <li><a class="website" href="http://yinzhicao.org/"><i class="fa fa-globe"></i></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="team-member wow flipInY" data-wow-duration="1000ms" data-wow-delay="500ms">
+              <div class="member-image">
+                <img class="member-image" src="images/team/songli.jpg" alt="">
+              </div>
+              <div class="member-info">
+                <h3>Song Li</h3>
+                <h4>Ph.D. student of Johns Hopkins University</h4>
+                <p>Website Developer and Maintainer</p>
+                <p>Report bug to me (lisong1013@gmail.com)</p>
+              </div>
+              <div class="social-icons">
+                <ul>
+                  <li><a class="github" href="https://github.com/Song-Li"><i class="fa fa-github"></i></a></li>
+                  <li><a class="email" href="mailto:lisong1013@gmail.com"><i class="fa fa-envelope"></i></a></li>
+                  <li><a class="website" href="http://www.songli.io/"><i class="fa fa-globe"></i></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>            
+    </div>
+  </section><!--/#team-->
+
+  <script type="text/javascript" src="js/jquery.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/jquery.inview.min.js"></script>
+  <script type="text/javascript" src="js/wow.min.js"></script>
+  <script type="text/javascript" src="js/mousescroll.js"></script>
+  <script type="text/javascript" src="js/smoothscroll.js"></script>
+  <script type="text/javascript" src="js/jquery.countTo.js"></script>
+  <script type="text/javascript" src="js/lightbox.min.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+
+</body>
+</html>

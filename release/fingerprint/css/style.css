@@ -1,0 +1,177 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:700);
+
+.details_table {
+  border-collapse: collapse;
+  border: 1px solid black;
+}
+
+.bar {
+    padding: -10px -10px -10px -10px;
+    background: rgba(230,240,255,0.4);
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+}
+
+.bar:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    height: 100%;
+    top: 0; right: 0; left: 0;
+    filter: blur(5px);
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+}
+
+progress {
+    appearance: none;
+    position: relative;
+    overflow: hidden;
+    width: 1.5em;
+    height: 1em;
+    padding: 0;
+    border: none;
+    font-family: "Ubuntu Mono", sans-serif;
+    font-size: 120px;
+    transition: height .4s;
+}
+
+progress.hidden {
+    height: 0;
+    transition-delay: .4s;
+}
+
+#instruction {
+    display: none;
+    position: absolute;
+    top:0; left: 0; right: 0; bottom: 0;
+    height: 400px;
+    width: 350px;
+    text-align: center;
+    margin: auto;
+    font-family: sans-serif;
+    font-size: 1.2em;
+    line-height: 30px;
+}
+
+#hint98 {
+    display: none;
+    position: absolute;
+    top:50%; left: 0; right: 0; bottom: 0;
+    height: 400px;
+    width: 350px;
+    text-align: center;
+    margin: auto;
+    font-family: sans-serif;
+    font-size: 1.2em;
+    line-height: 30px;
+    color: #666666
+}
+#hint98.appear {
+    display: block;
+}
+#hint98.hidden {
+    display: none;
+}
+
+#instruction.appear {
+    display: block;
+}
+
+#instruction a {
+    font-size: .7em;
+    color: #9B9B4F
+}
+
+#instruction #browsers {
+    font-size: .7em;
+    color: #555555
+
+}
+
+#instruction h2 {
+    color: #151515
+}
+
+#instruction img {
+    height: 70;
+    width: 70;
+    padding-top: 10px;
+    border-radius: 50%;
+}
+
+progress::-webkit-progress-bar,
+progress::-webkit-progress-value {
+    background: transparent;
+}
+
+
+progress::before {
+    content: attr(value);
+    position: absolute;
+    top:0; left: 0; right: 0; bottom: 0;
+    text-align: center;
+    font-size: 1.5em;
+    line-height: .62em;
+    color: hsla(0,0%,100%,.2);
+    background: linear-gradient(
+    hsla(0,0%,100%,.6),
+    hsla(0,0%,100%,.0) 70% )
+    no-repeat center;
+    background-position: inherit;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+progress::-webkit-progress-bar,
+progress::-webkit-progress-value {
+    background: transparent;
+}
+
+/* ------------------------------ */
+
+body {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: space-around;
+    box-sizing: border-box;
+    padding: 50px;
+    background-image: url(../images/fingerprint.gif);
+    background-attachment: fixed;
+    background-position: center;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 1;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+#test_canvases canvas{
+    display: none !important;
+}
+
+.hidden-vid {
+  display: none!important;
+  width: 0px;
+  height: 0px;
+}
+
+
+.tooltip .tooltip-inner {
+    background-color: navy;
+}
+
+.tooltip .tooltip-arrow {
+    border-top-color: navy;
+}
