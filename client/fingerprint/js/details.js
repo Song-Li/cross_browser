@@ -164,6 +164,8 @@ function gen_code() {
   res = "";
   for (var feature in show_list) {
     label = 'box_' + feature;
+    if (document.getElementById(label) == null) continue;
+    console.log(label);
     if (document.getElementById(label).checked) {
       res += trans_data[feature]; 
     }
@@ -173,6 +175,7 @@ function gen_code() {
   gpu_hash = 0;
   for (gpu_hash in gpu_hashes) {
     label = 'box_' + gpu_hash;
+    if (document.getElementById(label) == null) continue;
     if (document.getElementById(label).checked) {
       res += trans_data['gpu_hashes'][gpu_hash]; 
     }
@@ -231,6 +234,7 @@ function getTable(name) {
 }
 
 function buildTable(data) {
+  console.log(data);
   trans_data = data;
   var list = data['resolution'].split('_');
   trans_data['ratio'] = Math.round(list[0] / list[1] * 100) / 100;
@@ -263,6 +267,7 @@ function buildTable(data) {
  // $('#result_table').append('<tr><td colspan="3" class = "type">Features do not recommend for cross_browser</td></tr>');
 
   for (var feature in show_list) {
+    console.log(feature);
     //pass all the cross browser features
     if (feature in cross_list) 
       continue;
@@ -278,8 +283,7 @@ function buildTable(data) {
 
 
 function getDetails() {
-  ip_address = "sec.uniquemachine.org/uniquemachine"
-  //ip_address = "aws.songli.us:5000"
+  ip_address = "YOURSERVER"
   var ID = window.location.href.split("?")[1];
   $("#cur_fingerprint").html("Current Fingerprint: " + ID);
 
