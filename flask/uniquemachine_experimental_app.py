@@ -5,48 +5,31 @@ from flask_cors import CORS, cross_origin
 import json
 import hashlib
 from flaskext.mysql import MySQL
-import ConfigParser
 import re
 import os
+from tinydb import TinyDB, Query
 
 root = "./"
-config = ConfigParser.ConfigParser()
-config.read(os.path.join(root, 'password.ignore'))
-
-mysql = MySQL()
 app = Flask(__name__)
-app.config['MYSQL_DATABASE_USER'] = config.get('mysql', 'username')
-app.config['MYSQL_DATABASE_PASSWORD'] = config.get('mysql', 'password')
-app.config['MYSQL_DATABASE_DB'] = 'uniquemachine'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mysql.init_app(app)
 CORS(app)
-
-@app.route("/")
-def hello():
-    return "Hello World!"
+db = TinyDB('db.json')
 
 @app.route('/details', methods=['POST'])
 def details():
     res = {}
     ID = request.get_json()["ID"]
-    db = mysql.get_db()
-    cursor = db.cursor()
-    sql_str = "SELECT * FROM features WHERE browser_fingerprint = '" + ID +"'"
-    cursor.execute(sql_str)
-    db.commit()
-    row = cursor.fetchone()
-    for i in range(len(row)):
-        value = row[i]
-        name = cursor.description[i][0]
-        res[name] = value
 
-    if 'fonts' in res:
-        fs = list(res['fonts'])
-        for i in range(len(mask)):
-            fs[i] = str(int(fs[i]) & mask[i] & mac_mask[i])
-        res['fonts'] = ''.join(fs)
+    # sql injection vulnerability but whatever
+    query = Query()
+    res = db.search(query.browser_fingerprint==ID)[0]
 
+    # historical bug
+    if 'gpuImgs' in res:
+        res['gpuimgs'] = res['gpuImgs']
+    if 'langsDetected' in res:
+        res['langsdetected'] = res['langsDetected']
+
+    print(flask.jsonify(res))
     return flask.jsonify(res)
 
 @app.route('/features', methods=['POST'])
@@ -116,10 +99,9 @@ def features():
     result['accept'] = accept
     result['encoding'] = encoding
     result['language'] = language
-    
-    print agent
-           
-    feature_str = "IP"
+   
+    value_dict = {}
+    value_dict['IP'] = IP
     value_str = "'" + IP + "'"
 
     for feature in feature_list:
@@ -130,7 +112,6 @@ def features():
         else:
             value = "NULL"
 
-        feature_str += "," + feature
         #for gpu imgs
         if feature == "gpuImgs":
             value = ",".join('%s_%s' % (k,v) for k,v in value.iteritems())
@@ -153,6 +134,7 @@ def features():
             value = value[1:]
         
         value_str += ",'" + str(value) + "'"
+        value_dict[feature] = str(value)
         #print feature, hash_object.hexdigest()
 
 
@@ -167,14 +149,11 @@ def features():
     hash_object = hashlib.md5(cross_hash)
     cross_hash = hash_object.hexdigest()
 
-    feature_str += ',browser_fingerprint,computer_fingerprint_1'
-    value_str += ",'" + single_hash + "','" + cross_hash + "'"
+    value_dict['browser_fingerprint'] = single_hash
+    value_dict['computer_fingerprint_1'] = cross_hash
 
-    db = mysql.get_db()
-    cursor = db.cursor()
-    sql_str = "INSERT INTO features (" + feature_str + ") VALUES (" + value_str + ");"
-    cursor.execute(sql_str)
-    db.commit()
+    print(value_dict)
+    db.insert(value_dict)
 
-    print (single_hash, cross_hash)
+    print(single_hash, cross_hash)
     return flask.jsonify({"single": single_hash, "cross": cross_hash})
