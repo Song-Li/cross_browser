@@ -259,7 +259,7 @@ var Sender = function() {
           success : function(data) {
             console.log(data);
             data['finished'] = true;
-            parent.postMessage(data,"http://uniquemachine.org");
+            parent.postMessage(data,"http://localhost:9876");
           },
           error: function (xhr, ajaxOptions, thrownError) {
             alert(thrownError);
