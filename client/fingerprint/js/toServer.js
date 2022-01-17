@@ -1,4 +1,5 @@
-var ip_address = "sec.uniquemachine.org/uniquemachine/";
+//var ip_address = "sec.uniquemachine.org/uniquemachine/";
+var ip_address = "lab.songli.io:19875";
 //var ip_address = "aws.songli.us:5000";
 
 function populateFontList(fontArr) {
@@ -259,7 +260,7 @@ var Sender = function() {
           success : function(data) {
             console.log(data);
             data['finished'] = true;
-            parent.postMessage(data,"http://uniquemachine.org");
+            parent.postMessage(data,"http://localhost:9876");
           },
           error: function (xhr, ajaxOptions, thrownError) {
             alert(thrownError);
